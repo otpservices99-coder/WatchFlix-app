@@ -420,7 +420,7 @@ body.theme-dark .wf-warn-red{color:#fecaca;background:rgba(239,68,68,.15)}
         </div>
         <div class="wf-gate-row" style="margin-top:14px">
           <span class="rew" id="wfAdsGateReward" style="display:none"></span>
-          <button type="button" class="wf-gate-btn" id="wfAdsGateBtn" onclick="openWfAdsGateway()">Continue to activity</button>
+          <button type="button" class="wf-gate-btn" id="wfAdsGateBtn" onclick="goToWatchFlixAds()">Continue to activity</button>
         </div>
       </div>
     </div>
@@ -909,7 +909,12 @@ function openSponsoredTask(taskId, url, event){
     return;
   }
   markTaskOpened(taskId);
-  try{ window.open(url, "_blank", "noopener,noreferrer"); }catch(e){ location.href = url; }
+  const cleanUrl = normalizeUrl(url);
+  if(!cleanUrl || cleanUrl === "#"){
+    alert("This task link is broken. Please try another task.");
+    return;
+  }
+  try{ window.open(cleanUrl, "_blank", "noopener,noreferrer"); }catch(e){ location.href = cleanUrl; }
   // Unlock proof on this card
   const proofLabel = document.querySelector('label.proof[data-task="'+taskId+'"]');
   const proofInput = document.getElementById("proofInput_"+taskId);
@@ -1059,18 +1064,22 @@ function initWfAds(){
   }
 }
 
-function openWfAdsGateway(){
-  const warn = document.getElementById("wfAdsGateWarn");
-  const btn = document.getElementById("wfAdsGateBtn");
-  // First tap: show warning only — no ads on this page
-  if(warn && !warn.classList.contains("show")){
-    warn.classList.add("show");
-    if(btn) btn.textContent = "I understand — open activity";
+function goToWatchFlixAds(){
+  // Validate and navigate directly to watchflix.html (no query params)
+  const store = loadWfAdsStore();
+  const active = (store.campaigns||[]).filter(c => c && c.active !== false);
+  if(!active.length){
+    alert("No active campaigns right now. Check back later.");
     return;
   }
-  const id = window._wfAdsGatewayId || "";
-  const q = id ? ("?id=" + encodeURIComponent(id)) : "";
-  location.href = "watchflix-ads.html" + q;
+  const limit = Number(store.dailyLimit) || 10;
+  const done = wfAdsCompletionsToday().length;
+  if(done >= limit){
+    alert("Daily limit reached. Come back tomorrow.");
+    return;
+  }
+  // Navigate to watchflix.html as a plain link — no query parameters
+  window.location.href = "watchflix.html";
 }
 
 
@@ -1133,6 +1142,18 @@ function notifyNewSponsoredTasks(tasks){
   }catch(e){ console.warn("notifyNewSponsoredTasks", e); }
 }
 
+function normalizeUrl(url){
+  if(!url) return "";
+  url = String(url).trim();
+  url = url.replace(/\s+/g, "");
+  if(!/^https?:\/\//i.test(url) && !/^mailto:/i.test(url) && !/^tel:/i.test(url)){
+    url = "https://" + url;
+  }
+  return url;
+}
+function isValidUrl(url){
+  try{ new URL(url); return true; }catch{ return false; }
+}
 function taskAtCapacity(ad){
   const max = ad.maxCompletions;
   if(max == null || max === "" || Number(max) <= 0) return false;
@@ -1167,7 +1188,8 @@ function renderSponsored(){
     const id=ad._id||ad.id;
     const naira=Number(ad.rewardAmount||ad.reward||0);
     const img=(ad.imageUrl||ad.image||"").trim();
-    const url=ad.targetUrl||ad.url||"#";
+    let url=normalizeUrl(ad.targetUrl||ad.url||"");
+    if(!url || !isValidUrl(url)) url="#";
     const needs=ad.needsProof!==false;
     const desc=ad.description||"Complete the steps on the task page, then upload a clear screenshot.";
     const sub=latestSubForTask(id);
@@ -1177,7 +1199,10 @@ function renderSponsored(){
     const full=taskAtCapacity(ad);
     const slots=taskSlotsLabel(ad);
     let statusHtml="";
-    if(full) statusHtml=`<div class="ad-status rejected">Slots full (${escapeHtml(slots)}) — no more entries for this task</div>`;
+    const rawUrl = ad.targetUrl || ad.url || "";
+    const hasValidLink = isValidUrl(normalizeUrl(rawUrl));
+    if(!hasValidLink && !full) statusHtml=`<div class="ad-status rejected">Task link unavailable — admin will fix soon</div>`;
+    else if(full) statusHtml=`<div class="ad-status rejected">Slots full (${escapeHtml(slots)}) — no more entries for this task</div>`;
     else if(pending) statusHtml=`<div class="ad-status pending">Proof under review — you can’t submit again until it’s decided</div>`;
     else if(rejected) statusHtml=`<div class="ad-status rejected">Previous proof rejected${sub.rejectionReason?": "+escapeHtml(sub.rejectionReason):""}. You can try again.</div>`;
     const proofDisabled=pending || full;
@@ -1197,7 +1222,9 @@ function renderSponsored(){
         <div class="ad-actions">
           ${full
             ? `<button type="button" class="go disabled-btn" disabled style="opacity:.55;grid-column:1/-1">Slots full</button>`
-            : `<a class="go" id="openTaskBtn_${escapeHtml(id)}" href="${escapeHtml(url)}" target="_blank" rel="noopener" onclick="openSponsoredTask('${escapeHtml(id)}','${escapeHtml(url)}',event)">Open task</a>
+            : !hasValidLink
+              ? `<button type="button" class="go disabled-btn" disabled style="opacity:.55;grid-column:1/-1">Link unavailable</button>`
+              : `<a class="go" id="openTaskBtn_${escapeHtml(id)}" href="${escapeHtml(url)}" target="_blank" rel="noopener" onclick="openSponsoredTask('${escapeHtml(id)}','${escapeHtml(url)}',event)">Open task</a>
           ${needs
             ? (function(){
                 const canProof = !proofDisabled && hasOpenedTask(id);
