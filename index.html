@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WatchFlix — Earn WCoin for Eligible Activities</title>
+    <meta name="description" content="Free registration. Complete eligible WatchFlix activities to earn WCoin. Rewards are funded from the platform Rewards Pool. Withdraw when you reach the minimum.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            900: '#064e3b',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #059669 0%, #10b981 40%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        .float-anim {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.4); }
+        }
+        .money-pattern {
+            background-image: radial-gradient(circle at 1px 1px, rgba(16, 185, 129, 0.07) 1px, transparent 0);
+            background-size: 32px 32px;
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(5, 150, 105, 0.35);
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.35);
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            animation: marquee 40s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+        .sticky-cta {
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .sticky-cta.visible {
+            transform: translateY(0);
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #059669;
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 2px 6px rgba(5,150,105,0.3);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 2px;
+        }
+        input[type=range]:focus::-webkit-slider-runnable-track {
+            background: #d1fae5;
+        }
+    </style>
+</head>
+<body class="font-sans text-slate-800 antialiased bg-white">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-50 glass border-b border-slate-100/80">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl p-[2px] shadow-lg shadow-emerald-500/25" style="background:conic-gradient(from 210deg,#047857,#34d399,#a7f3d0,#059669)">
+                    <div class="w-full h-full rounded-[10px] bg-white flex items-center justify-center">
+                        <span class="font-black text-lg bg-gradient-to-br from-emerald-500 to-emerald-700 bg-clip-text text-transparent">W</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-sm font-extrabold text-slate-900 tracking-[0.08em] leading-none">WATCHFLIX</div>
+                    <div class="text-[9px] font-bold text-slate-400 tracking-[0.14em] mt-0.5">WATCH · FINISH · COLLECT</div>
+                </div>
+            </a>
+            <div class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+                <a href="#features" class="hover:text-emerald-600 transition">How to Earn</a>
+                <a href="#withdrawal" class="hover:text-emerald-600 transition">Withdrawal</a>
+                <a href="#features" class="hover:text-emerald-600 transition">Tasks</a>
+                <a href="#faq" class="hover:text-emerald-600 transition">FAQ</a>
+            </div>
+            <div class="hidden md:flex items-center gap-4">
+                <a href="login.html" class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition">Log In</a>
+                <a href="register.html" class="btn-primary text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-emerald-500/20">Create Free Account</a>
+            </div>
+            <button id="menuBtn" class="md:hidden p-2 text-slate-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden glass border-t border-slate-100 px-6 py-4 space-y-3">
+            <a href="#features" class="block py-2 text-slate-700 font-medium">How to Earn</a>
+            <a href="#withdrawal" class="block py-2 text-slate-700 font-medium">Withdrawal</a>
+            <a href="#features" class="block py-2 text-slate-700 font-medium">Tasks</a>
+            <a href="#faq" class="block py-2 text-slate-700 font-medium">FAQ</a>
+            <a href="register.html" class="block btn-primary text-white text-center py-3 rounded-xl font-bold mt-2">Create Free Account</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden money-pattern">
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-100 rounded-full blur-[120px] opacity-40 -translate-y-1/2 translate-x-1/4"></div>
+        <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-amber-100 rounded-full blur-[100px] opacity-40 translate-y-1/3 -translate-x-1/4"></div>
+
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold mb-6">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                        </span>
+                        Free Registration — Start Earning Today
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.05] mb-6">
+                        Turn Your <span class="gradient-text">Time</span> Into <br>
+                        Real <span class="text-emerald-600">WCoin</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-slate-500 leading-relaxed mb-8 max-w-lg">
+                        Complete eligible WatchFlix activities — tasks, campaigns, and platform challenges — to earn WCoin. A portion of advertising revenue funds the Rewards Pool. Rates can vary. No investment needed.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 mb-10">
+                        <a href="register.html" class="btn-primary text-white px-8 py-4 rounded-2xl font-bold text-center shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2">
+                            Start Earning Free
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                        </a>
+                        <a href="#how-it-works" class="bg-white border-2 border-slate-200 text-slate-700 px-8 py-4 rounded-2xl font-bold text-center hover:border-emerald-300 hover:bg-emerald-50/50 transition">
+                            See How It Works
+                        </a>
+                    </div>
+                    <div class="flex items-center gap-6 text-sm text-slate-500">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            Withdraw Anytime
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            Free to Join Worldwide
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Card Visual -->
+                <div class="relative hidden lg:block">
+                    <div class="relative z-10 bg-white rounded-3xl shadow-2xl shadow-slate-200/60 border border-slate-100 p-6 max-w-sm mx-auto float-anim">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <div class="text-xs text-slate-400 font-medium uppercase tracking-wider">Total Earnings</div>
+                                <div class="text-3xl font-extrabold text-slate-900">122,500 WCoin</div>
+                            </div>
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                        </div>
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm text-slate-800">Complete a task</div>
+                                        <div class="text-xs text-slate-400">Eligible activity</div>
+                                    </div>
+                                </div>
+                                <div class="text-emerald-600 font-bold text-sm">+250 WC</div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm text-slate-800">Social task</div>
+                                        <div class="text-xs text-slate-400">Follow the brief</div>
+                                    </div>
+                                </div>
+                                <div class="text-emerald-600 font-bold text-sm">+500 WC</div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm text-slate-800">Referral Bonus</div>
+                                        <div class="text-xs text-slate-400">Friend signed up</div>
+                                    </div>
+                                </div>
+                                <div class="text-emerald-600 font-bold text-sm">+250 WC</div>
+                            </div>
+                        </div>
+                        <button class="w-full btn-gold text-white py-3 rounded-xl font-bold shadow-lg shadow-amber-500/20">
+                            Withdraw WCoin
+                        </button>
+                    </div>
+                    <div class="absolute -top-6 -right-6 w-20 h-20 bg-emerald-400 rounded-full blur-2xl opacity-30"></div>
+                    <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-amber-400 rounded-full blur-2xl opacity-30"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Earnings Ticker -->
+    <section class="bg-emerald-600 text-white py-3 overflow-hidden relative">
+        <div class="flex whitespace-nowrap animate-marquee">
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Chioma A. earned 1,200 WCoin today</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Emmanuel O. completed 8 tasks this week</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Fatima B. reached 8,500 WCoin this month</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Minimum reached — payout requested</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Millions of WCoin paid out</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Chidi U. earned 3,400 WCoin from referrals</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Amina K. completed her daily streak</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Withdraw when you reach the minimum</span>
+            <!-- Duplicate for seamless loop -->
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Chioma A. earned 1,200 WCoin today</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Emmanuel O. completed 8 tasks this week</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Fatima B. reached 8,500 WCoin this month</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Minimum reached — payout requested</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Millions of WCoin paid out</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Chidi U. earned 3,400 WCoin from referrals</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Amina K. completed her daily streak</span>
+            <span class="mx-8 text-sm font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> Withdraw when you reach the minimum</span>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="border-y border-slate-100 bg-slate-50/50 py-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-3xl md:text-4xl font-extrabold text-slate-900">Growing community</div>
+                    <div class="text-sm text-slate-500 font-medium mt-1">Paid to Users</div>
+                </div>
+                <div>
+                    <div class="text-3xl md:text-4xl font-extrabold text-slate-900">4K+</div>
+                    <div class="text-sm text-slate-500 font-medium mt-1">Active Earners</div>
+                </div>
+                <div>
+                    <div class="text-3xl md:text-4xl font-extrabold text-slate-900">638K+</div>
+                    <div class="text-sm text-slate-500 font-medium mt-1">Tasks Completed</div>
+                </div>
+                <div>
+                    <div class="text-3xl md:text-4xl font-extrabold text-slate-900">4.7★</div>
+                    <div class="text-sm text-slate-500 font-medium mt-1">User Rating</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Badge Bar -->
+    <section class="py-10 bg-white border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Trusted, Secure & Supported By</p>
+            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-70">
+                <div class="flex items-center gap-2 font-bold text-slate-600 text-sm md:text-base">
+                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    256-bit SSL
+                </div>
+                <div class="flex items-center gap-2 font-bold text-slate-600 text-sm md:text-base">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                    Paystack
+                </div>
+                <div class="flex items-center gap-2 font-bold text-slate-600 text-sm md:text-base">
+                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    
+                </div>
+                <div class="flex items-center gap-2 font-bold text-slate-600 text-sm md:text-base">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    NDPR Compliant
+                </div>
+                <div class="flex items-center gap-2 font-bold text-slate-600 text-sm md:text-base">
+                    <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    All Nigerian Banks
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Earn -->
+    <section id="features" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-emerald-600 font-bold text-sm uppercase tracking-wider">Earn Your Way</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold mt-3 mb-4 tracking-tight">Multiple ways to <span class="gradient-text">complete activities</span></h2>
+                <p class="text-slate-500 text-lg">Choose from a variety of simple tasks. No skills required. Just your phone and a few minutes.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="card-hover bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Complete platform tasks</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-4">Complete eligible video or content tasks. Each task shows its own fixed WCoin reward when available.</p>
+                    <div class="text-emerald-600 font-bold text-sm">Reward shown per task</div>
+                </div>
+
+                <div class="card-hover bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
+                    <div class="w-14 h-14 rounded-2xl bg-rose-50 flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">View Short Clips</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-4">Finish eligible content activities listed in your dashboard. Rewards are set per task, not per ad click.</p>
+                    <div class="text-emerald-600 font-bold text-sm">Reward shown per task</div>
+                </div>
+
+                <div class="card-hover bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
+                    <div class="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Social Tasks</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-4">Like, follow, share, and comment on social media posts for brands.</p>
+                    <div class="text-emerald-600 font-bold text-sm">Reward shown per task</div>
+                </div>
+
+                <div class="card-hover bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Refer & Earn</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-4">Invite friends with your link. Successful referrals may earn a fixed WCoin bonus when the program is active.</p>
+                    <div class="text-emerald-600 font-bold text-sm">Bonus when program is active</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Earnings Calculator -->
+    <section id="calculator" class="py-24 bg-slate-50">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-emerald-600 font-bold text-sm uppercase tracking-wider">Earnings Simulator</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold mt-3 mb-4 tracking-tight">Example <span class="gradient-text">activity levels</span></h2>
+                <p class="text-slate-500 text-lg">Adjust the sliders for an example activity profile — not a guaranteed payout.</p>
+            </div>
+            <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-slate-100">
+                <div class="space-y-10">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <label class="font-bold text-slate-700">Hours per day watching ads</label>
+                            <span id="hoursVal" class="text-emerald-600 font-extrabold bg-emerald-50 px-3 py-1 rounded-full text-sm">2 hours</span>
+                        </div>
+                        <input type="range" min="1" max="8" value="2" id="hoursRange">
+                        <div class="flex justify-between text-xs text-slate-400 mt-2">
+                            <span>1 hour</span>
+                            <span>8 hours</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <label class="font-bold text-slate-700">Social tasks per day</label>
+                            <span id="tasksVal" class="text-emerald-600 font-extrabold bg-emerald-50 px-3 py-1 rounded-full text-sm">5 tasks</span>
+                        </div>
+                        <input type="range" min="0" max="20" value="5" id="tasksRange">
+                        <div class="flex justify-between text-xs text-slate-400 mt-2">
+                            <span>0 tasks</span>
+                            <span>20 tasks</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <label class="font-bold text-slate-700">Friends referred per month</label>
+                            <span id="refsVal" class="text-emerald-600 font-extrabold bg-emerald-50 px-3 py-1 rounded-full text-sm">10 friends</span>
+                        </div>
+                        <input type="range" min="0" max="50" value="10" id="refsRange">
+                        <div class="flex justify-between text-xs text-slate-400 mt-2">
+                            <span>0 friends</span>
+                            <span>50 friends</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-10 pt-8 border-t border-slate-100 text-center">
+                    <div class="text-sm text-slate-500 mb-2 uppercase tracking-wider font-semibold">Illustrative WCoin (example only)</div>
+                    <div class="text-5xl md:text-6xl font-extrabold text-emerald-600 mb-4" id="totalEarnings">45,000 WCoin</div>
+                    <p class="text-slate-400 text-sm max-w-md mx-auto">Illustrative only. Actual rewards depend on eligible tasks, approval, and Rewards Pool funding.</p>
+                    <a href="register.html" class="inline-flex items-center gap-2 mt-6 btn-primary text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-emerald-500/20">
+                        Start Earning Now
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Live platform pulse -->
+    <section class="bg-white border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center justify-center gap-6 md:gap-10 text-sm">
+            <div class="flex items-center gap-2 text-slate-600">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span class="font-semibold"><span id="liveTaskCount">—</span> campaigns live</span>
+            </div>
+            <div class="hidden sm:block w-px h-4 bg-slate-200"></div>
+            <div class="text-slate-500 font-medium">Tasks refresh as partners publish offers</div>
+            <div class="hidden sm:block w-px h-4 bg-slate-200"></div>
+            <div class="text-slate-500 font-medium">WCoin credited after review</div>
+        </div>
+    </section>
+
+    <!-- Withdrawal Section -->
+    <section id="withdrawal" class="py-16 md:py-24 bg-slate-900 text-white relative">
+        <div class="absolute inset-0 money-pattern opacity-5 pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+                <!-- Left -->
+                <div class="min-w-0 order-2 lg:order-1">
+                    <span class="text-emerald-400 font-bold text-sm uppercase tracking-wider">Flexible Withdrawal</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold mt-3 mb-4 tracking-tight leading-tight">
+                        Cash out to your <span class="text-emerald-400">WCoin</span> wallet
+                    </h2>
+                    <p class="text-slate-400 text-base sm:text-lg leading-relaxed mb-5">
+                        Request a payout whenever you reach the minimum WCoin balance. Reviews run continuously and approved payouts are sent by bank transfer.
+                    </p>
+                    <div class="mb-6 p-4 rounded-2xl bg-white/5 border border-white/10 text-sm text-slate-300 leading-relaxed">
+                        <div class="font-bold text-white mb-1.5">How withdrawals work</div>
+                        WatchFlix is funded by advertising and task partners. When those partners settle with us, we release user payouts in the same cycle.
+                        That keeps the platform sustainable: we pay what has been earned and cleared on our side — not speculative balances.
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3 p-3 sm:p-4 bg-white/5 rounded-2xl border border-white/10">
+                            <div class="w-11 h-11 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm sm:text-base">Withdraw when ready</div>
+                                <div class="text-xs sm:text-sm text-slate-400">Hit the minimum — request anytime</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 sm:p-4 bg-white/5 rounded-2xl border border-white/10">
+                            <div class="w-11 h-11 rounded-xl bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm sm:text-base">Reviewed before payout</div>
+                                <div class="text-xs sm:text-sm text-slate-400">Approved requests are paid by bank transfer</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 sm:p-4 bg-white/5 rounded-2xl border border-white/10">
+                            <div class="w-11 h-11 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm sm:text-base">Nigerian banks supported</div>
+                                <div class="text-xs sm:text-sm text-slate-400">GTB, Access, Zenith, UBA, Kuda, OPay, PalmPay &amp; more</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: live feed -->
+                <div class="min-w-0 order-1 lg:order-2 w-full">
+                    <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl text-slate-800 w-full box-border">
+                        <div class="flex items-center justify-between gap-2 mb-4">
+                            <div class="min-w-0">
+                                <h3 class="text-slate-900 font-bold text-base sm:text-lg">Recent withdrawals</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Bank transfer · live-style activity</p>
+                            </div>
+                            <span id="liveFeedStatus" class="flex-shrink-0 text-xs font-bold bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full inline-flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live
+                            </span>
+                        </div>
+                        <div id="liveWithdrawFeed" class="max-h-[240px] sm:max-h-[300px] overflow-y-auto overscroll-contain"></div>
+                        <div class="mt-3 pt-3 border-t border-slate-100">
+                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Redacted payout proofs</div>
+                            <div id="payoutProofStrip" class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1"></div>
+                            <p class="text-[10px] sm:text-[11px] text-slate-400 mt-2 leading-relaxed">
+                                Illustrative activity. Proofs are managed in Admin → Landing. Your withdrawals appear in your dashboard after approval.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- How It Works -->
+    
+    <section class="py-16 bg-white border-y border-slate-100" id="rewards-economy">
+        <div class="max-w-3xl mx-auto px-6 text-center">
+            <span class="text-emerald-600 font-bold text-sm uppercase tracking-wider">How rewards work</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold mt-3 mb-4 tracking-tight text-slate-900">Earn WCoin with WatchFlix</h2>
+            <p class="text-slate-600 leading-relaxed text-[15px] md:text-base">
+                Complete eligible WatchFlix activities and earn WCoin. WatchFlix allocates a portion of its advertising revenue to the <b>Rewards Pool</b>, which funds eligible user rewards.
+            </p>
+            <p class="text-slate-800 font-extrabold mt-4 text-lg">5 WCoin = &#8358;1</p>
+            <p class="text-slate-500 text-sm mt-3 leading-relaxed">
+                Reward rates may vary because advertising revenue changes with audience, device, demand, and available inventory.
+                Completing eligible activities is what qualifies you for WCoin; clicking advertisements is not itself a reward condition.
+            </p>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-emerald-600 font-bold text-sm uppercase tracking-wider">Getting Started</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold mt-3 mb-4 tracking-tight">From signup to <span class="gradient-text">cashout</span> in minutes</h2>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-8 relative">
+                <div class="hidden md:block absolute top-10 left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-emerald-200 via-amber-200 to-emerald-200"></div>
+                
+                <div class="relative text-center">
+                    <div class="w-20 h-20 mx-auto bg-emerald-50 rounded-3xl border-2 border-emerald-100 flex items-center justify-center mb-6 relative z-10 shadow-sm">
+                        <span class="text-2xl font-extrabold text-emerald-600">1</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Create Account</h3>
+                    <p class="text-slate-500 text-sm">Sign up for free in 30 seconds with your email or phone number.</p>
+                </div>
+
+                <div class="relative text-center">
+                    <div class="w-20 h-20 mx-auto bg-emerald-50 rounded-3xl border-2 border-emerald-100 flex items-center justify-center mb-6 relative z-10 shadow-sm">
+                        <span class="text-2xl font-extrabold text-emerald-600">2</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Pick a Task</h3>
+                    <p class="text-slate-500 text-sm">Choose from ads, videos, or social tasks available on your dashboard.</p>
+                </div>
+
+                <div class="relative text-center">
+                    <div class="w-20 h-20 mx-auto bg-emerald-50 rounded-3xl border-2 border-emerald-100 flex items-center justify-center mb-6 relative z-10 shadow-sm">
+                        <span class="text-2xl font-extrabold text-emerald-600">3</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Complete & Earn</h3>
+                    <p class="text-slate-500 text-sm">Watch, share, or engage. Your wallet is credited instantly upon completion.</p>
+                </div>
+
+                <div class="relative text-center">
+                    <div class="w-20 h-20 mx-auto bg-amber-50 rounded-3xl border-2 border-amber-100 flex items-center justify-center mb-6 relative z-10 shadow-sm">
+                        <span class="text-2xl font-extrabold text-amber-600">4</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Withdraw</h3>
+                    <p class="text-slate-500 text-sm">Cash out via supported bank or crypto methods when you hit the minimum.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Referral Program -->
+    <section id="referral" class="py-24 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+                <div class="order-2 lg:order-1">
+                    <div class="bg-white rounded-3xl p-8 md:p-10 shadow-xl border border-slate-100">
+                        <div class="flex items-center justify-between mb-8">
+                            <h3 class="text-slate-900 font-bold text-lg">Referral Earnings Simulator</h3>
+                            <span class="text-xs font-bold bg-amber-100 text-amber-700 px-3 py-1 rounded-full">50 WCoin / friend</span>
+                        </div>
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between items-center mb-3">
+                                    <label class="font-bold text-slate-700 text-sm">Friends you invite</label>
+                                    <span id="refSimCount" class="text-amber-600 font-extrabold bg-amber-50 px-3 py-1 rounded-full text-sm">20 friends</span>
+                                </div>
+                                <input type="range" min="1" max="100" value="20" id="refSimRange" class="accent-amber-500">
+                                <div class="flex justify-between text-xs text-slate-400 mt-2">
+                                    <span>1 friend</span>
+                                    <span>100 friends</span>
+                                </div>
+                            </div>
+                            <div class="pt-6 border-t border-slate-100 text-center">
+                                <div class="text-sm text-slate-500 mb-2 uppercase tracking-wider font-semibold">Your Referral Income</div>
+                                <div class="text-4xl md:text-5xl font-extrabold text-amber-600 mb-2" id="refSimTotal">10,000 WCoin</div>
+                                <p class="text-slate-400 text-xs">Plus 10% lifetime commission on their earnings</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2">
+                    <span class="text-amber-600 font-bold text-sm uppercase tracking-wider">Refer & Earn</span>
+                    <h2 class="text-4xl md:text-5xl font-extrabold mt-3 mb-6 tracking-tight">Your network is your <span class="gradient-text">net worth</span></h2>
+                    <p class="text-slate-500 text-lg leading-relaxed mb-8">
+                        Share your unique referral link with friends, family, and followers. Earn 50 WCoin for every person who signs up and completes their first task. Plus, receive a 10% lifetime commission on everything they earn.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                            </div>
+                            <div>
+                                <div class="font-bold text-slate-800">Unique Referral Link</div>
+                                <div class="text-sm text-slate-500">One link, unlimited earnings. Track every signup in real time.</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div>
+                                <div class="font-bold text-slate-800">10% Lifetime Commission</div>
+                                <div class="text-sm text-slate-500">Earn referral bonuses when invited friends meet program rules — terms can change.</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                            </div>
+                            <div>
+                                <div class="font-bold text-slate-800">Real-Time Dashboard</div>
+                                <div class="text-sm text-slate-500">Track referrals and pending bonuses from your dashboard.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="register.html" class="inline-flex items-center gap-2 mt-8 btn-gold text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-amber-500/20">
+                        Get My Referral Link
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Consistency Bonus (Daily Streak adapted for new site) -->
+    <section class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-emerald-600 font-bold text-sm uppercase tracking-wider">Launch Incentive</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold mt-3 mb-4 tracking-tight">Consistency pays <span class="gradient-text">extra</span></h2>
+                <p class="text-slate-500 text-lg">As an early member, unlock bonus rewards just for showing up daily. No complex tiers — just pure appreciation for loyal earners.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div class="card-hover bg-gradient-to-br from-emerald-50 to-white rounded-3xl border border-emerald-100 p-8 text-center shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-100 rounded-full blur-2xl opacity-50 -translate-y-1/2 translate-x-1/2"></div>
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 mx-auto bg-emerald-100 rounded-2xl flex items-center justify-center mb-4">
+                            <span class="text-2xl font-extrabold text-emerald-700">7</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">7-Day Streak</h3>
+                        <p class="text-slate-500 text-sm mb-4">Complete at least one task daily for 7 days.</p>
+                        <div class="text-3xl font-extrabold text-emerald-600">+500 WC</div>
+                        <div class="text-xs text-slate-400 mt-1">Bonus credited instantly</div>
+                    </div>
+                </div>
+                <div class="card-hover bg-gradient-to-br from-amber-50 to-white rounded-3xl border border-amber-100 p-8 text-center shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-amber-100 rounded-full blur-2xl opacity-50 -translate-y-1/2 translate-x-1/2"></div>
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 mx-auto bg-amber-100 rounded-2xl flex items-center justify-center mb-4">
+                            <span class="text-2xl font-extrabold text-amber-700">14</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">14-Day Streak</h3>
+                        <p class="text-slate-500 text-sm mb-4">Two weeks of consistent task completion.</p>
+                        <div class="text-3xl font-extrabold text-amber-600">+200 WCoin</div>
+                        <div class="text-xs text-slate-400 mt-1">Bonus credited instantly</div>
+                    </div>
+                </div>
+                <div class="card-hover bg-gradient-to-br from-blue-50 to-white rounded-3xl border border-blue-100 p-8 text-center shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-100 rounded-full blur-2xl opacity-50 -translate-y-1/2 translate-x-1/2"></div>
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 mx-auto bg-blue-100 rounded-2xl flex items-center justify-center mb-4">
+                            <span class="text-2xl font-extrabold text-blue-700">30</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">30-Day Streak</h3>
+                        <p class="text-slate-500 text-sm mb-4">A full month of dedication. You're a top earner.</p>
+                        <div class="text-3xl font-extrabold text-blue-600">+300 WCoin</div>
+                        <div class="text-xs text-slate-400 mt-1">Bonus + priority withdrawal</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partners & Supply -->
+    <section class="py-20 bg-slate-50 border-y border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-10">Powered by Leading Ad Networks & Offer Walls</p>
+            <div class="flex flex-wrap justify-center items-center gap-10 md:gap-16 opacity-60">
+                <div class="flex items-center gap-2 font-extrabold text-slate-700 text-lg tracking-tight">
+                    <svg class="w-6 h-6 text-indigo-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    TimeWall
+                </div>
+                <div class="flex items-center gap-2 font-extrabold text-slate-700 text-lg tracking-tight">
+                    <svg class="w-6 h-6 text-pink-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    AdGate Media
+                </div>
+                <div class="flex items-center gap-2 font-extrabold text-slate-700 text-lg tracking-tight">
+                    <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    OfferToro
+                </div>
+                <div class="flex items-center gap-2 font-extrabold text-slate-700 text-lg tracking-tight">
+                    <svg class="w-6 h-6 text-teal-600" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v-2z"/></svg>
+                    Pollfish
+                </div>
+                <div class="flex items-center gap-2 font-extrabold text-slate-700 text-lg tracking-tight">
+                    <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    BitLabs
+                </div>
+            </div>
+            <p class="text-slate-400 text-sm mt-8 max-w-2xl mx-auto">We partner with global ad networks and survey providers to ensure a constant supply of high-paying tasks for our users.</p>
+        </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section class="py-24 bg-white">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-emerald-600 font-bold text-sm uppercase tracking-wider">Why WatchFlix?</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold mt-3 mb-4 tracking-tight">The clear <span class="gradient-text">choice</span></h2>
+            </div>
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100">
+                                <th class="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-wider">Feature</th>
+                                <th class="px-8 py-5 text-sm font-bold text-emerald-600 uppercase tracking-wider text-center">WatchFlix</th>
+                                <th class="px-8 py-5 text-sm font-bold text-slate-400 uppercase tracking-wider text-center">Other Platforms</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="px-8 py-5 font-semibold text-slate-700">Registration Fee</td>
+                                <td class="px-8 py-5 text-center font-bold text-emerald-600">FREE</td>
+                                <td class="px-8 py-5 text-center text-slate-400">1,000 WCoin – 5,000 WCoin</td>
+                            </tr>
+                            <tr>
+                                <td class="px-8 py-5 font-semibold text-slate-700">Minimum Withdrawal</td>
+                                <td class="px-8 py-5 text-center font-bold text-emerald-600">1,000 WCoin</td>
+                                <td class="px-8 py-5 text-center text-slate-400">5,000 WCoin – 10,000 WCoin</td>
+                            </tr>
+                            <tr>
+                                <td class="px-8 py-5 font-semibold text-slate-700">Withdrawal Speed</td>
+                                <td class="px-8 py-5 text-center font-bold text-emerald-600">24 Hours</td>
+                                <td class="px-8 py-5 text-center text-slate-400">3 – 14 Days</td>
+                            </tr>
+                            <tr>
+                                <td class="px-8 py-5 font-semibold text-slate-700">Task Variety</td>
+                                <td class="px-8 py-5 text-center font-bold text-emerald-600">4 Types + Offer Walls</td>
+                                <td class="px-8 py-5 text-center text-slate-400">1 – 2 Types</td>
+                            </tr>
+                            <tr>
+                                <td class="px-8 py-5 font-semibold text-slate-700">Referral Commission</td>
+                                <td class="px-8 py-5 text-center font-bold text-emerald-600">10% Lifetime</td>
+                                <td class="px-8 py-5 text-center text-slate-400">One-time or None</td>
+                            </tr>
+                            <tr>
+                                <td class="px-8 py-5 font-semibold text-slate-700">Customer Support</td>
+                                <td class="px-8 py-5 text-center font-bold text-emerald-600">WhatsApp + Email</td>
+                                <td class="px-8 py-5 text-center text-slate-400">Email Only</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-24 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-emerald-600 font-bold text-sm uppercase tracking-wider">Testimonials</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold mt-3 mb-4 tracking-tight">Real people, <span class="gradient-text">real earnings</span></h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
+                    <div class="flex items-center gap-1 mb-4">
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed mb-6">"I thought it was a scam until I cashed out 75,000 WCoin after hitting the minimum. This platform is a lifesaver for students like me."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-sm">CO</div>
+                        <div>
+                            <div class="font-bold text-sm text-slate-900">Chioma Okeke.</div>
+                            <div class="text-xs text-slate-400">Student — Lagos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
+                    <div class="flex items-center gap-1 mb-4">
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed mb-6">"The referral program alone pays my data bills. I've referred 40 friends and earned over 20,000 WCoin. The payouts are smooth once approved."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm">ES</div>
+                        <div>
+                            <div class="font-bold text-sm text-slate-900">Emmanuel Sylvester.</div>
+                            <div class="text-xs text-slate-400">Trader — Abuja</div>
+                        </div>
+                    </div>
+                </div>
+
+<div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
+                    <div class="flex items-center gap-1 mb-4">
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed mb-6">"As a student this platform has helped me alot. in buying Data and sometimes drinking my little Garri😂 I highly recommend."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm">MD</div>
+                        <div>
+                            <div class="font-bold text-sm text-slate-900">Muhammad Danladi.</div>
+                            <div class="text-xs text-slate-400">Student — Sokoto</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
+                    <div class="flex items-center gap-1 mb-4">
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed mb-6">"I do the social tasks during my lunch break. In two weeks I've made 8,500 WCoin. It's not magic, it's just consistent effort. Highly recommend."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-sm">FB</div>
+                        <div>
+                            <div class="font-bold text-sm text-slate-900">Fatima Abubakar.</div>
+                            <div class="text-xs text-slate-400">Teacher — Kano</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- FAQ -->
+
+    
+    <!-- Platform rules -->
+    <section class="bg-slate-900 text-white">
+        <div class="max-w-7xl mx-auto px-6 py-5">
+            <div class="flex flex-col md:flex-row md:items-center gap-3 md:gap-8 text-sm">
+                <div class="font-extrabold text-emerald-400 whitespace-nowrap tracking-wide text-xs uppercase">House rules</div>
+                <div class="flex flex-wrap gap-x-6 gap-y-2 text-slate-300">
+                    <span>One account per person</span>
+                    <span class="text-slate-600 hidden sm:inline">·</span>
+                    <span>Clear proof required for manual tasks</span>
+                    <span class="text-slate-600 hidden sm:inline">·</span>
+                    <span>Minimum balance to withdraw</span>
+                    <span class="text-slate-600 hidden sm:inline">·</span>
+                    <span>No password sharing</span>
+                    <span class="text-slate-600 hidden sm:inline">·</span>
+                    <span>Fraud may lead to suspension</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust & transparency -->
+    <section class="py-16 bg-slate-50 border-y border-slate-100">
+        <div class="max-w-3xl mx-auto px-6 text-center">
+            <div class="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-600 px-4 py-1.5 rounded-full text-xs font-bold mb-5">
+                Truth · Trust · Transparency
+            </div>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">WatchFlix is not a get-rich-quick scheme</h2>
+            <p class="text-slate-600 leading-relaxed text-[15px] md:text-base">
+                Earnings come from completing real tasks and offers. How much you make depends on your activity and available campaigns — not on promises of overnight wealth.
+                There is no investment required to join. Withdrawals require reaching the minimum balance and passing review.
+                We aim to be clear about what the platform is: a rewards product where consistent effort matters more than hype.
+            </p>
+            <p class="text-slate-500 text-sm mt-4 leading-relaxed">
+                Please use WatchFlix responsibly. Never share your password, and treat every payout method as you would any financial account.
+            </p>
+        </div>
+    </section>
+
+<section id="faq" class="py-24 bg-white">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-emerald-600 font-bold text-sm uppercase tracking-wider">FAQ</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold mt-3 mb-4 tracking-tight">Questions? <span class="gradient-text">Answered.</span></h2>
+            </div>
+
+            <div class="space-y-4">
+                <details class="group bg-slate-50 rounded-2xl border border-slate-100 cursor-pointer transition-all duration-200 open:bg-white open:shadow-lg open:shadow-slate-100/50 open:border-slate-200">
+                    <summary class="flex justify-between items-center p-6 font-bold text-lg select-none text-slate-800">
+                        Is registration really free?
+                        <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-500 leading-relaxed">
+                        Yes, 100% free. You will never be asked to pay a registration fee, subscription, or any hidden charges. Just sign up and start earning immediately.
+                    </div>
+                </details>
+
+                <details class="group bg-slate-50 rounded-2xl border border-slate-100 cursor-pointer transition-all duration-200 open:bg-white open:shadow-lg open:shadow-slate-100/50 open:border-slate-200">
+                    <summary class="flex justify-between items-center p-6 font-bold text-lg select-none text-slate-800">
+                        How do I withdraw my earnings?
+                        <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-500 leading-relaxed">
+                        Go to your wallet, click "Withdraw," enter your bank details (your preferred payout method), and submit your request once you reach the minimum balance. Requests are reviewed and paid out as soon as possible.
+                    </div>
+                </details>
+
+                <details class="group bg-slate-50 rounded-2xl border border-slate-100 cursor-pointer transition-all duration-200 open:bg-white open:shadow-lg open:shadow-slate-100/50 open:border-slate-200">
+                    <summary class="flex justify-between items-center p-6 font-bold text-lg select-none text-slate-800">
+                        How much can I realistically earn?
+                        <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-500 leading-relaxed">
+                        Earnings depend on your activity. Active users stack WCoin daily through videos, tasks, and referrals. How much you earn depends on activity and available offers.
+                    </div>
+                </details>
+
+                <details class="group bg-slate-50 rounded-2xl border border-slate-100 cursor-pointer transition-all duration-200 open:bg-white open:shadow-lg open:shadow-slate-100/50 open:border-slate-200">
+                    <summary class="flex justify-between items-center p-6 font-bold text-lg select-none text-slate-800">
+                        Do I need special skills?
+                        <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-500 leading-relaxed">
+                        Not at all. If you can watch a video, click a like button, or share a post, you qualify. The tasks are designed to be simple and accessible to everyone with a smartphone.
+                    </div>
+                </details>
+
+                <details class="group bg-slate-50 rounded-2xl border border-slate-100 cursor-pointer transition-all duration-200 open:bg-white open:shadow-lg open:shadow-slate-100/50 open:border-slate-200">
+                    <summary class="flex justify-between items-center p-6 font-bold text-lg select-none text-slate-800">
+                        Is this platform legitimate?
+                        <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-500 leading-relaxed">
+                        Yes. We are a registered platform with over 5,000 active users and 1.7 WCoinmillion paid out. WatchFlix generates advertising revenue and allocates a portion to the Rewards Pool that funds eligible activity rewards.
+                    </div>
+                </details>
+            </div>
+
+            <div class="mt-12 text-center">
+                <div class="bg-emerald-50 rounded-2xl p-8 border border-emerald-100 inline-block max-w-md w-full">
+                    <div class="w-12 h-12 mx-auto bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    </div>
+                    <h3 class="font-bold text-slate-900 mb-2">Still have questions?</h3>
+                    <p class="text-slate-500 text-sm mb-4">Chat with our support team on WhatsApp. We typically reply within 5 minutes.</p>
+                    <a href="https://wa.me/2348081647810" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold transition">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        Chat on WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-24 bg-slate-50">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="relative rounded-[2.5rem] overflow-hidden bg-slate-900 p-12 md:p-20 text-center">
+                <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-slate-900 to-amber-500/10"></div>
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent"></div>
+                
+                <div class="relative z-10">
+                    <h2 class="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">Start earning today.</h2>
+                    <p class="text-slate-400 text-lg max-w-xl mx-auto mb-10">
+                        Join thousands of users already turning free time into WCoin. Registration is free and takes 30 seconds.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="register.html" class="btn-gold text-white px-10 py-5 rounded-2xl text-lg font-bold shadow-2xl shadow-amber-500/20 inline-flex items-center justify-center gap-2">
+                            Create Free Account
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                        </a>
+                        <a href="login.html" class="bg-white/10 hover:bg-white/20 text-white px-10 py-5 rounded-2xl text-lg font-bold transition border border-white/10 inline-flex items-center justify-center">
+                            Log In
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-100 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="md:col-span-2">
+                    <a href="index.html" class="flex items-center gap-2.5 mb-4">
+                        <div class="w-8 h-8 rounded-lg p-[2px]" style="background:conic-gradient(from 210deg,#047857,#34d399,#a7f3d0,#059669)">
+                            <div class="w-full h-full rounded-md bg-white flex items-center justify-center">
+                                <span class="font-black text-sm bg-gradient-to-br from-emerald-500 to-emerald-700 bg-clip-text text-transparent">W</span>
+                            </div>
+                        </div>
+                        <span class="text-lg font-extrabold text-slate-900 tracking-wide">WATCHFLIX</span>
+                    </a>
+                    <p class="text-slate-500 max-w-sm leading-relaxed">
+                        A rewards platform for eligible activities. Earn WCoin funded by the Rewards Pool, then withdraw when you reach the minimum.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 mb-4">Platform</h4>
+                    <ul class="space-y-3 text-sm text-slate-500">
+                        <li><a href="#features" class="hover:text-emerald-600 transition">How to Earn</a></li>
+                        <li><a href="#withdrawal" class="hover:text-emerald-600 transition">Withdrawal</a></li>
+                        <li><a href="#faq" class="hover:text-emerald-600 transition">FAQ</a></li>
+                        <li><a href="referral.html" class="hover:text-emerald-600 transition">Referral Program</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 mb-4">Company</h4>
+                    <ul class="space-y-3 text-sm text-slate-500">
+                        <li><a href="about.html" class="hover:text-emerald-600 transition">About Us</a></li>
+                        <li><a href="blog.html" class="hover:text-emerald-600 transition">Blog</a></li>
+                        <li><a href="contact.html" class="hover:text-emerald-600 transition">Contact</a></li>
+                        <li><a href="privacy.html" class="hover:text-emerald-600 transition">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-sm text-slate-400">© 2026 WatchFlix. All rights reserved.</div>
+                <div class="text-xs text-slate-400">
+                    WatchFlix is an independent rewards platform. All earnings are earned and withdrawn as WCoin.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Sticky Mobile CTA -->
+    <div id="stickyCta" class="sticky-cta fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-slate-200 p-4 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+        <div class="flex items-center gap-3">
+            <a href="register.html" class="flex-1 btn-primary text-white py-3.5 rounded-xl font-bold text-center shadow-lg shadow-emerald-500/20">
+                Create Free Account
+            </a>
+            <button id="closeSticky" class="p-2 text-slate-400 hover:text-slate-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/2348081647810" target="_blank" class="fixed bottom-24 md:bottom-8 right-6 z-40 bg-emerald-500 hover:bg-emerald-600 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition hover:scale-110">
+        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+
+    <!-- Add to Home Screen Banner -->
+    <div id="a2hsBanner" class="fixed bottom-0 left-0 right-0 z-50 bg-slate-900 text-white p-4 hidden">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl p-[2px]" style="background:conic-gradient(from 210deg,#047857,#34d399,#a7f3d0,#059669)"><div class="w-full h-full rounded-[10px] bg-slate-900 flex items-center justify-center"><span class="font-black text-sm text-emerald-400">W</span></div></div>
+                <div>
+                    <div class="font-bold text-sm">Add WatchFlix to your home screen</div>
+                    <div class="text-xs text-slate-400">Launch faster. No app store needed.</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="a2hsBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">Add</button>
+                <button id="a2hsDismiss" class="text-slate-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu
+        document.getElementById('menuBtn').addEventListener('click', () => {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobileMenu').classList.add('hidden');
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Earnings Calculator
+        const hoursRange = document.getElementById('hoursRange');
+        const tasksRange = document.getElementById('tasksRange');
+        const refsRange = document.getElementById('refsRange');
+        const hoursVal = document.getElementById('hoursVal');
+        const tasksVal = document.getElementById('tasksVal');
+        const refsVal = document.getElementById('refsVal');
+        const totalEarnings = document.getElementById('totalEarnings');
+
+                // Live-ish rates (gentle fluctuation) — values in WCoin
+        let rateHour = 250, rateTask = 750, rateRef = 2500;
+        function tickRates() {
+            // small random walk so estimates feel alive without large jumps
+            rateHour = Math.max(180, Math.min(320, rateHour + (Math.random() * 12 - 6)));
+            rateTask = Math.max(500, Math.min(950, rateTask + (Math.random() * 30 - 15)));
+            rateRef = Math.max(1800, Math.min(3200, rateRef + (Math.random() * 80 - 40)));
+            calcEarnings();
+        }
+        function calcEarnings() {
+            if (!hoursRange) return;
+            const h = parseInt(hoursRange.value) || 0;
+            const t = parseInt(tasksRange.value) || 0;
+            const r = parseInt(refsRange.value) || 0;
+            if (hoursVal) hoursVal.textContent = h + (h === 1 ? ' hour' : ' hours');
+            if (tasksVal) tasksVal.textContent = t + (t === 1 ? ' task' : ' tasks');
+            if (refsVal) refsVal.textContent = r + (r === 1 ? ' friend' : ' friends');
+            const total = Math.round((h * rateHour * 30) + (t * rateTask * 30) + (r * rateRef));
+            if (totalEarnings) {
+                totalEarnings.textContent = total.toLocaleString() + ' WCoin';
+                totalEarnings.style.transition = 'opacity .25s';
+                totalEarnings.style.opacity = '0.7';
+                setTimeout(() => { totalEarnings.style.opacity = '1'; }, 120);
+            }
+            const sub = document.getElementById('calcLiveHint');
+            if (sub) sub.textContent = 'Illustrative estimate only · not a guaranteed rate';
+        }
+        calcEarnings();
+        if (hoursRange) { [hoursRange, tasksRange, refsRange].forEach(el => el && el.addEventListener('input', calcEarnings)); setInterval(tickRates, 3500); }
+
+        // Referral Simulator
+        const refSimRange = document.getElementById('refSimRange');
+        const refSimCount = document.getElementById('refSimCount');
+        const refSimTotal = document.getElementById('refSimTotal');
+        if (refSimRange) {
+            refSimRange.addEventListener('input', function() {
+                const v = parseInt(this.value);
+                refSimCount.textContent = v + (v === 1 ? ' friend' : ' friends');
+                refSimTotal.textContent = (v * 250).toLocaleString() + ' WCoin';
+            });
+        }
+
+        // Sticky Mobile CTA
+        const stickyCta = document.getElementById('stickyCta');
+        const closeSticky = document.getElementById('closeSticky');
+        let stickyVisible = false;
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 600 && !stickyVisible) {
+                stickyCta.classList.add('visible');
+                stickyVisible = true;
+            }
+        });
+        if (closeSticky) {
+            closeSticky.addEventListener('click', () => {
+                stickyCta.classList.remove('visible');
+            });
+        }
+
+        // Add to Home Screen
+        let deferredPrompt;
+        const a2hsBanner = document.getElementById('a2hsBanner');
+        const a2hsBtn = document.getElementById('a2hsBtn');
+        const a2hsDismiss = document.getElementById('a2hsDismiss');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                a2hsBanner.classList.remove('hidden');
+            }
+        });
+
+        if (a2hsBtn) {
+            a2hsBtn.addEventListener('click', () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(() => {
+                        a2hsBanner.classList.add('hidden');
+                        deferredPrompt = null;
+                    });
+                }
+            });
+        }
+        if (a2hsDismiss) {
+            a2hsDismiss.addEventListener('click', () => {
+                a2hsBanner.classList.add('hidden');
+            });
+        }
+    </script>
+
+    <script>
+(function(){
+  /* Redacted payout screenshots — drop files in assets/payouts/ (6–8 recommended).
+     Admin can later replace these paths with CDN/Cloudinary URLs from the dashboard. */
+  function loadPayoutProofList(){
+    const defaults = [
+      "assets/payouts/payout-1.jpg","assets/payouts/payout-2.jpg","assets/payouts/payout-3.jpg",
+      "assets/payouts/payout-4.jpg","assets/payouts/payout-5.jpg","assets/payouts/payout-6.jpg",
+      "assets/payouts/payout-7.jpg","assets/payouts/payout-8.jpg"
+    ];
+    try{
+      const raw = localStorage.getItem("wf_landing_proofs");
+      if(raw){
+        const arr = JSON.parse(raw);
+        if(Array.isArray(arr) && arr.length){
+          return arr.map(x => typeof x === "string" ? x : (x && x.url)).filter(Boolean);
+        }
+      }
+    }catch(e){}
+    return defaults;
+  }
+  let PAYOUT_PROOFS = loadPayoutProofList();
+
+  const firstNames = ["Chioma","Tunde","Amina","Emeka","Blessing","Ibrahim","Ngozi","Chidi","Fatima","Yusuf","Ada","Kemi","Segun","Zainab","Oluwaseun","Halima","Ifeanyi","Maryam","Bola","Chukwudi","Aisha","Femi","Nneka","Sani","Yetunde"];
+  const lastInits = ["A.","B.","C.","D.","E.","F.","G.","H.","I.","J.","K.","M.","O.","S.","U."];
+  const banks = [
+    {name:"GTBank", short:"GT", color:"bg-orange-100 text-orange-700"},
+    {name:"Access Bank", short:"AC", color:"bg-blue-100 text-blue-700"},
+    {name:"Zenith Bank", short:"ZE", color:"bg-red-100 text-red-700"},
+    {name:"UBA", short:"UB", color:"bg-red-100 text-red-600"},
+    {name:"First Bank", short:"FB", color:"bg-blue-100 text-blue-800"},
+    {name:"Kuda", short:"KD", color:"bg-purple-100 text-purple-700"},
+    {name:"OPay", short:"OP", color:"bg-emerald-100 text-emerald-700"},
+    {name:"PalmPay", short:"PP", color:"bg-sky-100 text-sky-700"},
+    {name:"Moniepoint", short:"MP", color:"bg-indigo-100 text-indigo-700"},
+    {name:"Wema Bank", short:"WM", color:"bg-purple-100 text-purple-600"},
+    {name:"Union Bank", short:"UN", color:"bg-orange-100 text-orange-800"},
+    {name:"FCMB", short:"FC", color:"bg-green-100 text-green-800"}
+  ];
+  const amounts = [5000,7500,10000,12000,15000,18000,20000,25000,30000,35000,40000,50000];
+  const statuses = [
+    {t:"Paid", c:"text-emerald-600"},
+    {t:"Approved", c:"text-emerald-700"},
+    {t:"Processing", c:"text-amber-600"}
+  ];
+
+  function maskAcct(){ return "**** " + String(1000 + Math.floor(Math.random()*9000)); }
+  function timeAgo(){
+    const roll = Math.random();
+    if(roll < 0.18) return (Math.floor(Math.random()*50)+5) + "s ago";
+    if(roll < 0.45) return (Math.floor(Math.random()*55)+1) + "m ago";
+    if(roll < 0.68) return (Math.floor(Math.random()*20)+1) + "h ago";
+    if(roll < 0.88) return (Math.floor(Math.random()*20)+1) + "d ago";
+    return (Math.floor(Math.random()*28)+7) + "d ago";
+  }
+  function pickProof(){
+    if(!PAYOUT_PROOFS.length) return "";
+    return PAYOUT_PROOFS[Math.floor(Math.random()*PAYOUT_PROOFS.length)];
+  }
+
+  function row(){
+    const name = firstNames[Math.floor(Math.random()*firstNames.length)] + " " + lastInits[Math.floor(Math.random()*lastInits.length)];
+    const bank = banks[Math.floor(Math.random()*banks.length)];
+    const amount = amounts[Math.floor(Math.random()*amounts.length)];
+    const st = statuses[Math.floor(Math.random()*statuses.length)];
+    const when = timeAgo();
+    const acct = maskAcct();
+    const img = pickProof();
+    const imgHtml = img
+      ? `<button type="button" class="flex-shrink-0 w-11 h-11 rounded-lg overflow-hidden border border-slate-200 bg-slate-100" onclick="window.openPayoutProof && window.openPayoutProof('${img.replace(/'/g,"")}')" title="View redacted proof">
+           <img src="${img}" alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.parentNode.style.display='none'">
+         </button>`
+      : "";
+    return `<div class="flex items-center justify-between gap-3 py-3.5 border-b border-slate-100 last:border-0" style="animation:fadeIn .35s ease">
+      <div class="flex items-center gap-3 min-w-0">
+        ${imgHtml}
+        <div class="w-10 h-10 rounded-full ${bank.color} flex items-center justify-center font-bold text-[11px] flex-shrink-0">${bank.short}</div>
+        <div class="min-w-0">
+          <div class="font-bold text-sm text-slate-800 truncate">${name} · <span class="${st.c}">${st.t}</span></div>
+          <div class="text-xs text-slate-400 truncate">${bank.name} · ${acct} · ${when}</div>
+        </div>
+      </div>
+      <div class="font-extrabold text-emerald-600 text-sm whitespace-nowrap">${amount.toLocaleString()} WC</div>
+    </div>`;
+  }
+
+  let timer = null;
+
+  function pushRow(){
+    const box = document.getElementById('liveWithdrawFeed');
+    if(!box) return;
+    const wrap = document.createElement('div');
+    wrap.innerHTML = row();
+    const node = wrap.firstElementChild;
+    box.insertBefore(node, box.firstChild);
+    while(box.children.length > 7) box.removeChild(box.lastChild);
+  }
+
+  function setStatus(live){
+    const el = document.getElementById('liveFeedStatus');
+    if(!el) return;
+    if(live){
+      el.className = "text-xs font-bold bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full inline-flex items-center gap-1.5";
+      el.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live';
+    } else {
+      el.className = "text-xs font-bold bg-slate-100 text-slate-500 px-3 py-1 rounded-full inline-flex items-center gap-1.5";
+      el.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Idle';
+    }
+  }
+
+  function scheduleNext(){
+    if(timer) clearTimeout(timer);
+    const pause = Math.random() < 0.28;
+    setStatus(!pause);
+    const delay = pause ? (8000 + Math.random()*10000) : (2500 + Math.random()*3500);
+    timer = setTimeout(() => {
+      if(!pause) pushRow();
+      if(pause){
+        setStatus(true);
+        pushRow();
+        setTimeout(pushRow, 900 + Math.random()*1200);
+      }
+      scheduleNext();
+    }, delay);
+  }
+
+  function renderProofStrip(){
+    const strip = document.getElementById('payoutProofStrip');
+    if(!strip) return;
+    strip.innerHTML = PAYOUT_PROOFS.map((src,i) =>
+      `<button type="button" class="flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 hover:ring-2 hover:ring-emerald-400/40 transition" onclick="window.openPayoutProof('${src}')" title="Proof ${i+1}">
+        <img src="${src}" alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.parentNode.style.opacity='0.35'">
+      </button>`
+    ).join("");
+  }
+
+  window.openPayoutProof = function(src){
+    if(!src) return;
+    let m = document.getElementById('payoutProofModal');
+    if(!m){
+      m = document.createElement('div');
+      m.id = 'payoutProofModal';
+      m.style.cssText = 'display:none;position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.75);align-items:center;justify-content:center;padding:16px';
+      m.innerHTML = '<button type="button" style="position:absolute;top:16px;right:16px;width:40px;height:40px;border:0;border-radius:999px;background:#fff;font-weight:800;cursor:pointer" onclick="document.getElementById(\'payoutProofModal\').style.display=\'none\'">×</button><img id="payoutProofModalImg" alt="Redacted proof" style="max-width:min(920px,96vw);max-height:88vh;border-radius:12px;object-fit:contain;background:#111">';
+      m.addEventListener('click', function(e){ if(e.target===m) m.style.display='none'; });
+      document.body.appendChild(m);
+    }
+    const img = document.getElementById('payoutProofModalImg');
+    if(img) img.src = src;
+    m.style.display = 'flex';
+  };
+
+  // Live campaign count from public sponsored-tasks API
+  async function loadLiveTaskCount(){
+    const el = document.getElementById('liveTaskCount');
+    if(!el) return;
+    try{
+      const res = await fetch('https://global-api-platform-production.up.railway.app/api/v1/sponsored-tasks', {
+        headers: { 'X-API-Key': 'ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c' }
+      });
+      const data = await res.json().catch(()=>({}));
+      const rows = Array.isArray(data.data) ? data.data : [];
+      const active = rows.filter(t => t && t.active !== false).length;
+      el.textContent = String(active);
+    }catch(e){
+      el.textContent = '—';
+    }
+  }
+
+  function boot(){
+    const box = document.getElementById('liveWithdrawFeed');
+    if(box){
+      box.innerHTML = "";
+      for(let i=0;i<5;i++) pushRow();
+      scheduleNext();
+    }
+    renderProofStrip();
+    loadLiveTaskCount();
+    setInterval(loadLiveTaskCount, 60000);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+<style>@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}</style>
+</body>
+</html>
