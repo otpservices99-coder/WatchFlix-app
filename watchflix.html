@@ -74,6 +74,19 @@ const API_KEY = "ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264
 const CFG_KEY = "wf_watchflix_ads_v2";
 const SUB_KEY = "wf_ads_submissions_v1";
 
+function normalizeUrl(url){
+  if(!url) return "";
+  url = String(url).trim();
+  url = url.replace(/\s+/g, "");
+  if(!/^https?:\/\//i.test(url) && !/^mailto:/i.test(url) && !/^tel:/i.test(url)){
+    url = "https://" + url;
+  }
+  return url;
+}
+function isValidUrl(url){
+  try{ new URL(url); return true; }catch{ return false; }
+}
+
 function uid(){
   try{
     const u = JSON.parse(localStorage.getItem("wf_user")||localStorage.getItem("user")||"null");
@@ -147,6 +160,13 @@ function renderStep(){
     $("cta").disabled = true;
     return;
   }
+  // Check for broken stage links
+  const brokenSlots = slots.map((s,j) => ({ idx: j, ok: isValidUrl(normalizeUrl(s.url||"")) })).filter(x => !x.ok);
+  if(brokenSlots.length > 0){
+    $("warnBox").innerHTML = `<b>Warning:</b> Stage ${brokenSlots[0].idx + 1} has a broken link. Admin will fix soon. Complete other stages if possible.`;
+    $("warnBox").style.borderColor = "rgba(239,68,68,.45)";
+    $("warnBox").style.background = "rgba(239,68,68,.12)";
+  }
   const i = state.index;
   const slot = slots[i] || {};
   $("title").textContent = slot.title || ("Stage " + (i+1));
@@ -156,16 +176,22 @@ function renderStep(){
     `<span class="${d===i?"on":""}"></span>`
   ).join("");
   if(slot.imageUrl){
-    $("visual").innerHTML = `<img src="${String(slot.imageUrl).replace(/"/g,"")}" alt="" onerror="this.parentNode.innerHTML='<div class=ph>Offer ${i+1}</div>'">`;
+    const imgUrl = normalizeUrl(slot.imageUrl);
+    $("visual").innerHTML = `<img src="${String(imgUrl).replace(/"/g,"")}" alt="" onerror="this.parentNode.innerHTML='<div class=ph>Offer ${i+1}</div>'">`;
   } else {
     $("visual").innerHTML = `<div class="ph">Stage ${i+1} / ${N}</div>`;
   }
   renderClicks();
   const cta = $("cta");
+  const stageUrlValid = isValidUrl(normalizeUrl(slot.url || ""));
   if(state.clicked[i]){
     cta.textContent = state.timerArmed ? "Timer running…" : "Opened ✓";
     cta.classList.add("done");
     cta.disabled = state.timerArmed;
+  } else if(!stageUrlValid){
+    cta.textContent = "Link unavailable";
+    cta.classList.remove("done");
+    cta.disabled = true;
   } else {
     cta.textContent = slot.cta || "Go!";
     cta.classList.remove("done");
@@ -232,9 +258,9 @@ function onGo(){
   if(state.timerArmed) return;
   const i = state.index;
   const slot = slots[i] || {};
-  const url = (slot.url||"").trim();
-  if(!url){
-    showMsg("This stage is not configured yet.", "err");
+  let url = normalizeUrl(slot.url || "");
+  if(!url || !isValidUrl(url)){
+    showMsg("This stage link is broken. Contact support.", "err");
     return;
   }
   state.clicked[i] = true;
