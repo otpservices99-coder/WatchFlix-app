@@ -1,0 +1,3331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WatchFlix Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sidebar:#1b365d;
+  --sidebar-hover:#254a75;
+  --accent:#1a9f7a;
+  --accent-2:#14866a;
+  --bg:#eef1f6;
+  --surface:#ffffff;
+  --text:#1e293b;
+  --muted:#64748b;
+  --faint:#94a3b8;
+  --border:#e8ecf1;
+  --danger:#e11d48;
+  --warn:#d97706;
+  --shadow:0 2px 16px rgba(15,23,42,.06);
+  --radius:12px;
+  --sidebar-w:240px;
+}
+html,body{min-height:100vh;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+a{color:var(--accent)}
+
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(160deg,#1b365d 0%,#1a9f7a 100%)}
+.login-card{width:100%;max-width:400px;background:#fff;border-radius:16px;padding:32px;box-shadow:0 24px 60px rgba(0,0,0,.2)}
+.logo{font-size:22px;font-weight:800;letter-spacing:.04em}.logo span{color:var(--accent)}
+.login-card h2{margin:16px 0 6px;font-size:22px}.login-card p{color:var(--muted);font-size:14px}
+
+.field{margin:12px 0}.field label{display:block;font-size:11px;font-weight:700;margin-bottom:6px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.field input,.field select,.field textarea,.toolbar input,.toolbar select{
+  width:100%;border:1px solid #dbe2ea;border-radius:10px;padding:10px 12px;background:#fff;color:var(--text);outline:none
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,159,122,.15)}
+.field textarea{min-height:80px;resize:vertical}
+
+.btn{border:1px solid #dbe2ea;background:#fff;border-radius:9px;padding:8px 12px;font-size:12px;font-weight:700;color:var(--text)}
+.btn:hover{background:#f8fafc}.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.primary,.primary{border:0;background:var(--accent);color:#fff;border-radius:9px;padding:10px 16px;font-weight:700}
+.btn.primary:hover{background:var(--accent-2)}
+.btn.success{color:var(--accent-2);border-color:#bbf7d0;background:#ecfdf5}
+.btn.danger{color:var(--danger);border-color:#fecdd3;background:#fff1f2}
+.btn.warn{color:var(--warn);border-color:#fde68a;background:#fffbeb}
+.login-btn{width:100%;margin-top:8px}
+.msg{font-size:13px;margin-top:10px}.error{color:var(--danger)}.ok{color:var(--accent)}
+
+.app{min-height:100vh;display:flex}
+.sidebar{
+  width:var(--sidebar-w);background:var(--sidebar);color:#c7d2e0;
+  position:fixed;inset:0 auto 0 0;z-index:40;display:flex;flex-direction:column
+}
+.side-logo{
+  padding:28px 22px 22px;font-size:13px;font-weight:800;color:#fff;letter-spacing:.14em;text-transform:uppercase;
+  border-bottom:1px solid rgba(255,255,255,.06)
+}
+.side-logo span{color:#5eead4}
+.env{
+  margin:14px 18px 8px;display:inline-flex;align-self:flex-start;padding:4px 10px;border-radius:999px;
+  font-size:10px;font-weight:800;background:rgba(94,234,212,.12);color:#5eead4;letter-spacing:.08em
+}
+.nav{display:flex;flex-direction:column;gap:2px;flex:1;overflow:auto;padding:12px 12px 20px}
+.nav button{
+  border:0;background:transparent;color:rgba(226,232,240,.72);text-align:left;padding:13px 14px;
+  border-radius:8px;font-weight:500;display:flex;align-items:center;gap:12px;font-size:13.5px
+}
+.nav button:hover{background:var(--sidebar-hover);color:#fff}
+.nav button.active{background:rgba(255,255,255,.1);color:#fff}
+.logout{margin:12px;background:rgba(0,0,0,.18)!important;color:#fff!important;border:0!important;border-radius:8px!important}
+
+.main{margin-left:var(--sidebar-w);width:calc(100% - var(--sidebar-w));min-height:100vh;background:var(--bg)}
+.content{max-width:1180px;margin:0 auto;padding:28px 28px 48px}
+
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap
+}
+.topbar h1{
+  font-size:22px;font-weight:700;color:var(--accent);display:inline-block;
+  border-bottom:2px solid var(--accent);padding-bottom:4px;letter-spacing:-.02em
+}
+.top-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chip{background:#fff;border:1px solid var(--border);border-radius:999px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--muted);box-shadow:var(--shadow)}
+.chip.ctx{border-color:#bbf7d0;color:var(--accent);cursor:pointer;background:#ecfdf5}
+
+.notif-bell{
+  position:relative;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);
+  background:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow);color:var(--muted)
+}
+.notif-bell .dot{
+  position:absolute;top:6px;right:6px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;
+  background:#e11d48;color:#fff;font-size:9px;font-weight:800;display:none;place-items:center;border:2px solid #fff;line-height:1
+}
+.notif-bell .dot.show{display:grid}
+.notif-drop{
+  display:none;position:absolute;right:0;top:48px;width:320px;background:#fff;border-radius:12px;
+  box-shadow:0 12px 40px rgba(15,23,42,.12);border:1px solid var(--border);z-index:60;overflow:hidden
+}
+.notif-drop.open{display:block}
+.notif-drop .hd{padding:12px 14px;border-bottom:1px solid var(--border);font-weight:700;font-size:13px;display:flex;justify-content:space-between}
+.notif-drop .item{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer}
+.notif-drop .item:hover{background:#f8fafc}
+.notif-drop .item .t{font-weight:700}
+.notif-drop .item .m{color:var(--muted);font-size:12px;margin-top:3px}
+
+.session-banner{display:none;margin-bottom:12px;padding:12px 14px;border-radius:12px;background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;font-size:13px}
+.session-banner.show{display:block}
+.ops-brief{background:#fff;border-radius:var(--radius);padding:16px 18px;margin-bottom:20px;font-size:13px;line-height:1.55;box-shadow:var(--shadow)}
+
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:var(--shadow)}
+.stat-label{color:var(--muted);font-size:13px;font-weight:600}
+.stat{font-size:28px;font-weight:800;margin-top:10px;color:#1b365d}.stat.green{color:var(--accent)}
+
+.section{margin-bottom:18px}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+.section-head h2{font-size:15px;font-weight:700;color:#1b365d}
+
+.table-wrap{overflow:auto;background:#fff;border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th,td{padding:13px 16px;border-bottom:1px solid #f1f5f9;text-align:left;font-size:13px}
+th{background:#fafbfc;color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+tr:last-child td{border-bottom:0}tr:hover td{background:#fafbfc}
+
+.badge{display:inline-block;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:800}
+.badge.success{background:#ecfdf5;color:var(--accent-2)}
+.badge.danger{background:#fff1f2;color:var(--danger)}
+.badge.warning{background:#fffbeb;color:var(--warn)}
+.badge.info{background:#e0f2fe;color:#0284c7}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.toolbar input,.toolbar select{width:auto;min-width:140px}
+.notice{padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:14px;background:#ecfdf5;color:#065f46}
+.warn-box{padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:12px;background:#fffbeb;color:#92400e}
+.empty{text-align:center;color:var(--muted);padding:28px 16px;font-size:13px}
+.loading{text-align:center;padding:24px;color:var(--muted)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.split{display:grid;grid-template-columns:1.15fr 1fr;gap:16px}
+.list-item{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #f1f5f9;font-size:13px}
+.list-item:last-child{border-bottom:0}.list-item .meta{color:var(--muted);font-size:12px}
+.bulk-bar{display:none;align-items:center;gap:10px;flex-wrap:wrap;background:#ecfdf5;color:var(--accent-2);padding:10px 14px;border-radius:10px;margin-bottom:12px}
+.bulk-bar.show{display:flex}
+.check{width:16px;height:16px;accent-color:var(--accent)}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+.toast{position:fixed;right:18px;bottom:18px;background:#1b365d;color:#fff;padding:12px 16px;border-radius:12px;z-index:120;font-size:13px;max-width:380px;box-shadow:var(--shadow)}
+.mobile-menu{display:none;border:1px solid var(--border);background:#fff;border-radius:10px;padding:8px 11px}
+.action-group{background:#fff;border-radius:12px;padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.action-group h3{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:#1b365d}
+.action-group h3 .tag{font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;background:#ecfdf5;color:var(--accent);text-transform:uppercase}
+.reason-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.reason-chips button{border:1px solid #dbe2ea;background:#fff;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:700;color:var(--muted)}
+.linkish{color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px;background:none;border:0;padding:0;font:inherit;font-weight:600}
+pre.engine-pre{background:#0f172a;color:#e2e8f0;padding:12px;border-radius:12px;font-size:11px;overflow:auto;max-height:220px;margin:8px 0 0;white-space:pre-wrap}
+.response-view{background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.response-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;background:#fafbfc;border-bottom:1px solid #f1f5f9}
+.response-head .status-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:800}
+.response-head .status-pill.ok{background:#ecfdf5;color:var(--accent-2)}
+.response-head .status-pill.bad{background:#fff1f2;color:var(--danger)}
+.response-meta{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:12px;color:var(--muted)}
+.response-meta span{background:#fafbfc;border:1px solid var(--border);border-radius:999px;padding:4px 9px}
+.response-body{padding:12px 14px}
+.response-summary{font-size:14px;font-weight:700;margin-bottom:10px}
+.kv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:12px}
+.kv-card{background:#fafbfc;border-radius:10px;padding:12px}
+.kv-card .k{font-size:11px;font-weight:700;color:var(--faint);text-transform:uppercase}
+.kv-card .v{font-size:16px;font-weight:800;margin-top:4px;word-break:break-all}
+.raw-toggle{font-size:12px;font-weight:700;color:var(--accent);background:none;border:0;cursor:pointer;text-decoration:underline}
+.raw-json{display:none;margin-top:10px;background:#0f172a;color:#e2e8f0;padding:12px;border-radius:12px;font-size:11px;overflow:auto;max-height:280px;white-space:pre-wrap}
+.raw-json.show{display:block}
+
+.proof-thumb{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--border);cursor:pointer;background:#fafbfc;display:block}
+.proof-modal{position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.75);display:none;align-items:center;justify-content:center;padding:20px}
+.proof-modal.show{display:flex}
+.proof-modal img{max-width:min(920px,96vw);max-height:88vh;width:auto;height:auto;object-fit:contain;border-radius:12px;background:#111}
+.proof-modal .close-x{position:absolute;top:16px;right:16px;border:0;background:#fff;border-radius:999px;width:40px;height:40px;font-size:18px;font-weight:800;cursor:pointer}
+.sp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.sp-stat{background:#fff;border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+.sp-stat .l{font-size:12px;font-weight:600;color:var(--muted)}
+.sp-stat .v{font-size:24px;font-weight:800;margin-top:8px;color:#1b365d}
+.sp-stat .v.g{color:var(--accent)}.sp-stat .v.w{color:var(--warn)}
+.task-preview{width:100%;max-height:140px;object-fit:cover;border-radius:12px;margin-top:8px;display:none}
+.file-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.chart-card{min-height:150px;display:flex;align-items:flex-end;gap:8px;padding-top:16px}
+.chart-bar{flex:1;background:linear-gradient(180deg,#5eead4,#1a9f7a);border-radius:6px 6px 0 0;min-height:8px;opacity:.9}
+.donut-wrap{display:flex;align-items:center;justify-content:center;gap:16px;padding:12px 0}
+.donut{width:110px;height:110px;border-radius:50%;background:conic-gradient(var(--accent) 0 var(--p,41%), #e8ecf1 var(--p,41%) 100%);display:grid;place-items:center;position:relative}
+.donut::after{content:"";width:72px;height:72px;border-radius:50%;background:#fff;position:absolute}
+.donut span{position:relative;z-index:1;font-weight:800;font-size:18px;color:#1b365d}
+.edit-modal{position:fixed;inset:0;z-index:180;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;padding:16px}
+.edit-modal.show{display:flex}
+.edit-modal .box{background:#fff;border-radius:14px;padding:22px;width:min(480px,100%);max-height:90vh;overflow:auto;box-shadow:0 20px 50px rgba(0,0,0,.2)}
+.json-data-area{font-family:ui-monospace,Menlo,monospace;font-size:12px;min-height:100px}
+
+@media(max-width:1100px){.cards,.sp-stats{grid-template-columns:1fr 1fr}.grid-2,.split{grid-template-columns:1fr}}
+@media(max-width:800px){
+  .sidebar{transform:translateX(-100%);transition:.2s}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;width:100%}
+  .content{padding:16px}
+  .mobile-menu{display:block}
+}
+</style>
+</head>
+<body>
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <div class="logo">Watch<span>Flix</span></div>
+    <h2>Admin Panel</h2>
+    <p>Staff access only</p>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input id="loginEmail" type="email" required autocomplete="username"></div>
+      <div class="field"><label>Password</label><input id="loginPassword" type="password" required autocomplete="current-password"></div>
+      <button class="primary login-btn" type="submit">Sign in</button>
+      <div id="loginMsg" class="msg"></div>
+    </form>
+  </div>
+</div>
+
+<div id="app" class="app hidden">
+  <aside id="sidebar" class="sidebar">
+    <div class="side-logo">WATCH<span>FLIX</span></div>
+    <div class="env">PRODUCTION</div>
+    <nav class="nav">
+      <button data-page="dashboard" class="active">Home</button>
+      <button data-page="queue">Payouts</button>
+      <button data-page="payout-history">Payout history</button>
+      <button data-page="sponsored">Sponsored</button>
+      <button data-page="money">Money</button>
+      <button data-page="users">Users</button>
+      <button data-page="notify">Messages</button>
+      <button data-page="actions">Tools</button>
+      <button data-page="transactions">History</button>
+      <button data-page="landing">Landing</button>
+      <button data-page="wfads">WatchFlix Ads</button>
+      <button data-page="audit">Activity</button>
+    </nav>
+    <button id="logoutBtn" class="nav logout">Sign out</button>
+  </aside>
+
+  <main class="main"><div class="content">
+    <div id="sessionBanner" class="session-banner">Session expired. Please sign in again.</div>
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button id="mobileMenu" class="mobile-menu" type="button">☰</button>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="top-actions">
+        <input id="globalSearch" placeholder="Search user / id" style="min-width:200px;border:1px solid #dbe2ea;border-radius:999px;padding:9px 14px;background:#fff">
+        <div id="ctxChip" class="chip ctx hidden"></div>
+        <div style="position:relative">
+          <button type="button" class="notif-bell" id="adminNotifBtn" onclick="toggleAdminNotifs()" title="Alerts">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5"/><path d="M9 17a3 3 0 006 0"/></svg>
+            <span class="dot" id="adminNotifDot">0</span>
+          </button>
+          <div class="notif-drop" id="adminNotifDrop">
+            <div class="hd"><span>Alerts</span><button type="button" class="btn" style="padding:4px 8px" onclick="refreshAdminNotifs()">Refresh</button></div>
+            <div id="adminNotifList"><div class="empty" style="padding:16px">No alerts</div></div>
+          </div>
+        </div>
+        <button class="btn" type="button" onclick="refreshCurrent()">Refresh</button>
+        <div id="adminChip" class="chip">Admin</div>
+      </div>
+    </div>
+
+    <section id="page-dashboard" class="page">
+      <div id="opsBrief" class="ops-brief">Loading…</div>
+      <div class="cards">
+        <div class="card"><div class="stat-label">Wallet pool</div><div id="statBalance" class="stat green">—</div></div>
+        <div class="card"><div class="stat-label">Pending payouts</div><div id="statPendingCount" class="stat">—</div><div style="font-size:12px;color:var(--muted);margin-top:4px" id="statPendingValue">—</div></div>
+        <div class="card"><div class="stat-label">Approved today</div><div id="statApprovedToday" class="stat green">—</div></div>
+        <div class="card"><div class="stat-label">Users</div><div id="statUsers" class="stat">—</div><div style="font-size:12px;color:var(--muted);margin-top:4px" id="statUserMix">—</div></div>
+      </div>
+      <div class="split">
+        <div class="section">
+          <div class="section-head"><h2>Oldest pending</h2><button class="btn primary" type="button" onclick="showPage('queue')">Open queue</button></div>
+          <div id="dashPending" class="table-wrap"><div class="loading">Loading…</div></div>
+        </div>
+        <div class="section">
+          <div class="section-head"><h2>Session activity</h2></div>
+          <div class="card" id="dashAudit"><div class="empty">No actions yet</div></div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section id="page-sponsored" class="page hidden">
+      <div class="notice">Create campaigns · Review proof (inline preview) · Approve credits wallet + notifies user</div>
+      <div class="sp-stats">
+        <div class="sp-stat"><div class="l">Active tasks</div><div class="v g" id="spStatActive">—</div></div>
+        <div class="sp-stat"><div class="l">Pending proofs</div><div class="v w" id="spStatPending">—</div></div>
+        <div class="sp-stat"><div class="l">Approved</div><div class="v g" id="spStatApproved">—</div></div>
+        <div class="sp-stat"><div class="l">Total completions</div><div class="v" id="spStatCompletions">—</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="action-group">
+          <h3>Create sponsored task <span class="tag">admin</span></h3>
+          <div class="field"><label>Title</label><input id="spTitle" placeholder="Follow on Instagram"></div>
+          <div class="field"><label>Description</label><textarea id="spDesc" placeholder="What the user must do"></textarea></div>
+          <div class="field"><label>Target URL</label><input id="spUrl" placeholder="https://…"></div>
+          <div class="field">
+            <label>Campaign image</label>
+            <div class="file-row">
+              <input type="file" id="spImageFile" accept="image/*" onchange="onSpImageFile(this)">
+              <button class="btn" type="button" onclick="$('spImage').value='';$('spImagePreview').style.display='none';$('spImageFile').value=''">Clear</button>
+            </div>
+            <input id="spImage" type="hidden" value="">
+            <img id="spImagePreview" class="task-preview" alt="Preview">
+            <div class="meta" style="margin-top:6px;font-size:12px;color:var(--muted)">Upload a banner (compressed automatically) or paste a URL below.</div>
+            <input id="spImageUrl" style="margin-top:8px" placeholder="Or image URL https://…/banner.png" oninput="onSpImageUrl(this)">
+          </div>
+          <div class="field"><label>Reward (NGN)</label><input id="spReward" type="number" step="1" min="0" value="100"></div>
+          <div class="field"><label>Platform</label><input id="spPlatform" value="social"></div>
+          <div class="field"><label>Max completions (optional)</label>
+            <input id="spMaxCompletions" type="number" min="1" step="1" placeholder="e.g. 300 — leave empty for unlimited">
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">Leave blank for unlimited participants</div>
+          </div>
+          <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin:8px 0"><input type="checkbox" id="spNeedsProof" checked> Requires proof</label>
+          <button class="btn primary" type="button" onclick="createSponsoredTask()">Create task</button>
+          <div id="spCreateMsg" class="msg"></div>
+        </div>
+        <div class="action-group">
+          <h3>Tasks <span class="tag">live</span></h3>
+          <div class="toolbar">
+            <select id="spTaskFilter"><option value="all">All</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
+            <input id="spTaskSearch" placeholder="Search title…" oninput="loadSponsoredTasksAdmin()">
+            <button class="btn" type="button" onclick="loadSponsoredTasksAdmin()">Refresh</button>
+          </div>
+          <div id="spTasksTable" class="table-wrap"><div class="loading">…</div></div>
+        </div>
+      </div>
+      <div class="section" style="margin-top:14px">
+        <div class="section-head">
+          <h2>Submissions to review</h2>
+          <div class="toolbar">
+            <select id="spSubStatus" onchange="loadSponsoredSubs()"><option value="pending">Pending</option><option value="">All</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select>
+            <input id="spSubSearch" placeholder="Search user / task…" oninput="filterSpSubsLocal()">
+            <button class="btn primary" type="button" onclick="loadSponsoredSubs()">Refresh</button>
+          </div>
+        </div>
+        <div id="spSubsTable" class="table-wrap"><div class="loading">…</div></div>
+      </div>
+    </section>
+
+    
+    <section id="page-payout-history" class="page hidden">
+      <div class="notice">Approved and rejected withdrawals with account details for audit. Pending items stay on <b>Payouts</b>.</div>
+      <div class="sp-stats">
+        <div class="sp-stat"><div class="l">Approved (loaded)</div><div class="v g" id="phStatApproved">—</div></div>
+        <div class="sp-stat"><div class="l">Rejected (loaded)</div><div class="v r" id="phStatRejected">—</div></div>
+      </div>
+      <div class="toolbar">
+        <select id="phFilter" onchange="renderPayoutHistory()">
+          <option value="all">Approved + Rejected</option>
+          <option value="approved">Approved only</option>
+          <option value="rejected">Rejected only</option>
+        </select>
+        <input id="phSearch" placeholder="Search user, account, bank…" oninput="renderPayoutHistory()">
+        <button class="btn primary" type="button" onclick="loadPayoutHistory()">Refresh</button>
+      </div>
+      <div id="payoutHistoryTable" class="table-wrap"><div class="empty">Open this page to load history</div></div>
+    </section>
+
+    <section id="page-queue" class="page hidden">
+      <div class="notice">Review pending payouts · Approve or reject · User is notified automatically</div>
+      <div class="toolbar">
+        <button class="btn primary" type="button" onclick="loadQueue()">Refresh</button>
+        <button class="btn" type="button" onclick="selectAllPendingQueue()">Select all</button>
+      </div>
+      <div id="queueBulk" class="bulk-bar">
+        <span id="queueBulkCount">0 selected</span>
+        <button class="btn success" type="button" onclick="bulkApproveQueue()">Bulk approve + notify</button>
+        <button class="btn danger" type="button" onclick="bulkRejectQueue()">Bulk reject + notify</button>
+        <button class="btn" type="button" onclick="clearQueueSelection()">Clear</button>
+      </div>
+      <div id="queueTable" class="table-wrap"><div class="loading">Loading…</div></div>
+    </section>
+
+    <section id="page-money" class="page hidden">
+      <div class="grid-2">
+        <div class="action-group">
+          <h3>Single wallet <span class="tag">credit · debit</span></h3>
+          <div class="field"><label>User ID</label><input id="moneyUserId"></div>
+          <div class="field"><label>Amount</label><input id="moneyAmount" type="number" step="0.01" min="0"></div>
+          <div class="field"><label>Memo</label><input id="moneyMemo"></div>
+          <div class="actions">
+            <button class="btn success" type="button" onclick="moneyCredit()">Credit</button>
+            <button class="btn danger" type="button" onclick="moneyDebit()">Debit</button>
+            <button class="btn" type="button" onclick="moneyInspect()">Inspect</button>
+          </div>
+          <div id="moneyMsg" class="msg"></div>
+          <pre id="moneyPre" class="engine-pre">…</pre>
+        </div>
+        <div class="action-group">
+          <h3>Bulk wallet <span class="tag">many users</span></h3>
+          <div class="field"><label>User IDs</label><textarea id="bulkMoneyUsers"></textarea></div>
+          <div class="field"><label>Amount each</label><input id="bulkMoneyAmount" type="number" step="0.01" min="0"></div>
+          <div class="field"><label>Memo</label><input id="bulkMoneyMemo"></div>
+          <div class="actions">
+            <button class="btn success" type="button" onclick="bulkMoney('credit')">Bulk credit + notify</button>
+            <button class="btn danger" type="button" onclick="bulkMoney('debit')">Bulk debit</button>
+          </div>
+          <div id="bulkMoneyMsg" class="msg"></div>
+        </div>
+      </div>
+      <div class="action-group">
+        <h3>Reward grant <span class="tag">working</span></h3>
+        <div class="toolbar">
+          <input id="rewardUser" placeholder="User ID">
+          <input id="rewardAmount" type="number" step="0.01" placeholder="Amount" style="width:120px">
+          <button class="btn success" type="button" onclick="doRewardGrant()">Grant + notify</button>
+        </div>
+        <div id="rewardMsg" class="msg"></div>
+      </div>
+      <div class="action-group">
+        <h3>Create withdrawal request <span class="tag">admin · support</span></h3>
+        <div class="grid-2">
+          <div class="field"><label>User ID</label><input id="wdReqUser"></div>
+          <div class="field"><label>Amount</label><input id="wdReqAmount" type="number" step="0.01" min="0"></div>
+          <div class="field"><label>Method</label><input id="wdReqMethod" value="Bank Transfer"></div>
+          <div class="field"><label>Account / bank label</label><input id="wdReqAccount" placeholder="Bank name or note"></div>
+        </div>
+        <button class="btn primary" type="button" onclick="adminWithdrawalRequest()">Create pending withdrawal</button>
+        <div id="wdReqMsg" class="msg"></div>
+      </div>
+      <div class="section">
+        <div class="section-head"><h2>All withdrawals</h2>
+          <button class="btn" type="button" onclick="exportWithdrawalsCsv()">Export CSV</button>
+        </div>
+
+        <div class="toolbar">
+          <select id="withdrawalStatus"><option value="">All</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select>
+          <input id="withdrawalSearch" placeholder="Search…">
+          <button class="btn primary" type="button" onclick="loadWithdrawals()">Refresh</button>
+        </div>
+        <div id="withdrawalsTable" class="table-wrap"><div class="loading">—</div></div>
+      </div>
+    </section>
+
+    <section id="page-users" class="page hidden">
+      <div class="toolbar">
+        <input id="userSearch" placeholder="Search username / email / id" style="min-width:200px">
+        <select id="userStatusFilter">
+          <option value="">All</option><option value="active">Active</option><option value="suspended">Suspended</option><option value="blocked">Blocked</option>
+        </select>
+        <button class="btn primary" type="button" onclick="loadUsers()">Refresh</button>
+        <button class="btn" type="button" onclick="searchUsersApi()">API search</button>
+        <button class="btn" type="button" onclick="exportUsersCsv()">Export CSV</button>
+        <button class="btn" type="button" onclick="bulkEnsureWallets()">Bulk ensure wallets</button>
+      </div>
+      <div class="action-group">
+        <h3>Bulk status <span class="tag">activate · suspend · block</span></h3>
+        <div class="field"><label>User IDs</label><textarea id="bulkStatusUsers"></textarea></div>
+        <div class="actions">
+          <button class="btn success" type="button" onclick="bulkStatus('active')">Bulk activate</button>
+          <button class="btn warn" type="button" onclick="bulkStatus('suspended')">Bulk suspend</button>
+          <button class="btn danger" type="button" onclick="bulkStatus('blocked')">Bulk block</button>
+        </div>
+        <div id="bulkStatusMsg" class="msg"></div>
+      </div>
+      <div id="usersTable" class="table-wrap"><div class="loading">Loading…</div></div>
+      <div class="section" style="margin-top:16px">
+        <div class="section-head"><h2>Inspect wallet</h2></div>
+        <div class="toolbar">
+          <input id="walletUser" placeholder="User ID" style="min-width:260px">
+          <button class="btn primary" type="button" onclick="loadUserWallet()">Inspect</button>
+        </div>
+        <div id="walletResult"></div>
+      </div>
+    </section>
+
+    <section id="page-notify" class="page hidden">
+      <div class="grid-2">
+        <div class="action-group">
+          <h3>Single user <span class="tag">notification.send</span></h3>
+          <div class="field"><label>Template</label>
+            <select id="notifyTemplate" onchange="applyNotifyTemplate()">
+              <option value="">Custom</option>
+              <option value="payout_ok">Payout approved</option>
+              <option value="payout_no">Payout rejected</option>
+              <option value="suspended">Account suspended</option>
+              <option value="reward">Reward received</option>
+            </select>
+          </div>
+          <div class="field"><label>User ID</label><input id="notifyUserId"></div>
+          <div class="field"><label>Title</label><input id="notifyTitle"></div>
+          <div class="field"><label>Message</label><textarea id="notifyMessage"></textarea></div>
+          <div class="field"><label>Type</label>
+            <select id="notifyType"><option>system</option><option>info</option><option>promo</option><option>payout</option></select>
+          </div>
+          <button class="btn primary" type="button" onclick="sendSingleNotify()">Send</button>
+          <div id="notifyResult" class="msg"></div>
+        </div>
+        <div class="action-group">
+          <h3>Broadcast / bulk</h3>
+          <div class="field"><label>Title</label><input id="broadTitle"></div>
+          <div class="field"><label>Message</label><textarea id="broadMessage"></textarea></div>
+          <div class="field"><label>Type</label><select id="broadType"><option>system</option><option>info</option><option>promo</option></select></div>
+          <div class="field"><label>Bulk user IDs (optional)</label><textarea id="bulkNotifyUsers"></textarea></div>
+          <div class="actions">
+            <button class="btn primary" type="button" onclick="sendBroadcast()">Broadcast all</button>
+            <button class="btn success" type="button" onclick="sendBulkNotify()">Bulk listed</button>
+          </div>
+          <div id="broadResult" class="msg"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-actions" class="page hidden">
+      <div class="notice">Universal Action Engine · Actions load from API. New config-driven actions need no new frontend handlers — use Extra JSON for any fields.</div>
+      <div class="toolbar">
+        <button class="btn primary" type="button" onclick="loadKnownActions()">Reload</button>
+        <input id="actionSearch" placeholder="Filter…" oninput="renderKnownActions()">
+      </div>
+      <div id="knownActionsBox" class="card" style="margin-bottom:12px"></div>
+      <div class="grid-2">
+        <div class="action-group">
+          <h3>Builder</h3>
+          <div class="field"><label>Action</label><select id="actionSelect" onchange="onActionSelectChange()"><option value="">Choose…</option></select></div>
+          <div id="actionFriendlyFields"></div>
+          <div class="field"><label>Memo</label><input id="actionMemo"></div>
+          <button class="btn primary" type="button" onclick="executeFriendlyAction()">Execute</button>
+          <div id="actionExecResult" class="msg"></div>
+        </div>
+        <div class="action-group">
+          <h3>Response</h3>
+          <div id="actionResponseView"><div class="empty">Run an action to see a readable result.</div></div>
+          <pre id="actionResponse" class="engine-pre hidden">No request yet.</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-transactions" class="page hidden">
+      <div class="action-group">
+        <h3>Engine transaction tools <span class="tag">find · findOne · create</span></h3>
+        <div class="toolbar">
+          <input id="txEngineUser" placeholder="User ID">
+          <input id="txEngineId" placeholder="Transaction ID (findOne)">
+          <button class="btn primary" type="button" onclick="txEngineFind()">Find by user</button>
+          <button class="btn" type="button" onclick="txEngineFindOne()">FindOne by id</button>
+        </div>
+        <div class="toolbar">
+          <input id="txCreateUser" placeholder="User ID">
+          <input id="txCreateAmount" type="number" step="0.01" placeholder="Amount" style="width:110px">
+          <input id="txCreateType" value="earning" style="width:120px">
+          <input id="txCreateDesc" placeholder="Description">
+          <button class="btn success" type="button" onclick="txEngineCreate()">Create tx</button>
+        </div>
+        <div id="txEngineView"></div><pre id="txEnginePre" class="engine-pre hidden">…</pre>
+      </div>
+      <div class="toolbar">
+        <input id="transactionUser" placeholder="User ID (admin list)">
+        <button class="btn primary" type="button" onclick="loadTransactions()">Admin list</button>
+      </div>
+      <div id="transactionsTable" class="table-wrap"><div class="loading">—</div></div>
+    </section>
+
+    
+    
+    
+    
+    
+    <section id="page-wfads" class="page hidden">
+      <div class="notice">WatchFlix Ads packs (1–10 offers each). Users submit for <b>review</b> — approve to credit WCoin. Gateway on Earn tab · player = <span class="mono">watchflix-ads.html</span>.</div>
+
+      <div class="sp-stats">
+        <div class="sp-stat"><div class="l">Campaigns</div><div class="v" id="wfStatCamps">—</div></div>
+        <div class="sp-stat"><div class="l">Pending reviews</div><div class="v w" id="wfStatPending">—</div></div>
+        <div class="sp-stat"><div class="l">Approved</div><div class="v g" id="wfStatApproved">—</div></div>
+        <div class="sp-stat"><div class="l">Daily limit</div><div class="v" id="wfStatLimit">—</div></div>
+      </div>
+
+      <div class="action-group">
+        <h3>Global</h3>
+        <div class="field" style="max-width:220px"><label>Max packs / user / day</label><input id="wfDailyLimit" type="number" min="1" max="50" value="10"></div>
+        <button class="btn primary" type="button" onclick="saveWfGlobal()">Save limit</button>
+        <div id="wfGlobalMsg" class="msg"></div>
+      </div>
+
+      <div class="section-head"><h2>Campaigns</h2>
+        <button class="btn primary" type="button" onclick="openWfEditor(null)">+ New pack</button>
+      </div>
+      <div id="wfCampaignTable" class="table-wrap"><div class="empty">—</div></div>
+
+      <div id="wfEditor" class="action-group" style="display:none;margin-top:14px">
+        <h3 id="wfEditorTitle">Edit pack</h3>
+        <input type="hidden" id="wfEditId">
+        <div class="grid-2">
+          <div class="field"><label>Title</label><input id="wfEditTitle" placeholder="Partner pack"></div>
+          <div class="field"><label>Active</label>
+            <select id="wfEditActive"><option value="true">Active</option><option value="false">Inactive</option></select>
+          </div>
+          <div class="field"><label>Reward (WCoin)</label><input id="wfEditReward" type="number" min="1" value="150"></div>
+          <div class="field"><label>Seconds after each Go</label><input id="wfEditSec" type="number" min="5" max="60" value="12"></div>
+          <div class="field"><label>Number of offers</label>
+            <input id="wfEditSlotCount" type="number" min="1" max="10" value="3" onchange="rebuildWfSlots()">
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">1–10 offers in this pack</div>
+          </div>
+        </div>
+        <div id="wfEditSlots" style="display:grid;gap:12px;margin-top:12px"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+          <button class="btn primary" type="button" onclick="saveWfCampaign()">Save campaign</button>
+          <button class="btn" type="button" onclick="closeWfEditor()">Cancel</button>
+        </div>
+        <div id="wfEditMsg" class="msg"></div>
+      </div>
+
+      <div class="section-head" style="margin-top:22px"><h2>User submissions</h2>
+        <div class="toolbar" style="margin:0">
+          <select id="wfSubFilter" onchange="renderWfSubs()">
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="all">All</option>
+          </select>
+          <button class="btn" type="button" onclick="renderWfSubs()">Refresh</button>
+        </div>
+      </div>
+      <div class="bulk-bar" id="wfBulkBar">
+        <span id="wfBulkCount">0 selected</span>
+        <button class="btn success" type="button" onclick="bulkWfSubs('approved')">Bulk approve</button>
+        <button class="btn danger" type="button" onclick="bulkWfSubs('rejected')">Bulk reject</button>
+      </div>
+      <div id="wfSubTable" class="table-wrap"><div class="empty">No submissions</div></div>
+    </section>
+<section id="page-landing" class="page hidden">
+      <div class="notice">Upload <b>redacted</b> bank-transfer screenshots (6–8 ideal). Same image picker + Cloudinary upload as <b>Sponsored → Campaign image</b>.</div>
+      <div class="grid-2">
+        <div class="action-group">
+          <h3>Add proof image <span class="tag">landing</span></h3>
+          <div class="field">
+            <label>Proof screenshot</label>
+            <div class="file-row">
+              <input type="file" id="lpImageFile" accept="image/*" onchange="onLpImageFile(this)">
+              <button class="btn" type="button" onclick="clearLpImage()">Clear</button>
+            </div>
+            <img id="lpImagePreview" class="task-preview" alt="Preview">
+            <div class="meta" style="margin-top:6px;font-size:12px;color:var(--muted)">Choose a photo — preview appears here (same as sponsored tasks).</div>
+            <input id="lpUrl" style="margin-top:8px" placeholder="Or paste Cloudinary / CDN URL https://…">
+          </div>
+          <button class="btn primary" type="button" id="lpAddBtn" onclick="addLandingProofs()">Add to landing feed</button>
+          <div id="lpMsg" class="msg"></div>
+        </div>
+        <div class="action-group">
+          <h3>How it works</h3>
+          <p style="font-size:13px;color:var(--muted);line-height:1.55;margin:0 0 10px">
+            Files upload through <span class="mono">POST /api/v1/admin/sponsored-tasks</span> (Multer + Cloudinary), same as campaign banners.
+            The helper campaign is then deactivated/deleted. Proof URLs are saved in this browser for the landing page.
+          </p>
+          <button class="btn" type="button" onclick="exportLandingProofs()">Copy URL list</button>
+          <button class="btn danger" type="button" onclick="clearLandingProofs()">Clear all</button>
+        </div>
+      </div>
+      <div class="section-head" style="margin-top:8px"><h2>Current proofs (<span id="lpCount">0</span>)</h2>
+        <button class="btn" type="button" onclick="renderLandingProofs()">Refresh</button>
+      </div>
+      <div id="lpGrid" class="table-wrap" style="padding:14px"><div class="empty">No proofs yet</div></div>
+    </section>
+<section id="page-audit" class="page hidden">
+      <div class="notice">Everything you do is listed here — who it affected and what changed.</div>
+      <div class="toolbar">
+        <button class="btn primary" type="button" onclick="loadAudit()">All activity</button>
+        <button class="btn" type="button" onclick="renderSessionAudit()">This session</button>
+      </div>
+      <div id="auditTable" class="table-wrap"><div class="loading">—</div></div>
+    </section>
+  </div></main>
+</div>
+
+<div id="drawerOverlay" class="drawer-overlay" onclick="closeResolve()"></div>
+<aside id="resolvePanel" class="resolve-panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h3 style="margin:0;font-size:17px">Resolve payout</h3>
+    <button type="button" class="btn" onclick="closeResolve()">Close</button>
+  </div>
+  <div id="resolveBody"><div class="empty">Select a pending withdrawal</div></div>
+</aside>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+const API_URL = "https://global-api-platform-production.up.railway.app";
+const PROJECT_KEY = "ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c";
+const LS = { token: "adminToken", user: "adminUser", ctx: "earnify_ctx_user" };
+
+const state = {
+  token: localStorage.getItem(LS.token) || "",
+  user: JSON.parse(localStorage.getItem(LS.user) || "null"),
+  currentPage: "dashboard",
+  queueSelected: new Set(),
+  usersCache: [], withdrawalsCache: [], transactionsCache: [],
+  discoveredActions: [], sessionAudit: [], failedActions: [],
+  ctxUser: JSON.parse(localStorage.getItem(LS.ctx) || "null")
+};
+
+const FALLBACK_ACTIONS = [
+  "wallet.ensure","wallet.view","wallet.credit","wallet.debit","wallet.pending_adjust",
+  "user.status_update","user.delete","user.unsuspend","user.role_update",
+  "withdrawal.approve","withdrawal.reject","withdrawal.hold","withdrawal.request",
+  "notification.send","notification.broadcast",
+  "reward.grant","reward.clawback",
+  "transaction.find","transaction.findOne","transaction.create",
+  "fraud.flag","fraud.remove_flag",
+  "device.block","device.unblock",
+  "system.ping"
+];
+
+const REASON_TEMPLATES = {
+  reject: ["Insufficient KYC","Multi-account","Chargeback risk","Invalid bank details","Suspected fraud","User request"],
+  hold: ["Awaiting KYC","Manual review","Large first payout"],
+  suspend: ["Multi-account","Fraud review","Terms violation","Support investigation"]
+};
+
+const AUTO_NOTIFY = {
+  "withdrawal.approve": { title: "Payout approved", message: "Your withdrawal has been approved and is being processed.", type: "payout" },
+  "withdrawal.reject": { title: "Payout rejected", message: "Your withdrawal could not be approved.", type: "payout" },
+  "user.status_update:suspended": { title: "Account suspended", message: "Your account has been suspended pending review.", type: "system" },
+  "user.status_update:blocked": { title: "Account blocked", message: "Your account has been blocked.", type: "system" },
+  "user.status_update:active": { title: "Account restored", message: "Your account is active again.", type: "system" },
+  "wallet.credit": { title: "Wallet credited", message: "Funds were added to your wallet.", type: "promo" },
+  "reward.grant": { title: "Reward received", message: "A reward has been added to your wallet.", type: "promo" }
+};
+
+
+const ADMIN_ROLES = new Set(["super_admin","admin","platform_admin","project_admin"]);
+
+function decodeJwt(token){
+  try{
+    const p = String(token||"").split(".")[1];
+    if(!p) return null;
+    const json = atob(p.replace(/-/g,"+").replace(/_/g,"/"));
+    return JSON.parse(json);
+  }catch{ return null; }
+}
+
+function roleOf(user, token){
+  const jwt = decodeJwt(token || state.token);
+  const candidates = [
+    user?.platformRole, user?.role, user?.platform_role,
+    jwt?.platformRole, jwt?.role,
+    user?.data?.platformRole
+  ];
+  for(const c of candidates){
+    if(c == null) continue;
+    if(typeof c === "string" && c && !/^[a-f0-9]{24}$/i.test(c)) return String(c).toLowerCase();
+  }
+  return "";
+}
+
+function isAdminAccount(user, token){
+  const r = roleOf(user, token);
+  if(ADMIN_ROLES.has(r)) return true;
+  // Some setups only set platformRole on JWT
+  const jwt = decodeJwt(token || state.token);
+  if(jwt && ADMIN_ROLES.has(String(jwt.platformRole||"").toLowerCase())) return true;
+  return false;
+}
+
+
+/* ---------- Idempotency + in-flight guards ---------- */
+const inflight = new Map(); // key -> Promise
+const recentKeys = new Map(); // key -> timestamp
+const IDEMPOTENCY_TTL_MS = 90 * 1000; // 90s window for client dedupe
+
+function actionFingerprint(actionName, data){
+  const d = data || {};
+  const parts = [
+    String(actionName||"").toLowerCase(),
+    d.user||d.userId||d.id||"",
+    d.withdrawalId||"",
+    d.amount!=null ? String(d.amount) : "",
+    d.status||"",
+    d.title||""
+  ];
+  return parts.join("|");
+}
+
+function makeIdempotencyKey(actionName, data){
+  const fp = actionFingerprint(actionName, data);
+  // stable within short window so double-click reuses same key
+  const bucket = Math.floor(Date.now() / 15000); // 15s bucket
+  let h = 0;
+  const s = fp + "#" + bucket;
+  for(let i=0;i<s.length;i++){ h = ((h<<5)-h) + s.charCodeAt(i); h|=0; }
+  return "adm-" + Math.abs(h).toString(36) + "-" + bucket.toString(36);
+}
+
+function isMoneyAction(actionName){
+  const a = String(actionName||"").toLowerCase();
+  return /wallet\.(credit|debit)|reward\.grant|withdrawal\.(approve|reject|request)|user\.delete/.test(a);
+}
+
+function setBusy(on, label){
+  document.querySelectorAll("[data-busy-lock]").forEach(el => {
+    el.disabled = !!on;
+  });
+  // soft: disable primary money buttons if marked
+  document.querySelectorAll("button.btn.success, button.btn.danger, button.btn.primary").forEach(el => {
+    if(el.closest("#loginScreen")) return;
+    if(on){ el.dataset._wasDisabled = el.disabled ? "1" : "0"; el.disabled = true; }
+    else if(el.dataset._wasDisabled === "0"){ el.disabled = false; delete el.dataset._wasDisabled; }
+    else if(el.dataset._wasDisabled === "1"){ el.disabled = true; delete el.dataset._wasDisabled; }
+  });
+  if(on && label) toast(label + "…");
+}
+
+const $ = id => document.getElementById(id);
+const escapeHtml = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c]));
+const money = v => new Intl.NumberFormat("en-NG",{ style:"currency", currency:"NGN", maximumFractionDigits:2 }).format(Number(v)||0);
+const date = v => { if(!v) return "—"; const d = new Date(v); return Number.isNaN(d.getTime()) ? "—" : d.toLocaleString("en-NG",{ dateStyle:"medium", timeStyle:"short" }); };
+const ageHours = v => { if(!v) return "—"; const h = (Date.now()-new Date(v).getTime())/36e5; return Number.isNaN(h)?"—":(h<1?Math.round(h*60)+"m":h.toFixed(1)+"h"); };
+
+function badge(status){
+  const s = String(status||"").toLowerCase();
+  const cls = ["approved","completed","active","success"].includes(s) ? "success"
+    : ["rejected","banned","blocked","failed"].includes(s) ? "danger"
+    : ["pending","suspended","hold"].includes(s) ? "warning" : "info";
+  return `<span class="badge ${cls}">${escapeHtml(status||"unknown")}</span>`;
+}
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.remove("hidden"); clearTimeout(window.__tt); window.__tt=setTimeout(()=>t.classList.add("hidden"),3400); }
+function backendMessage(data, fallback){
+  if(!data) return fallback||"Request failed";
+  if(typeof data==="string") return data;
+  if(data.message) return String(data.message);
+  if(data.error) return String(data.error);
+  if(Array.isArray(data.result)){ const f=data.result.find(r=>r&&r.success===false); if(f&&f.error) return String(f.error); }
+  return fallback||"Request failed";
+}
+function engineSucceeded(data){
+  if(!data) return false;
+  if(data.success===false) return false;
+  if(Array.isArray(data.result)&&data.result.some(r=>r&&r.success===false)) return false;
+  return data.success===true||data.success===undefined;
+}
+
+
+function summarizeAction(actionName, data){
+  const a = String(actionName||"");
+  const d = data || {};
+  const who = d.user || d.id || d.withdrawalId || "";
+  const amt = d.amount != null ? money(d.amount) : "";
+  if(a.startsWith("wallet.credit")) return "Added " + amt + (who ? " → " + who : "");
+  if(a.startsWith("wallet.debit")) return "Removed " + amt + (who ? " → " + who : "");
+  if(a.startsWith("reward.grant")) return "Reward " + amt + (who ? " → " + who : "");
+  if(a.startsWith("reward.clawback")) return "Clawback " + amt + (who ? " → " + who : "");
+  if(a.includes("approve")) return "Approved payout" + (who ? " " + who : "");
+  if(a.includes("reject")) return "Rejected payout" + (d.reason ? " · " + d.reason : "");
+  if(a.includes("notification.send")) return (d.title || "Message") + (who ? " → " + who : "");
+  if(a.includes("broadcast")) return "Broadcast · " + (d.title || "");
+  if(a.includes("status_update")) return "Status → " + (d.status||"") + (who ? " · " + who : "");
+  if(a.includes("delete")) return "Deleted user " + (who||"");
+  if(a.includes("transaction.find")) return "Looked up transactions" + (who ? " · " + who : "");
+  if(a.includes("transaction.create")) return "Created " + (d.type||"tx") + " " + amt;
+  if(a.includes("fraud")) return (a.includes("remove")?"Cleared flag":"Flagged") + (who ? " · " + who : "");
+  if(a.includes("device")) return (a.includes("unblock")?"Unblocked":"Blocked") + " device/user " + (who||"");
+  if(d.title) return d.title + (who ? " → " + who : "");
+  if(who && amt) return who + " · " + amt;
+  if(who) return String(who);
+  if(amt) return amt;
+  return "";
+}
+
+function shortId(id){
+  const s = String(id||"");
+  if(s.length <= 12) return s;
+  return s.slice(0,6) + "…" + s.slice(-4);
+}
+
+function unwrapEnginePayload(body){
+  if(!body) return { ok:false, action:"", items:[], record:null, error:null, raw:body };
+  const ok = engineSucceeded(body);
+  const action = body.action || "";
+  const step = Array.isArray(body.result) ? body.result[0] : null;
+  const stepOk = step ? step.success !== false : ok;
+  const inner = step && step.result != null ? step.result : (body.data != null ? body.data : body);
+  let error = body.message || (step && step.error) || null;
+  if(!ok && !error) error = "Action failed";
+
+  // Normalize common shapes
+  let items = [];
+  let record = null;
+  if(inner && typeof inner === "object"){
+    if(Array.isArray(inner)) items = inner;
+    else if(Array.isArray(inner.data)) items = inner.data;
+    else if(inner.data && typeof inner.data === "object" && !Array.isArray(inner.data)) record = inner.data;
+    else if(inner.wallet) record = inner.wallet;
+    else if(inner.withdrawal) record = inner.withdrawal;
+    else if(inner.user) record = inner.user;
+    else if(inner.success != null && (inner.balance != null || inner._id)) record = inner;
+    else record = inner;
+  }
+  return { ok: ok && stepOk, action: action || (step && step.action) || "", items, record, error, raw: body, inner };
+}
+
+function humanType(t){
+  const s = String(t||"").toLowerCase();
+  if(s==="earning") return "Earning";
+  if(s==="withdrawal") return "Withdrawal";
+  if(s==="penalty") return "Penalty";
+  if(s==="reward") return "Reward";
+  return t || "—";
+}
+
+function renderKvCards(obj, preferKeys){
+  if(!obj || typeof obj !== "object") return "";
+  const skip = new Set(["__v","project","password","token"]);
+  let keys = preferKeys && preferKeys.length ? preferKeys.filter(k => obj[k] != null) : Object.keys(obj);
+  keys = keys.filter(k => !skip.has(k) && typeof obj[k] !== "object").slice(0, 12);
+  if(!keys.length) return "";
+  return `<div class="kv-grid">${keys.map(k=>{
+    let v = obj[k];
+    if(k.toLowerCase().includes("amount") || ["balance","pendingBalance","totalEarned","totalWithdrawn"].includes(k)) v = money(v);
+    else if(/date|at$/i.test(k) || k==="createdAt" || k==="updatedAt") v = date(v);
+    else if(k==="status") return `<div class="kv-card"><div class="k">${escapeHtml(k)}</div><div class="v">${badge(obj[k])}</div></div>`;
+    return `<div class="kv-card"><div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(String(v))}</div></div>`;
+  }).join("")}</div>`;
+}
+
+function renderItemsTable(items){
+  if(!items || !items.length) return '<div class="empty">No rows returned.</div>';
+  // Detect transaction-like rows
+  const sample = items[0] || {};
+  const isTx = sample.type != null || sample.amount != null;
+  if(isTx){
+    return `<div class="table-wrap"><table class="resp-table"><thead><tr>
+      <th>Type</th><th>Amount</th><th>Status</th><th>Description</th><th>Date</th><th>ID</th>
+    </tr></thead><tbody>${items.map(t=>{
+      const ty = String(t.type||"").toLowerCase();
+      const cls = ty==="earning"?"type-earning":(ty==="withdrawal"||ty==="penalty"?"type-withdrawal":"");
+      return `<tr>
+        <td class="${cls}"><b>${escapeHtml(humanType(t.type))}</b></td>
+        <td>${money(t.amount)}</td>
+        <td>${badge(t.status)}</td>
+        <td>${escapeHtml(t.description||"—")}</td>
+        <td>${date(t.createdAt)}</td>
+        <td class="mono" style="font-size:11px">${escapeHtml(t._id||t.id||"—")}</td>
+      </tr>`;
+    }).join("")}</tbody></table></div>
+    <div style="margin-top:8px;font-size:12px;color:var(--muted)">${items.length} record(s)</div>`;
+  }
+  // Generic object rows
+  const cols = Object.keys(sample).filter(k => !["__v","project"].includes(k) && typeof sample[k] !== "object").slice(0,6);
+  return `<div class="table-wrap"><table class="resp-table"><thead><tr>${cols.map(c=>`<th>${escapeHtml(c)}</th>`).join("")}</tr></thead><tbody>${
+    items.map(row => `<tr>${cols.map(c=>{
+      let v = row[c];
+      if(c==="status") return `<td>${badge(v)}</td>`;
+      if(/amount|balance/i.test(c)) return `<td>${money(v)}</td>`;
+      if(/at$/i.test(c)||c==="createdAt") return `<td>${date(v)}</td>`;
+      return `<td>${escapeHtml(v!=null?String(v):"—")}</td>`;
+    }).join("")}</tr>`).join("")
+  }</tbody></table></div>`;
+}
+
+function renderEngineResponse(body, mountId){
+  const mount = $(mountId);
+  if(!mount) return;
+  const u = unwrapEnginePayload(body);
+  const title = u.action || "Engine result";
+  let summary = "";
+  if(!u.ok) summary = u.error || "Failed";
+  else if(u.items.length) summary = `Found ${u.items.length} record(s)`;
+  else if(u.record){
+    if(u.record.balance != null) summary = "Wallet · balance " + money(u.record.balance);
+    else if(u.record.amount != null) summary = "Amount " + money(u.record.amount);
+    else if(u.record.status) summary = "Status · " + u.record.status;
+    else summary = "Success";
+  } else summary = "Success";
+
+  let bodyHtml = "";
+  if(u.items.length) bodyHtml = renderItemsTable(u.items);
+  else if(u.record){
+    bodyHtml = renderKvCards(u.record, ["balance","pendingBalance","totalEarned","totalWithdrawn","amount","status","type","description","username","email","currency","_id","user","createdAt"]);
+    // if record still has nested leftover, show short note
+    if(!bodyHtml) bodyHtml = `<div class="notice">${escapeHtml(summary)}</div>`;
+  } else if(!u.ok){
+    bodyHtml = `<div class="warn-box"><b>Error</b><br>${escapeHtml(u.error||"Unknown")}</div>`;
+  } else {
+    bodyHtml = `<div class="notice">${escapeHtml(summary)}</div>`;
+  }
+
+  const rawId = mountId + "Raw";
+  mount.innerHTML = `
+    <div class="response-view">
+      <div class="response-head">
+        <div>
+          <span class="status-pill ${u.ok?"ok":"bad"}">${u.ok?"✓ Success":"✕ Failed"}</span>
+          <span style="margin-left:8px;font-weight:800">${escapeHtml(title)}</span>
+        </div>
+        <button type="button" class="raw-toggle" onclick="(function(id){var e=$(id);if(e)e.classList.toggle('show')})('${rawId}')">View raw JSON</button>
+      </div>
+      <div class="response-meta">
+        <span>Action · ${escapeHtml(title)}</span>
+        ${u.items.length?`<span>Rows · ${u.items.length}</span>`:""}
+        ${u.ok?`<span>Engine OK</span>`:`<span>Engine error</span>`}
+      </div>
+      <div class="response-body">
+        <div class="response-summary">${escapeHtml(summary)}</div>
+        ${bodyHtml}
+        <pre id="${rawId}" class="raw-json">${escapeHtml(JSON.stringify(body, null, 2))}</pre>
+      </div>
+    </div>`;
+}
+
+function showActionResult(body, okMsg){
+  renderEngineResponse(body, "actionResponseView");
+  const pre = $("actionResponse");
+  if(pre){ pre.textContent = JSON.stringify(body, null, 2); }
+  if(okMsg) toast(okMsg);
+}
+
+function explainEngineResult(body){
+  if(!body) return "Empty";
+  const lines=[];
+  if(body.success!=null) lines.push("success: "+body.success);
+  if(body.action) lines.push("action: "+body.action);
+  const steps=Array.isArray(body.result)?body.result:null;
+  if(steps) steps.forEach((s,i)=>lines.push(`[${i}] ${(s&&s.action)||"step"} → ${(s&&s.success)?"ok":"fail"}${(s&&s.error)?(" — "+s.error):""}`));
+  return lines.join("\n")||"See JSON";
+}
+function slaClass(createdAt){ if(!createdAt) return ""; const h=(Date.now()-new Date(createdAt).getTime())/36e5; if(Number.isNaN(h)) return ""; if(h<6) return "sla-ok"; if(h<24) return "sla-warn"; return "sla-danger"; }
+function slaLabel(createdAt){ const h=(Date.now()-new Date(createdAt).getTime())/36e5; if(Number.isNaN(h)) return "—"; if(h<6) return "SLA OK"; if(h<24) return "Aging"; return "Overdue"; }
+function userLink(id,label){ if(!id) return escapeHtml(label||"—"); return `<button type="button" class="linkish" onclick="jumpToUser('${escapeHtml(String(id))}')">${escapeHtml(label||id)}</button>`; }
+function jumpToUser(id){ setCtxUser(id); $("walletUser").value=id; $("moneyUserId").value=id; showPage("users"); loadUserWallet(); }
+function parseIds(str){ return String(str||"").split(/[\s,]+/).map(s=>s.trim()).filter(Boolean); }
+function promptReason(kind, title){ const reasons=REASON_TEMPLATES[kind]||[]; return prompt((title||"Reason")+"\nSuggestions: "+reasons.join(" | "), reasons[0]||""); }
+function reasonChipHtml(kind, inputId){
+  return `<div class="reason-chips">${(REASON_TEMPLATES[kind]||[]).map(r=>
+    `<button type="button" onclick="($('${inputId}').value='${escapeHtml(r)}')">${escapeHtml(r)}</button>`).join("")}</div>`;
+}
+
+async function api(path, options={}){
+  const headers={ "Content-Type":"application/json", "X-API-Key": PROJECT_KEY, ...(options.headers||{}) };
+  if(state.token) headers.Authorization="Bearer "+state.token;
+  let res;
+  try{ res=await fetch(API_URL+path,{ ...options, headers }); }
+  catch(e){ throw new Error(e.message||"Network error"); }
+  const text=await res.text();
+  let data=null;
+  try{ data=text?JSON.parse(text):null; }catch{ data={ message:text||"Invalid JSON" }; }
+  if(res.status===401){ $("sessionBanner")?.classList.add("show"); throw new Error(backendMessage(data,"Session expired")); }
+  if(!res.ok){ const err=new Error(backendMessage(data,"HTTP "+res.status)); err.status=res.status; err.data=data; throw err; }
+  return data;
+}
+
+async function executeAction(actionName, data, meta={}){
+  let clean = data==null ? {} : { ...data };
+  const act = String(actionName||"").toLowerCase();
+  const isClassic = /^(wallet|user|withdrawal|notification|reward|fraud|device|transaction)\./.test(act) || act === "system.ping";
+
+  if(isClassic && act.startsWith("wallet.")){
+    const uid = clean.user || clean.userId || null;
+    const amount = clean.amount;
+    const description = clean.description || clean.memo;
+    clean = {};
+    if(uid) clean.user = String(uid).trim();
+    if(amount!=null && amount!=="") clean.amount = Number(amount);
+    if(description) clean.description = String(description);
+    if(act==="wallet.view"||act==="wallet.ensure") clean = clean.user ? { user: clean.user } : {};
+    // pending_adjust needs user + amount (can be negative)
+    if(act==="wallet.pending_adjust" && clean.user && clean.amount==null && amount!=null) clean.amount = Number(amount);
+  }
+  if(act.startsWith("user.")){
+    const uid = clean.user || clean.userId || clean.id || null;
+    const status = clean.status;
+    const role = clean.role;
+    clean = {};
+    if(uid){ clean.user = String(uid).trim(); clean.id = String(uid).trim(); }
+    if(status) clean.status = String(status).toLowerCase()==="banned" ? "blocked" : String(status);
+    if(role!==undefined && role!==null && role!=="") clean.role = role;
+  }
+  if(act.startsWith("withdrawal.")){
+    const wid = clean.withdrawalId || clean.id || clean.withdrawal || null;
+    if(wid) clean.withdrawalId = String(wid).trim();
+    // request shape verified live
+    if(act==="withdrawal.request"){
+      const uid = clean.user || clean.userId;
+      const amount = clean.amount;
+      const method = clean.method || "Bank Transfer";
+      const account = clean.account || clean.bank || "Admin";
+      clean = {
+        user: uid ? String(uid).trim() : undefined,
+        amount: amount!=null ? Number(amount) : undefined,
+        method,
+        account: typeof account==="string" ? account : account,
+        details: clean.details || { bank: typeof account==="string" ? account : "Bank" }
+      };
+    }
+  }
+  if(act==="notification.send"){
+    const uid = clean.user || clean.userId || null;
+    clean = { user: uid?String(uid).trim():undefined, title: clean.title, message: clean.message, type: clean.type||"system" };
+    if(!clean.user) delete clean.user;
+  }
+  if(act==="notification.broadcast"){
+    clean = { title: clean.title, message: clean.message, type: clean.type||"system" };
+  }
+  if(act.startsWith("reward.")){
+    const uid = clean.user || clean.userId || null;
+    clean = { user: uid?String(uid).trim():undefined, amount: Number(clean.amount) };
+  }
+  // LIVE-TESTED: fraud.* and device.* require data.id as Mongo ObjectId (user id works)
+  if(act.startsWith("fraud.")){
+    const id = clean.id || clean.user || clean.userId || null;
+    clean = { id: id ? String(id).trim() : undefined, reason: clean.reason || "admin" };
+  }
+  if(act.startsWith("device.")){
+    const id = clean.id || clean.user || clean.userId || clean.deviceId || null;
+    clean = { id: id ? String(id).trim() : undefined, reason: clean.reason || "admin" };
+  }
+  // Transactions: engine expects filter object or flat create fields
+  if(act==="transaction.find"){
+    if(!clean.filter){
+      const f = {};
+      if(clean.user||clean.userId) f.user = clean.user||clean.userId;
+      if(clean.type) f.type = clean.type;
+      clean = { filter: Object.keys(f).length ? f : {} };
+    }
+  }
+  if(act==="transaction.findOne"){
+    if(clean.id || clean._id){
+      const id = clean.id || clean._id;
+      clean = { id: String(id), filter: { _id: String(id) } };
+    } else if(!clean.filter){
+      clean = { filter: clean.filter || {} };
+    }
+  }
+  if(act==="transaction.create"){
+    // flat fields required: user, type, amount
+    if(clean.data && typeof clean.data==="object") clean = { ...clean.data };
+    const uid = clean.user || clean.userId;
+    clean = {
+      user: uid ? String(uid).trim() : undefined,
+      type: clean.type || "earning",
+      amount: Number(clean.amount),
+      description: clean.description || "admin",
+      status: clean.status || "completed"
+    };
+  }
+
+  const quiet = !!meta.quiet;
+  const fp = actionFingerprint(actionName, clean);
+  const money = isMoneyAction(actionName);
+
+  // Client-side dedupe: same money action within TTL
+  if(money && !meta.force && !quiet){
+    const last = recentKeys.get(fp);
+    if(last && (Date.now() - last) < IDEMPOTENCY_TTL_MS){
+      const err = new Error("Duplicate blocked: same action was just sent. Wait a moment or use force.");
+      err.code = "CLIENT_IDEMPOTENT";
+      throw err;
+    }
+  }
+
+  // In-flight: coalesce identical concurrent calls
+  if(inflight.has(fp) && !meta.force){
+    return inflight.get(fp);
+  }
+
+  const idemKey = meta.idempotencyKey || makeIdempotencyKey(actionName, clean);
+  if(money && clean && clean.amount != null){
+    // include key in data when helpful for backends that read it
+    clean = { ...clean, idempotencyKey: idemKey };
+  }
+
+  const payload = { action: actionName, data: clean, idempotencyKey: idemKey };
+
+  const run = (async () => {
+    const res = await fetch(API_URL+"/api/v1/engine", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": PROJECT_KEY,
+        "Idempotency-Key": idemKey,
+        ...(state.token ? { Authorization: "Bearer "+state.token } : {})
+      },
+      body: JSON.stringify(payload)
+    });
+    const text = await res.text();
+    let body = null;
+    try{ body = text ? JSON.parse(text) : null; }catch{ body = { message: text||"Invalid response" }; }
+    const entry = {
+      at: new Date().toISOString(),
+      action: actionName,
+      data: clean,
+      memo: meta.memo||"",
+      status: res.status,
+      body,
+      ok: false,
+      request: payload,
+      idempotencyKey: idemKey,
+      target: clean.user || clean.id || clean.withdrawalId || clean.title || "",
+      amount: clean.amount != null ? clean.amount : null,
+      summary: summarizeAction(actionName, clean)
+    };
+
+    if(res.status===401){
+      $("sessionBanner")?.classList.add("show");
+      throw Object.assign(new Error("Session expired"),{ status:401, data:body });
+    }
+    if(!res.ok || !engineSucceeded(body)){
+      const msg = backendMessage(body,"Action failed");
+      if(!quiet){ entry.error=msg; state.failedActions.unshift(entry); state.sessionAudit.unshift(entry); }
+      const err = new Error(msg); err.status=res.status; err.data=body; err.action=actionName; err.request=payload; throw err;
+    }
+    entry.ok = true;
+    if(!quiet) state.sessionAudit.unshift(entry);
+    if(money) recentKeys.set(fp, Date.now());
+    return body;
+  })();
+
+  inflight.set(fp, run);
+  try{
+    return await run;
+  }finally{
+    inflight.delete(fp);
+  }
+}
+
+async function viewWalletBalance(userId){
+  try{
+    const eng = await executeAction("wallet.view",{ user:userId },{ quiet:true });
+    const step = Array.isArray(eng.result)?eng.result[0]:null;
+    const data = (step&&step.result&&(step.result.data||step.result.wallet)) || {};
+    return Number(data.balance);
+  }catch{ return null; }
+}
+async function userHasWallet(userId){
+  try{ await api("/api/v1/admin/wallet/"+encodeURIComponent(userId)); return true; }
+  catch(e){
+    if(/not found/i.test(String(e.message||""))) return false;
+    try{ await executeAction("wallet.view",{ user:userId },{ quiet:true }); return true; }catch{ return false; }
+  }
+}
+async function ensureWalletForUser(userId){
+  userId = String(userId||"").trim();
+  if(!userId) return false;
+  try{
+    await executeAction("wallet.ensure",{ user:userId },{ memo:"ensure" });
+    toast("Wallet ensured");
+    return true;
+  }catch(e){ toast("Ensure failed: "+e.message); return false; }
+}
+async function autoNotifyFor(actionKey, userId, extraMsg){
+  if(!userId) return;
+  const conf = AUTO_NOTIFY[actionKey];
+  if(!conf) return;
+  try{
+    await executeAction("notification.send",{
+      user:userId, title:conf.title,
+      message: extraMsg ? (conf.message+" "+extraMsg) : conf.message,
+      type: conf.type||"system"
+    },{ quiet:true, memo:"auto-notify" });
+  }catch(e){ console.warn("auto-notify", e); }
+}
+
+function setCtxUser(id, label){
+  if(!id) return;
+  state.ctxUser = { id, label: label||id };
+  localStorage.setItem(LS.ctx, JSON.stringify(state.ctxUser));
+  renderCtxChip();
+}
+function renderCtxChip(){
+  const chip = $("ctxChip"); if(!chip) return;
+  if(!state.ctxUser){ chip.classList.add("hidden"); return; }
+  chip.classList.remove("hidden");
+  chip.textContent = "Focus: "+String(state.ctxUser.label||state.ctxUser.id).slice(0,24);
+  chip.onclick = () => jumpToUser(state.ctxUser.id);
+}
+
+function showApp(){
+  setTimeout(()=>refreshAdminNotifs().catch(()=>{}), 400);
+
+  $("loginScreen").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  const _r = roleOf(state.user, state.token);
+  $("adminChip").textContent = (state.user?.username || state.user?.email || "Admin") + (_r ? " · "+_r : "");
+  renderCtxChip();
+  showPage(state.currentPage||"dashboard");
+  loadKnownActions().catch(()=>{});
+}
+function logout(){
+  state.token=""; state.user=null;
+  localStorage.removeItem(LS.token); localStorage.removeItem(LS.user);
+  $("app").classList.add("hidden"); $("loginScreen").classList.remove("hidden");
+  $("sessionBanner")?.classList.remove("show");
+}
+function showPage(page){
+  if(page==="sponsored"){ setTimeout(()=>{ loadSponsoredTasksAdmin(); loadSponsoredSubs(); },0); }
+  if(page==="landing"){ renderLandingProofs(); }
+  if(page==="wfads"){ loadWfAdsAdminForm(); }
+  if(page==="payout-history"){ loadPayoutHistory(); }
+  refreshAdminNotifs().catch(()=>{});
+
+  state.currentPage = page;
+  document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
+  $("page-"+page)?.classList.remove("hidden");
+  document.querySelectorAll(".nav button[data-page]").forEach(b => b.classList.toggle("active", b.dataset.page===page));
+  const titles = { dashboard:"Home", queue:"Payouts", "payout-history":"Payout history",sponsored:"Sponsored", money:"Money", users:"Users", notify:"Messages", actions:"Tools", transactions:"History", landing:"Landing proofs", wfads:"WatchFlix Ads", audit:"Activity" };
+  $("pageTitle").textContent = titles[page]||page;
+  $("sidebar")?.classList.remove("open");
+  refreshCurrent();
+}
+function refreshCurrent(){
+  try{ if(document.getElementById("page-sponsored") && !document.getElementById("page-sponsored").classList.contains("hidden")){ loadSponsoredTasksAdmin(); loadSponsoredSubs(); } }catch(e){}
+
+  const map = { dashboard:loadDashboard, queue:loadQueue, money:loadWithdrawals, users:loadUsers, actions:loadKnownActions, transactions:loadTransactions, audit:loadAudit };
+  map[state.currentPage]?.();
+}
+
+$("loginForm").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const email = $("loginEmail").value.trim();
+  const password = $("loginPassword").value;
+  const msg = $("loginMsg");
+  msg.className="msg"; msg.textContent="Signing in…";
+  try{
+    const res = await fetch(API_URL+"/api/auth/login", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "X-API-Key": PROJECT_KEY },
+      body: JSON.stringify({ email, username: email, password })
+    });
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok || data.success===false) throw new Error(backendMessage(data,"Login failed"));
+    const token = data.token||data.accessToken||data.jwt||data.data?.token||data.data?.accessToken;
+    if(!token) throw new Error("No JWT returned");
+    let user = data.user||data.data?.user||{ email };
+    // Enrich role from profile if missing
+    try{
+      const uid = user._id||user.id||decodeJwt(token)?.id;
+      if(uid){
+        const prof = await fetch(API_URL+"/api/v1/admin/users/"+encodeURIComponent(uid), {
+          headers: { "X-API-Key": PROJECT_KEY, Authorization: "Bearer "+token }
+        }).then(r=>r.json()).catch(()=>null);
+        if(prof && (prof.data||prof._id)) user = { ...user, ...(prof.data||prof) };
+      }
+    }catch{}
+    if(!isAdminAccount(user, token)){
+      throw new Error("Access denied. Only admin accounts can use this dashboard (platformRole must be admin / super_admin).");
+    }
+    state.token = token;
+    state.user = user;
+    localStorage.setItem(LS.token, token);
+    localStorage.setItem(LS.user, JSON.stringify(state.user));
+    msg.className="msg ok"; msg.textContent="Signed in as admin ("+(roleOf(user,token)||"admin")+")";
+    showApp();
+  }catch(err){ msg.className="msg error"; msg.textContent=err.message; }
+});
+$("logoutBtn").onclick = () => logout();
+$("mobileMenu").onclick = () => $("sidebar").classList.toggle("open");
+document.querySelectorAll(".nav button[data-page]").forEach(b => b.onclick = () => showPage(b.dataset.page));
+document.addEventListener("keydown", e => {
+  if(e.key==="/" && !["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName)){ e.preventDefault(); $("globalSearch")?.focus(); }
+});
+$("globalSearch")?.addEventListener("keydown", e => {
+  if(e.key!=="Enter") return;
+  const q = e.target.value.trim(); if(!q) return;
+  if(/^[a-f0-9]{24}$/i.test(q)){ jumpToUser(q); return; }
+  $("userSearch").value=q; showPage("users"); loadUsers();
+});
+
+/* Dashboard */
+async function loadDashboard(){
+  try{
+    const [dash, wd, stats] = await Promise.all([
+      api("/api/v1/admin/dashboard"),
+      api("/api/v1/admin/withdrawals?limit=100"),
+      api("/api/v1/admin/stats").catch(()=>null)
+    ]);
+    const d = dash.data||dash;
+    const wallet = d.wallet||{};
+    const users = d.users||{};
+    $("statBalance").textContent = money(wallet.balance);
+    $("statUsers").textContent = users.total ?? "—";
+    $("statUserMix").textContent = `${users.active??0} active · ${users.suspended??0} susp · ${users.blocked??0} block`;
+    const rows = wd.data||[];
+    state.withdrawalsCache = rows;
+    const pending = rows.filter(w => String(w.status).toLowerCase()==="pending");
+    pending.sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+    $("statPendingCount").textContent = String(pending.length);
+    $("statPendingValue").textContent = "value "+money(pending.reduce((s,w)=>s+(Number(w.amount)||0),0));
+    const start = new Date(); start.setHours(0,0,0,0);
+    $("statApprovedToday").textContent = String(rows.filter(w=>String(w.status).toLowerCase()==="approved"&&new Date(w.updatedAt||w.createdAt)>=start).length);
+    const oldest = pending[0];
+    const st = (stats && (stats.data||stats)) || {};
+    $("opsBrief").innerHTML = `<b>Daily ops brief</b><br>
+      • Pending: <b>${pending.length}</b> · <b>${money(pending.reduce((s,w)=>s+(Number(w.amount)||0),0))}</b><br>
+      • Oldest: <b>${oldest ? ageHours(oldest.createdAt)+" · "+(oldest.user?.username||"user") : "—"}</b><br>
+      • Users: <b>${$("statUserMix").textContent}</b>
+      ${st.totalBalance!=null?`<br>• Ledger: wallets <b>${st.wallets??"—"}</b> · txs <b>${st.transactions??"—"}</b> · total balance <b>${money(st.totalBalance)}</b> · withdrawn <b>${money(st.totalWithdrawn)}</b>`:""}`;
+    const box = $("dashPending");
+    if(!pending.length) box.innerHTML = '<div class="empty">No pending payouts.</div>';
+    else box.innerHTML = `<table><thead><tr><th>User</th><th>Amount</th><th>SLA</th><th></th></tr></thead><tbody>${
+      pending.slice(0,8).map(w => {
+        const id=w._id||w.id; const uid=w.user?._id||w.user||"";
+        return `<tr class="${slaClass(w.createdAt)}"><td>${userLink(uid,w.user?.username||w.user?.email||"—")}</td><td>${money(w.amount)}</td><td>${ageHours(w.createdAt)} ${slaLabel(w.createdAt)}</td>
+        <td><button class="btn primary" type="button" onclick="openResolve('${escapeHtml(id)}')">Resolve</button></td></tr>`;
+      }).join("")
+    }</tbody></table>`;
+    renderDashAudit();
+  }catch(err){ toast(err.message); }
+}
+function renderDashAudit(){
+  const box=$("dashAudit");
+  const items=state.sessionAudit.slice(0,8);
+  if(!items.length){ box.innerHTML='<div class="empty">No engine actions this session.</div>'; return; }
+  box.innerHTML=items.map(a=>`<div class="list-item"><div><b>${escapeHtml(a.action)}</b><div class="meta">${date(a.at)}</div></div>${a.ok?badge("success"):badge("failed")}</div>`).join("");
+}
+
+/* Queue */
+async function loadQueue(){
+  const box=$("queueTable");
+  box.innerHTML='<div class="loading">Loading pending…</div>';
+  state.queueSelected.clear(); updateQueueBulk();
+  try{
+    let rows=(await api("/api/v1/admin/withdrawals?status=pending&limit=100")).data||[];
+    if(!rows.length){
+      const all=await api("/api/v1/admin/withdrawals?limit=100");
+      rows=(all.data||[]).filter(w=>String(w.status).toLowerCase()==="pending");
+    }
+    state.withdrawalsCache=rows;
+    if(!rows.length){ box.innerHTML='<div class="empty">No pending withdrawals.</div>'; return; }
+    rows.sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+    box.innerHTML=`<table><thead><tr><th></th><th>User</th><th>Amount</th><th>Method</th><th>SLA</th><th>Actions</th></tr></thead><tbody>${
+      rows.map(w=>{
+        const id=w._id||w.id; const uid=w.user?._id||w.user?.id||w.user||"";
+        return `<tr class="${slaClass(w.createdAt)}">
+          <td><input type="checkbox" class="check" data-qid="${escapeHtml(id)}" onchange="toggleQueue('${escapeHtml(id)}',this.checked)"></td>
+          <td>${userLink(uid,w.user?.username||w.user?.email||uid||"—")}</td>
+          <td>${money(w.amount)}</td>
+          <td>${escapeHtml(w.method||"—")}</td>
+          <td>${ageHours(w.createdAt)} · ${slaLabel(w.createdAt)}</td>
+          <td><div class="actions">
+            <button class="btn primary" type="button" onclick="openResolve('${escapeHtml(id)}')">Resolve</button>
+            <button class="btn success" type="button" onclick="approveWithdrawal('${escapeHtml(id)}')">Approve</button>
+            <button class="btn danger" type="button" onclick="rejectWithdrawal('${escapeHtml(id)}')">Reject</button>
+          </div></td>
+        </tr>`;
+      }).join("")
+    }</tbody></table>`;
+  }catch(err){ box.innerHTML=`<div class="empty">${escapeHtml(err.message)}</div>`; }
+}
+function toggleQueue(id,on){ if(on) state.queueSelected.add(id); else state.queueSelected.delete(id); updateQueueBulk(); }
+function updateQueueBulk(){ const n=state.queueSelected.size; $("queueBulk").classList.toggle("show",n>0); $("queueBulkCount").textContent=n+" selected"; }
+function clearQueueSelection(){ state.queueSelected.clear(); loadQueue(); }
+function selectAllPendingQueue(){ document.querySelectorAll("[data-qid]").forEach(cb=>{ cb.checked=true; state.queueSelected.add(cb.getAttribute("data-qid")); }); updateQueueBulk(); }
+
+async function approveWithdrawal(id, opts={}){
+  if(window.__payoutBusy) return toast("Wait — payout action in progress");
+  window.__payoutBusy = true;
+  try{
+    const row=(state.withdrawalsCache||[]).find(w=>String(w._id||w.id)===String(id));
+    const userId=opts.userId||row?.user?._id||row?.user?.id||row?.user||"";
+    if(!opts.skipConfirm && !confirm("Approve withdrawal "+id+"?\nUser will be notified.")) return;
+    await executeAction("withdrawal.approve",{ withdrawalId:id },{ memo:"approve" });
+    toast("Approved");
+    if(userId) await autoNotifyFor("withdrawal.approve", userId);
+    closeResolve(); loadQueue(); loadWithdrawals(); loadDashboard();
+    if($("walletUser")?.value) await loadUserWallet();
+  }catch(e){ toast("Approve failed: "+e.message); }
+  finally{ window.__payoutBusy = false; }
+}
+async function rejectWithdrawal(id, opts={}){
+  if(window.__payoutBusy) return toast("Wait — payout action in progress");
+  window.__payoutBusy = true;
+  try{
+    const row=(state.withdrawalsCache||[]).find(w=>String(w._id||w.id)===String(id));
+    const userId=opts.userId||row?.user?._id||row?.user?.id||row?.user||"";
+    let reason=opts.reason;
+    if(reason==null) reason=promptReason("reject","Reject reason");
+    if(reason===null) return;
+    reason=String(reason||"Rejected by admin").trim();
+    await executeAction("withdrawal.reject",{ withdrawalId:id, reason },{ memo:reason });
+    toast("Rejected");
+    if(userId) await autoNotifyFor("withdrawal.reject", userId, "Reason: "+reason);
+    closeResolve(); loadQueue(); loadWithdrawals(); loadDashboard();
+  }catch(e){ toast("Reject failed: "+e.message); }
+  finally{ window.__payoutBusy = false; }
+}
+async function holdWithdrawal(id, opts={}){
+  let reason=opts.reason;
+  if(reason==null) reason=promptReason("hold","Hold reason");
+  if(reason===null) return;
+  try{
+    await executeAction("withdrawal.hold",{ withdrawalId:id, reason:String(reason||"On hold").trim() },{ memo:String(reason) });
+    toast("Held"); closeResolve(); loadQueue(); loadWithdrawals();
+  }catch(e){ toast("Hold failed: "+e.message); }
+}
+async function bulkApproveQueue(){
+  const ids=[...state.queueSelected];
+  if(!ids.length||!confirm("Approve "+ids.length+" payouts?")) return;
+  let ok=0,fail=0;
+  for(const id of ids){
+    try{
+      const row=(state.withdrawalsCache||[]).find(w=>String(w._id||w.id)===String(id));
+      const userId=row?.user?._id||row?.user||"";
+      await executeAction("withdrawal.approve",{ withdrawalId:id },{ memo:"bulk-approve" });
+      if(userId) await autoNotifyFor("withdrawal.approve", userId);
+      ok++;
+    }catch{ fail++; }
+  }
+  toast(`Approved ${ok}, failed ${fail}`); loadQueue(); loadDashboard();
+}
+async function bulkRejectQueue(){
+  const ids=[...state.queueSelected];
+  if(!ids.length) return;
+  const reason=promptReason("reject","Bulk reject reason");
+  if(reason===null) return;
+  let ok=0,fail=0;
+  for(const id of ids){
+    try{
+      const row=(state.withdrawalsCache||[]).find(w=>String(w._id||w.id)===String(id));
+      const userId=row?.user?._id||row?.user||"";
+      await executeAction("withdrawal.reject",{ withdrawalId:id, reason:String(reason).trim() },{ memo:String(reason) });
+      if(userId) await autoNotifyFor("withdrawal.reject", userId, "Reason: "+reason);
+      ok++;
+    }catch{ fail++; }
+  }
+  toast(`Rejected ${ok}, failed ${fail}`); loadQueue(); loadDashboard();
+}
+
+async function openResolve(withdrawalId){
+  const panel=$("resolvePanel"); const body=$("resolveBody");
+  panel.classList.add("show"); $("drawerOverlay").classList.add("show");
+  body.innerHTML='<div class="loading">Loading…</div>';
+  let row=(state.withdrawalsCache||[]).find(w=>String(w._id||w.id)===String(withdrawalId));
+  if(!row){
+    try{ const all=await api("/api/v1/admin/withdrawals?limit=100"); state.withdrawalsCache=all.data||[]; row=state.withdrawalsCache.find(w=>String(w._id||w.id)===String(withdrawalId)); }catch{}
+  }
+  if(!row){ body.innerHTML='<div class="empty">Not found.</div>'; return; }
+  const uid=row.user?._id||row.user?.id||row.user||"";
+  let userMeta=null, bal=null;
+  try{ const ud=await api("/api/v1/admin/users/"+encodeURIComponent(uid)); userMeta=ud.data?.user||ud.data||ud; }catch{}
+  bal=await viewWalletBalance(uid);
+  body.innerHTML=`
+    <div class="notice">${userLink(uid,userMeta?.username||userMeta?.email||uid)} · ${badge(userMeta?.status||"—")}<br>
+      Wallet: ${bal==null?"—":money(bal)} · Payout ${money(row.amount)} · ${ageHours(row.createdAt)} (${slaLabel(row.createdAt)})</div>
+    <div class="field"><label>Reason</label><input id="resolveReason">${reasonChipHtml("reject","resolveReason")}</div>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn success" type="button" onclick="approveWithdrawal('${escapeHtml(String(withdrawalId))}',{userId:'${escapeHtml(String(uid))}'})">Approve + notify</button>
+      <button class="btn danger" type="button" onclick="rejectWithdrawal('${escapeHtml(String(withdrawalId))}',{userId:'${escapeHtml(String(uid))}',reason:($('resolveReason').value||'')})">Reject + notify</button>
+      <button class="btn warn" type="button" onclick="holdWithdrawal('${escapeHtml(String(withdrawalId))}',{reason:($('resolveReason').value||'')})">Hold</button>
+    </div>`;
+}
+function closeResolve(){ $("resolvePanel")?.classList.remove("show"); $("drawerOverlay")?.classList.remove("show"); }
+
+/* Money */
+async function moneyCredit(){
+  if(window.__moneyBusy) return toast("Wait — request in progress");
+  window.__moneyBusy=true;
+  const userId=$("moneyUserId").value.trim();
+  const amount=Number($("moneyAmount").value);
+  const memo=$("moneyMemo").value.trim();
+  if(!userId||!(amount>0)) return toast("User + amount required");
+  if(!(await userHasWallet(userId))){ if(!(await ensureWalletForUser(userId))) return; }
+  if(!confirm(`Credit ${amount} to ${userId}?`)) return;
+  const before=await viewWalletBalance(userId);
+  try{
+    const payload={ user:userId, amount:Number(amount) }; if(memo) payload.description=memo;
+    const result=await executeAction("wallet.credit", payload, { memo });
+    const after=await viewWalletBalance(userId);
+    $("moneyMsg").className="msg ok";
+    $("moneyMsg").textContent=`Credited · ${money(before)} → ${money(after)}`;
+    if($("moneyPre")) $("moneyPre").textContent=explainEngineResult(result)+"\n\n"+JSON.stringify(result,null,2);
+    await autoNotifyFor("wallet.credit", userId, memo||"");
+    toast("Credited");
+  }catch(e){ $("moneyMsg").className="msg error"; $("moneyMsg").textContent=e.message; }
+  finally{ window.__moneyBusy=false; }
+}
+async function moneyDebit(){
+  if(window.__moneyBusy) return toast("Wait — request in progress");
+  window.__moneyBusy=true;
+  const userId=$("moneyUserId").value.trim();
+  const amount=Number($("moneyAmount").value);
+  const memo=$("moneyMemo").value.trim();
+  if(!userId||!(amount>0)) return toast("User + amount required");
+  if(!confirm(`Debit ${amount} from ${userId}?`)) return;
+  const before=await viewWalletBalance(userId);
+  try{
+    const payload={ user:userId, amount:Number(amount) }; if(memo) payload.description=memo;
+    const result=await executeAction("wallet.debit", payload, { memo });
+    const after=await viewWalletBalance(userId);
+    $("moneyMsg").className="msg ok";
+    $("moneyMsg").textContent=`Debited · ${money(before)} → ${money(after)}`;
+    $("moneyPre").textContent=JSON.stringify(result,null,2);
+    toast("Debited");
+  }catch(e){ $("moneyMsg").className="msg error"; $("moneyMsg").textContent=e.message; }
+  finally{ window.__moneyBusy=false; }
+}
+function moneyInspect(){ const id=$("moneyUserId").value.trim(); if(!id) return toast("User ID"); jumpToUser(id); }
+
+async function bulkMoney(kind){
+  const ids=parseIds($("bulkMoneyUsers").value);
+  const amount=Number($("bulkMoneyAmount").value);
+  const memo=$("bulkMoneyMemo").value.trim();
+  if(!ids.length||!(amount>0)) return toast("IDs + amount required");
+  if(!confirm(`Bulk ${kind} ${amount} × ${ids.length}?`)) return;
+  const action=kind==="credit"?"wallet.credit":"wallet.debit";
+  let ok=0,fail=0;
+  for(const user of ids){
+    try{
+      const p={ user:String(user).trim(), amount:Number(amount) }; if(memo) p.description=memo;
+      if(kind==="credit" && !(await userHasWallet(user))) await ensureWalletForUser(user);
+      await executeAction(action, p, { memo:"bulk-"+kind });
+      if(kind==="credit") await autoNotifyFor("wallet.credit", user, memo||"");
+      ok++;
+    }catch{ fail++; }
+  }
+  $("bulkMoneyMsg").textContent=`${kind}: ${ok} ok, ${fail} failed`;
+  toast($("bulkMoneyMsg").textContent);
+}
+async function doRewardGrant(){
+  const user=$("rewardUser").value.trim();
+  const amount=Number($("rewardAmount").value);
+  if(!user||!(amount>0)) return toast("User + amount");
+  try{
+    await executeAction("reward.grant",{ user, amount });
+    await autoNotifyFor("reward.grant", user);
+    $("rewardMsg").className="msg ok"; $("rewardMsg").textContent="Granted";
+  }catch(e){ $("rewardMsg").className="msg error"; $("rewardMsg").textContent=e.message; }
+}
+
+async function loadWithdrawals(){
+  const box=$("withdrawalsTable"); if(!box) return;
+  box.innerHTML='<div class="loading">Loading…</div>';
+  try{
+    const st=$("withdrawalStatus")?.value||"";
+    const q=($("withdrawalSearch")?.value||"").trim().toLowerCase();
+    const params=new URLSearchParams({ limit:"100" }); if(st) params.set("status", st);
+    let rows=(await api("/api/v1/admin/withdrawals?"+params)).data||[];
+    state.withdrawalsCache=rows;
+    if(q) rows=rows.filter(w=>[w._id,w.user?.username,w.user?.email,w.method,w.status].join(" ").toLowerCase().includes(q));
+    if(!rows.length){ box.innerHTML='<div class="empty">No withdrawals.</div>'; return; }
+    box.innerHTML=`<table><thead><tr><th>User</th><th>Amount</th><th>Status</th><th>SLA</th><th>Actions</th></tr></thead><tbody>${
+      rows.map(w=>{
+        const id=w._id||w.id; const s=String(w.status||"").toLowerCase(); const uid=w.user?._id||w.user||"";
+        return `<tr class="${s==="pending"?slaClass(w.createdAt):""}">
+          <td>${userLink(uid,w.user?.username||w.user?.email||"—")}</td>
+          <td>${money(w.amount)}</td>
+          <td>${badge(w.status)}</td>
+          <td>${s==="pending"?ageHours(w.createdAt)+" "+slaLabel(w.createdAt):"—"}</td>
+          <td><div class="actions">${s==="pending"?`
+            <button class="btn success" type="button" onclick="approveWithdrawal('${escapeHtml(id)}')">Approve</button>
+            <button class="btn danger" type="button" onclick="rejectWithdrawal('${escapeHtml(id)}')">Reject</button>`:"—"}</div></td>
+        </tr>`;
+      }).join("")
+    }</tbody></table>`;
+  }catch(err){ box.innerHTML=`<div class="empty">${escapeHtml(err.message)}</div>`; }
+}
+
+
+async function adminWithdrawalRequest(){
+  const user = ($("wdReqUser")?.value||"").trim();
+  const amount = Number($("wdReqAmount")?.value);
+  const method = ($("wdReqMethod")?.value||"Bank Transfer").trim();
+  const accountLabel = ($("wdReqAccount")?.value||"Admin request").trim();
+  const out = $("wdReqMsg");
+  if(!user || !(amount>0)){ if(out){ out.className="msg error"; out.textContent="User + amount required"; } return; }
+  // Live-tested working shape
+  const data = {
+    user,
+    amount,
+    method,
+    account: accountLabel,
+    details: { bank: accountLabel }
+  };
+  if(!confirm("Create pending withdrawal of "+amount+" for "+user+"?")) return;
+  try{
+    const result = await executeAction("withdrawal.request", data, { memo: "admin-request" });
+    if(out){ out.className="msg ok"; out.textContent="Pending withdrawal created"; }
+    toast("Withdrawal requested");
+    loadWithdrawals(); loadQueue(); loadDashboard();
+  }catch(e){
+    if(out){ out.className="msg error"; out.textContent=e.message; }
+  }
+}
+
+function exportUsersCsv(){
+  const rows = state.usersCache||[];
+  if(!rows.length) return toast("Load users first");
+  const header = ["id","username","email","status","platformRole","createdAt"];
+  const lines = [header.join(",")].concat(rows.map(u=>{
+    const id=u._id||u.id||"";
+    return [id,u.username||"",u.email||"",u.status||"",u.platformRole||"",u.createdAt||""]
+      .map(x=>`"${String(x).replace(/"/g,'""')}"`).join(",");
+  }));
+  downloadCsv("users.csv", lines.join("\\n"));
+}
+
+function exportWithdrawalsCsv(){
+  const rows = state.withdrawalsCache||[];
+  if(!rows.length) return toast("Load withdrawals first");
+  const header = ["id","user","amount","status","method","createdAt"];
+  const lines = [header.join(",")].concat(rows.map(w=>{
+    const uid = w.user?._id||w.user||"";
+    return [w._id||w.id||"",uid,w.amount||"",w.status||"",w.method||"",w.createdAt||""]
+      .map(x=>`"${String(x).replace(/"/g,'""')}"`).join(",");
+  }));
+  downloadCsv("withdrawals.csv", lines.join("\\n"));
+}
+
+function downloadCsv(name, content){
+  const blob = new Blob([content], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast("Exported "+name);
+}
+
+async function searchUsersApi(){
+  const q = ($("userSearch")?.value||"").trim();
+  if(!q) return toast("Enter search text");
+  const box = $("usersTable");
+  box.innerHTML = '<div class="loading">Searching…</div>';
+  try{
+    const data = await api("/api/v1/search/users?q="+encodeURIComponent(q));
+    const rows = data.data||[];
+    state.usersCache = rows;
+    if(!rows.length){ box.innerHTML = '<div class="empty">No matches.</div>'; return; }
+    // reuse table builder by temporarily clearing filters and calling render path
+    $("userStatusFilter").value = "";
+    box.innerHTML = `<table><thead><tr><th>User</th><th>Email</th><th>Status</th><th>Role</th><th>Actions</th></tr></thead><tbody>${
+      rows.map(u=>{
+        const id=u._id||u.id;
+        const s=String(u.status||"active").toLowerCase();
+        return `<tr>
+          <td><b>${escapeHtml(u.username||"—")}</b><div class="mono" style="color:var(--muted)">${escapeHtml(id)}</div></td>
+          <td>${escapeHtml(u.email||"—")}</td>
+          <td>${badge(u.status||"active")}</td>
+          <td>${escapeHtml(u.platformRole||"—")}</td>
+          <td><div class="actions">
+            <button class="btn" type="button" onclick="jumpToUser('${escapeHtml(id)}')">Wallet</button>
+            <button class="btn danger" type="button" onclick="deleteUser('${escapeHtml(id)}','${escapeHtml(u.username||id)}')">Delete</button>
+          </div></td></tr>`;
+      }).join("")
+    }</tbody></table>`;
+  }catch(e){ box.innerHTML = `<div class="empty">${escapeHtml(e.message)}</div>`; }
+}
+
+async function bulkEnsureWallets(){
+  const ids = parseIds($("bulkStatusUsers")?.value||"");
+  let list = ids;
+  if(!list.length) list = (state.usersCache||[]).map(u=>u._id||u.id).filter(Boolean);
+  if(!list.length) return toast("Load users or paste IDs in bulk status box");
+  if(!confirm("Ensure wallets for "+list.length+" users?")) return;
+  let ok=0, fail=0;
+  for(const id of list){
+    try{ await executeAction("wallet.ensure",{ user:id },{ memo:"bulk-ensure" }); ok++; }
+    catch{ fail++; }
+  }
+  toast(`Ensure: ${ok} ok, ${fail} failed`);
+}
+
+
+/* Users + delete */
+async function loadUsers(){
+  const box=$("usersTable");
+  box.innerHTML='<div class="loading">Loading…</div>';
+  try{
+    let rows=(await api("/api/v1/admin/users?limit=100")).data||[];
+    state.usersCache=rows;
+    const q=($("userSearch").value||"").trim().toLowerCase();
+    const st=($("userStatusFilter").value||"").toLowerCase();
+    if(q) rows=rows.filter(u=>[u._id,u.username,u.email,u.status].join(" ").toLowerCase().includes(q));
+    if(st) rows=rows.filter(u=>String(u.status||"").toLowerCase()===st);
+    if(!rows.length){ box.innerHTML='<div class="empty">No users.</div>'; return; }
+    box.innerHTML=`<table><thead><tr><th>User</th><th>Email</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead><tbody>${
+      rows.map(u=>{
+        const id=u._id||u.id; const s=String(u.status||"active").toLowerCase();
+        return `<tr>
+          <td><b>${escapeHtml(u.username||"—")}</b><div class="mono" style="color:var(--muted)">${escapeHtml(id)}</div></td>
+          <td>${escapeHtml(u.email||"—")}</td>
+          <td>${badge(u.status||"active")}</td>
+          <td>${date(u.createdAt)}</td>
+          <td><div class="actions">
+            <button class="btn" type="button" onclick="jumpToUser('${escapeHtml(id)}')">Wallet</button>
+            <button class="btn" type="button" onclick="prefillNotify('${escapeHtml(id)}')">Notify</button>
+            ${s==="active"?`<button class="btn warn" type="button" onclick="setUserStatus('${escapeHtml(id)}','suspended')">Suspend</button>
+            <button class="btn danger" type="button" onclick="setUserStatus('${escapeHtml(id)}','blocked')">Block</button>`:
+            `<button class="btn success" type="button" onclick="setUserStatus('${escapeHtml(id)}','active')">Activate</button>`}
+            <button class="btn danger" type="button" onclick="deleteUser('${escapeHtml(id)}','${escapeHtml(u.username||u.email||id)}')">Delete</button>
+          </div></td>
+        </tr>`;
+      }).join("")
+    }</tbody></table>`;
+  }catch(err){ box.innerHTML=`<div class="empty">${escapeHtml(err.message)}</div>`; }
+}
+
+async function deleteUser(id, label){
+  id = String(id || "").trim();
+  if(!id) return toast("User id required");
+  const selfId = String(state.user?._id || state.user?.id || "");
+  if(selfId && selfId === id) return toast("Cannot delete your own admin account");
+  const name = label || id;
+  if(!confirm("Permanently delete user "+name+"?\nThis uses engine action user.delete and cannot be undone.")) return;
+  try{
+    await executeAction("user.delete", { id, user: id }, { memo: "admin-hard-delete", force: true });
+    toast("User permanently deleted");
+    try{ await loadUsers(); }catch(e){}
+    try{ await loadDashboard(); }catch(e){}
+  }catch(e){ toast(e.message || "Delete failed"); }
+}
+
+
+function prefillNotify(id){ showPage("notify"); $("notifyUserId").value=id; setCtxUser(id); }
+async function setUserStatus(id, status){
+  let st=String(status).toLowerCase(); if(st==="banned") st="blocked";
+  if(!["active","suspended","blocked"].includes(st)) return toast("Invalid status");
+  let memo="";
+  if(st==="suspended"||st==="blocked"){
+    const reason=promptReason("suspend","Reason for "+st);
+    if(reason===null) return; memo=String(reason||"").trim();
+  } else if(!confirm(`Set ${id} → ${st}?`)) return;
+  try{
+    await executeAction("user.status_update",{ user:id, status:st },{ memo:memo||st });
+    toast("Status → "+st);
+    await autoNotifyFor("user.status_update:"+st, id, memo?("Reason: "+memo):"");
+    loadUsers();
+    if($("walletUser")?.value===id) loadUserWallet();
+  }catch(e){ toast(e.message); }
+}
+async function bulkStatus(status){
+  const ids=parseIds($("bulkStatusUsers").value);
+  if(!ids.length||!confirm(`${status} ${ids.length} users?`)) return;
+  let ok=0,fail=0;
+  for(const id of ids){
+    try{
+      await executeAction("user.status_update",{ user:id, status },{ memo:"bulk-"+status });
+      await autoNotifyFor("user.status_update:"+status, id);
+      ok++;
+    }catch{ fail++; }
+  }
+  $("bulkStatusMsg").textContent=`${ok} ok, ${fail} failed`;
+  loadUsers();
+}
+
+async function loadUserWallet(){
+  const id=$("walletUser").value.trim();
+  if(!id) return toast("Enter user ID");
+  const box=$("walletResult");
+  box.innerHTML='<div class="card loading">Loading…</div>';
+  try{
+    let w={}, userMeta=null, withdrawals=[], transactions=[];
+    try{ const ud=await api("/api/v1/admin/users/"+encodeURIComponent(id)); userMeta=ud.data?.user||ud.data||ud; }catch{}
+    try{
+      const data=await api("/api/v1/admin/wallet/"+encodeURIComponent(id));
+      const d=data.data||data; w=d.wallet||d||{};
+      if(Array.isArray(d.withdrawals)) withdrawals=d.withdrawals;
+    }catch{}
+    try{
+      const eng=await executeAction("wallet.view",{ user:id },{ quiet:true });
+      const step=Array.isArray(eng.result)?eng.result[0]:null;
+      const wv=(step&&step.result&&(step.result.data||step.result.wallet))||{};
+      if(wv && (wv.balance!=null||wv.totalWithdrawn!=null)) w={ ...w, ...wv };
+    }catch{}
+    if(!withdrawals.length){
+      try{ withdrawals=((await api("/api/v1/admin/withdrawals?limit=100")).data||[]).filter(x=>String(x.user?._id||x.user||"")===String(id)); }catch{}
+    }
+    try{ transactions=(await api("/api/v1/admin/transactions?user="+encodeURIComponent(id)+"&limit=100")).data||[]; }catch{}
+
+    setCtxUser(id, userMeta?.username||userMeta?.email||id);
+    if($("moneyUserId")) $("moneyUserId").value=id;
+
+    const approvedWd=withdrawals.filter(x=>String(x.status||"").toLowerCase()==="approved");
+    const sumApproved=approvedWd.reduce((s,x)=>s+(Number(x.amount)||0),0);
+    const walletWithdrawn=Number(w.totalWithdrawn)||0;
+    const displayWithdrawn=Math.max(walletWithdrawn, sumApproved);
+    const hasWallet = w && (w._id || w.balance!=null || w.totalEarned!=null);
+    const s=String(userMeta?.status||"").toLowerCase();
+
+    box.innerHTML=`
+      <div class="notice">${escapeHtml(userMeta?.username||id)} · ${badge(userMeta?.status||"—")} · <span class="mono">${escapeHtml(id)}</span>
+        ${!hasWallet?' · <b style="color:var(--danger)">NO WALLET</b>':""}</div>
+      ${!hasWallet?`<div class="warn-box">No wallet yet. Click <b>Ensure wallet</b> then credit.</div>`:""}
+      <div class="cards">
+        <div class="card"><div class="stat-label">Balance</div><div class="stat green">${money(w.balance)}</div></div>
+        <div class="card"><div class="stat-label">Pending</div><div class="stat">${money(w.pendingBalance??w.pending)}</div></div>
+        <div class="card"><div class="stat-label">Earned</div><div class="stat">${money(w.totalEarned)}</div></div>
+        <div class="card"><div class="stat-label">Withdrawn</div><div class="stat">${money(displayWithdrawn)}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">approved sum ${money(sumApproved)} · field ${money(walletWithdrawn)}</div></div>
+      </div>
+      <div class="action-group" style="margin-top:12px">
+        <h3>Wallet actions</h3>
+        <div class="toolbar">
+          <input id="walletAmount" type="number" step="0.01" min="0" placeholder="Amount" style="width:120px">
+          <input id="walletDesc" placeholder="Memo">
+          <button class="btn success" type="button" onclick="walletCredit('${escapeHtml(id)}')">Credit</button>
+          <button class="btn danger" type="button" onclick="walletDebit('${escapeHtml(id)}')">Debit</button>
+          <button class="btn primary" type="button" onclick="ensureWalletForUser('${escapeHtml(id)}').then(()=>loadUserWallet())">Ensure wallet</button>
+        </div>
+        <div id="walletActionMsg" class="msg"></div>
+        <pre id="walletActionResponse" class="engine-pre">…</pre>
+      </div>
+      <div class="actions" style="margin:12px 0">
+        ${s==="suspended"||s==="blocked"?`<button class="btn success" type="button" onclick="setUserStatus('${escapeHtml(id)}','active')">Activate</button>`:""}
+        ${s==="active"?`<button class="btn warn" type="button" onclick="setUserStatus('${escapeHtml(id)}','suspended')">Suspend</button>
+        <button class="btn danger" type="button" onclick="setUserStatus('${escapeHtml(id)}','blocked')">Block</button>`:""}
+        <button class="btn" type="button" onclick="prefillNotify('${escapeHtml(id)}')">Notify</button>
+        <button class="btn danger" type="button" onclick="deleteUser('${escapeHtml(id)}','${escapeHtml(userMeta?.username||id)}')">Delete user</button>
+      </div>
+      <div class="section-head"><h2>Withdrawals</h2></div>
+      <div class="table-wrap">${withdrawals.length?`<table><thead><tr><th>Amount</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody>${
+        withdrawals.map(x=>{
+          const wid=x._id||x.id; const st=String(x.status||"").toLowerCase();
+          return `<tr><td>${money(x.amount)}</td><td>${badge(x.status)}</td><td>${date(x.createdAt)}</td>
+          <td>${st==="pending"?`<button class="btn success" type="button" onclick="approveWithdrawal('${escapeHtml(wid)}')">Approve</button>
+          <button class="btn danger" type="button" onclick="rejectWithdrawal('${escapeHtml(wid)}')">Reject</button>`:"—"}</td></tr>`;
+        }).join("")
+      }</tbody></table>`:'<div class="empty">No withdrawals</div>'}</div>
+      <div class="section-head" style="margin-top:14px"><h2>Activity</h2></div>
+      <div class="table-wrap">${transactions.length?`<table><thead><tr><th>Type</th><th>Amount</th><th>Desc</th><th>Date</th></tr></thead><tbody>${
+        transactions.map(t=>`<tr><td>${escapeHtml(t.type||"—")}</td><td>${money(t.amount)}</td><td>${escapeHtml(t.description||"—")}</td><td>${date(t.createdAt)}</td></tr>`).join("")
+      }</tbody></table>`:'<div class="empty">No transactions</div>'}</div>`;
+  }catch(err){ box.innerHTML=`<div class="empty">${escapeHtml(err.message)}</div>`; }
+}
+
+async function walletCredit(userId){
+  if(window.__moneyBusy) return toast("Wait — request in progress");
+  window.__moneyBusy = true;
+  try{
+    userId = String(userId || ($("walletUser") && $("walletUser").value) || "").trim();
+    const amount = Number($("walletAmount") && $("walletAmount").value);
+    const description = (($("walletDesc") && $("walletDesc").value) || "").trim();
+    const out = $("walletActionMsg"), pre = $("walletActionResponse");
+    if(!userId || !(amount>0)) return toast("User + amount required");
+    if(!(await userHasWallet(userId))){ if(!(await ensureWalletForUser(userId))) return; }
+    if(!confirm("Credit " + amount + " to " + userId + "?")) return;
+    const payload = { user: userId, amount }; if(description) payload.description = description;
+    const before = await viewWalletBalance(userId);
+    if(out){ out.className = "msg"; out.textContent = "Crediting…"; }
+    const result = await executeAction("wallet.credit", payload, { memo: description || "credit" });
+    const after = await viewWalletBalance(userId);
+    if(out){ out.className = "msg ok"; out.textContent = "Credit OK · " + money(before) + " → " + money(after); }
+    if(pre) pre.textContent = "Target: " + userId + "\nBefore: " + money(before) + "\nAfter: " + money(after) + "\n\n" + JSON.stringify(result, null, 2);
+    toast("Credited");
+    await autoNotifyFor("wallet.credit", userId, description || "");
+    await loadUserWallet();
+  }catch(e){
+    const out = $("walletActionMsg"), pre = $("walletActionResponse");
+    if(out){ out.className = "msg error"; out.textContent = e.message; }
+    if(pre) pre.textContent = JSON.stringify(e.request || e.data || { error: e.message }, null, 2);
+  }finally{
+    window.__moneyBusy = false;
+  }
+}
+async function walletDebit(userId){
+  if(window.__moneyBusy) return toast("Wait — request in progress");
+  window.__moneyBusy = true;
+  try{
+    userId = String(userId || ($("walletUser") && $("walletUser").value) || "").trim();
+    const amount = Number($("walletAmount") && $("walletAmount").value);
+    const description = (($("walletDesc") && $("walletDesc").value) || "").trim();
+    const out = $("walletActionMsg"), pre = $("walletActionResponse");
+    if(!userId || !(amount>0)) return toast("User + amount required");
+    if(!confirm("Debit " + amount + " from " + userId + "?")) return;
+    const payload = { user: userId, amount }; if(description) payload.description = description;
+    const before = await viewWalletBalance(userId);
+    const result = await executeAction("wallet.debit", payload, { memo: description || "debit" });
+    const after = await viewWalletBalance(userId);
+    if(out){ out.className = "msg ok"; out.textContent = "Debit OK · " + money(before) + " → " + money(after); }
+    if(pre) pre.textContent = JSON.stringify(result, null, 2);
+    toast("Debited");
+    await loadUserWallet();
+  }catch(e){
+    const out = $("walletActionMsg"), pre = $("walletActionResponse");
+    if(out){ out.className = "msg error"; out.textContent = e.message; }
+    if(pre) pre.textContent = JSON.stringify(e.data || { error: e.message }, null, 2);
+  }finally{
+    window.__moneyBusy = false;
+  }
+}
+
+
+/* Notify */
+function applyNotifyTemplate(){
+  const map={
+    payout_ok:{ title:"Payout approved", message:"Your withdrawal has been approved and is being processed.", type:"payout" },
+    payout_no:{ title:"Payout rejected", message:"Your withdrawal could not be approved.", type:"payout" },
+    suspended:{ title:"Account suspended", message:"Your account has been suspended pending review.", type:"system" },
+    reward:{ title:"Reward received", message:"A reward has been added to your wallet.", type:"promo" }
+  };
+  const m=map[$("notifyTemplate").value]; if(!m) return;
+  $("notifyTitle").value=m.title; $("notifyMessage").value=m.message; $("notifyType").value=m.type;
+}
+async function sendSingleNotify(){
+  const user=$("notifyUserId").value.trim(), title=$("notifyTitle").value.trim(), message=$("notifyMessage").value.trim(), type=$("notifyType").value||"system";
+  if(!user||!title||!message){ $("notifyResult").className="msg error"; $("notifyResult").textContent="User, title, message required"; return; }
+  try{ await executeAction("notification.send",{ user, title, message, type }); $("notifyResult").className="msg ok"; $("notifyResult").textContent="Sent"; toast("Sent"); }
+  catch(e){ $("notifyResult").className="msg error"; $("notifyResult").textContent=e.message; }
+}
+async function sendBroadcast(){
+  const title=$("broadTitle").value.trim(), message=$("broadMessage").value.trim(), type=$("broadType").value||"system";
+  if(!title||!message||!confirm("Broadcast to all?")) return;
+  try{ await executeAction("notification.broadcast",{ title, message, type }); $("broadResult").className="msg ok"; $("broadResult").textContent="Broadcast sent"; }
+  catch(e){ $("broadResult").className="msg error"; $("broadResult").textContent=e.message; }
+}
+async function sendBulkNotify(){
+  const ids=parseIds($("bulkNotifyUsers").value);
+  const title=$("broadTitle").value.trim(), message=$("broadMessage").value.trim(), type=$("broadType").value||"system";
+  if(!ids.length||!title||!message) return toast("IDs + title + message");
+  let ok=0,fail=0;
+  for(const user of ids){ try{ await executeAction("notification.send",{ user, title, message, type }); ok++; }catch{ fail++; } }
+  $("broadResult").textContent=`Bulk: ${ok} ok, ${fail} failed`;
+}
+
+/* Actions */
+
+function normalizeActions(list){
+  return (list||[]).map(a=>{
+    if(typeof a==="string") return { name:a, enabled:true, label:a, type:"classic" };
+    const name = a.name || a.action || "";
+    return {
+      name,
+      enabled: a.enabled !== false,
+      label: a.label || a.name || a.action || name,
+      type: a.type || (a.config && a.config.type) || "universal",
+      description: a.description || "",
+      config: a.config || null,
+      raw: a
+    };
+  }).filter(a=>a.name);
+}
+
+async function loadKnownActions(){
+  try{
+    const data = await api("/api/v1/actions");
+    const rows = data.data || data.actions || [];
+    state.discoveredActions = normalizeActions(rows);
+    if(!state.discoveredActions.length) state.discoveredActions = normalizeActions(FALLBACK_ACTIONS);
+  }catch(e){
+    state.discoveredActions = normalizeActions(FALLBACK_ACTIONS);
+  }
+  const have = new Set(state.discoveredActions.map(a=>a.name));
+  normalizeActions(FALLBACK_ACTIONS).forEach(a=>{
+    if(!have.has(a.name)) state.discoveredActions.push(a);
+  });
+  state.discoveredActions.sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+  renderKnownActions();
+  populateActionSelect();
+}
+
+function renderKnownActions(){
+  const box = $("knownActionsBox"); if(!box) return;
+  const q = ($("actionSearch")?.value||"").toLowerCase();
+  let list = state.discoveredActions.filter(a => !q || (a.name+" "+a.label+" "+(a.description||"")).toLowerCase().includes(q));
+  box.innerHTML = `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">${list.length} actions · Universal Action Engine</div>
+    <div class="actions">${list.map(a=>`<button type="button" class="btn ${a.type==="universal"?"success":"primary"}" title="${escapeHtml(a.description||a.name)}" onclick="pickKnownAction('${escapeHtml(a.name)}')">${escapeHtml(a.label||a.name)}</button>`).join("")}</div>`;
+}
+
+function populateActionSelect(){
+  const sel = $("actionSelect"); if(!sel) return;
+  sel.innerHTML = '<option value="">Choose…</option>';
+  state.discoveredActions.forEach(a=>{
+    const o = document.createElement("option");
+    o.value = a.name;
+    o.textContent = a.name + (a.type === "universal" ? " · dynamic" : "");
+    sel.appendChild(o);
+  });
+}
+
+function pickKnownAction(name){ $("actionSelect").value = name; onActionSelectChange(); }
+function onActionSelectChange(){ renderFriendlyAction($("actionSelect").value || ""); }
+
+function getActionMeta(name){
+  return (state.discoveredActions||[]).find(a => a.name === name) || null;
+}
+
+function renderFriendlyAction(name){
+  const box = $("actionFriendlyFields"); if(!box) return;
+  box.innerHTML = "";
+  if(!name) return;
+  const meta = getActionMeta(name);
+  const n = name.toLowerCase();
+  const fields = [];
+  const add = (k,l,t,r,ph) => fields.push({k,l,t:t||"text",r:!!r,ph:ph||""});
+
+  if(n.startsWith("wallet.")){
+    add("user","User ID","text",true);
+    if(/credit|debit|pending_adjust/.test(n)) add("amount","Amount","number",true);
+    if(/credit|debit/.test(n)) add("description","Memo","text",false);
+  } else if(n.startsWith("user.")){
+    add("user","User ID","text",true);
+    if(n.includes("status")) add("status","Status (active|suspended|blocked)","text",true);
+    if(n.includes("role")) add("role","Role","text",true);
+  } else if(n.startsWith("withdrawal.")){
+    if(n.includes("request")){
+      add("user","User ID","text",true);
+      add("amount","Amount","number",true);
+      add("method","Method","text",false);
+      add("account","Account / bank","text",false);
+    } else {
+      add("withdrawalId","Withdrawal ID","text",true);
+      if(/reject|hold/.test(n)) add("reason","Reason","text",false);
+    }
+  } else if(n.startsWith("notification.")){
+    if(n.includes("send")) add("user","User ID","text",true);
+    add("title","Title","text",true);
+    add("message","Message","text",true);
+    add("type","Type","text",false);
+  } else if(n.startsWith("reward.")){
+    add("user","User ID","text",true);
+    add("amount","Amount","number",true);
+  } else if(n.startsWith("fraud.") || n.startsWith("device.")){
+    add("id","User ID (ObjectId)","text",true);
+    add("reason","Reason","text",false);
+  } else if(n === "transaction.find"){
+    add("user","User ID filter","text",false);
+  } else if(n === "transaction.findOne"){
+    add("id","Transaction ID","text",true);
+  } else if(n === "transaction.create"){
+    add("user","User ID","text",true);
+    add("type","Type","text",true);
+    add("amount","Amount","number",true);
+    add("description","Description","text",false);
+  } else if(n === "system.ping"){
+    /* none */
+  } else {
+    add("id","id (optional)","text",false,"Record id for update/delete");
+    add("user","user (optional)","text",false);
+    add("title","title (optional)","text",false);
+    add("amount","amount (optional)","number",false);
+  }
+
+  let htmlOut = "";
+  if(meta && meta.description){
+    htmlOut += `<div class="notice" style="margin-bottom:10px">${escapeHtml(meta.description)} · <span class="mono">${escapeHtml(meta.type||"")}</span></div>`;
+  }
+  if((meta && meta.type === "universal") || !/^(wallet|user|withdrawal|notification|reward|fraud|device|transaction|system)\./.test(n) && n !== "system.ping"){
+    htmlOut += `<div class="warn-box">Dynamic action — put custom fields in <b>Extra JSON data</b>. No new frontend code needed.</div>`;
+  }
+  htmlOut += fields.map(f => `<div class="field"><label>${escapeHtml(f.l)}${f.r?" *":""}</label>
+    <input data-action-key="${escapeHtml(f.k)}" data-req="${f.r?1:0}" type="${f.t==="number"?"number":"text"}" step="any" placeholder="${escapeHtml(f.ph||"")}"></div>`).join("")
+    || '<div class="notice">No preset fields — use Extra JSON data.</div>';
+  box.innerHTML = htmlOut;
+}
+
+function collectFriendlyData(){
+  const out = {};
+  document.querySelectorAll("#actionFriendlyFields [data-action-key]").forEach(input => {
+    let val = input.value.trim();
+    if(input.getAttribute("data-req")==="1" && !val) throw new Error(input.getAttribute("data-action-key") + " required");
+    if(!val) return;
+    out[input.getAttribute("data-action-key")] = input.type === "number" ? Number(val) : val;
+  });
+  const raw = ($("actionJsonData")?.value || "").trim();
+  if(raw){
+    let extra;
+    try { extra = JSON.parse(raw); } catch(e){ throw new Error("Extra JSON data is not valid JSON"); }
+    if(extra && typeof extra === "object" && !Array.isArray(extra)) Object.assign(out, extra);
+    else throw new Error("Extra JSON must be an object { ... }");
+  }
+  return out;
+}
+
+async function executeFriendlyAction(){
+  const action = ($("actionSelect").value || "").trim();
+  if(!action) return toast("Choose action");
+  if(action === "user.delete"){
+    const data = collectFriendlyData();
+    return deleteUser(data.user || data.id, data.user || data.id);
+  }
+  let data;
+  try { data = collectFriendlyData(); } catch(e){ return toast(e.message); }
+  const idem = ($("actionIdempotency")?.value || "").trim();
+  if(!confirm("Execute "+action+"?\n"+JSON.stringify(data,null,2))) return;
+  try{
+    const result = await executeAction(action, data, {
+      memo: ($("actionMemo")?.value || "").trim(),
+      idempotencyKey: idem || undefined
+    });
+    $("actionExecResult").className = "msg ok";
+    $("actionExecResult").textContent = "Success — see response panel";
+    showActionResult(result, "OK");
+  }catch(e){
+    $("actionExecResult").className = "msg error";
+    $("actionExecResult").textContent = e.message;
+    showActionResult(e.data || { success:false, message:e.message, action }, null);
+  }
+}
+
+async function txEngineFind(){
+  const user = ($("txEngineUser")?.value||"").trim();
+  const pre = $("txEnginePre");
+  try{
+    const data = { filter: user ? { user } : {} };
+    const result = await executeAction("transaction.find", data, { memo: "tx-find" });
+    if(pre) pre.textContent = JSON.stringify(result, null, 2);
+    toast("transaction.find OK");
+  }catch(e){ if(pre) pre.textContent = e.message + "\\n" + JSON.stringify(e.data||{},null,2); toast(e.message); }
+}
+async function txEngineFindOne(){
+  const id = ($("txEngineId")?.value||"").trim();
+  const pre = $("txEnginePre");
+  if(!id) return toast("Transaction ID required");
+  try{
+    const result = await executeAction("transaction.findOne", { id, filter: { _id: id } }, { memo: "tx-findOne" });
+    if(pre) pre.textContent = JSON.stringify(result, null, 2);
+    toast("transaction.findOne OK");
+  }catch(e){ if(pre) pre.textContent = e.message; toast(e.message); }
+}
+async function txEngineCreate(){
+  const user = ($("txCreateUser")?.value||"").trim();
+  const amount = Number($("txCreateAmount")?.value);
+  const type = ($("txCreateType")?.value||"earning").trim();
+  const description = ($("txCreateDesc")?.value||"admin").trim();
+  const pre = $("txEnginePre");
+  if(!user || !(amount>0)) return toast("User + amount required");
+  try{
+    const result = await executeAction("transaction.create", { user, type, amount, description, status: "completed" }, { memo: "tx-create" });
+    if(pre) pre.textContent = JSON.stringify(result, null, 2);
+    toast("transaction.create OK");
+    loadTransactions();
+  }catch(e){ if(pre) pre.textContent = e.message; toast(e.message); }
+}
+
+async function loadTransactions(){
+  const box=$("transactionsTable"); box.innerHTML='<div class="loading">…</div>';
+  try{
+    const params=new URLSearchParams({ limit:"100" });
+    const user=$("transactionUser").value.trim(); if(user) params.set("user", user);
+    const rows=(await api("/api/v1/admin/transactions?"+params)).data||[];
+    state.transactionsCache=rows;
+    if(!rows.length){ box.innerHTML='<div class="empty">No transactions.</div>'; return; }
+    box.innerHTML=`<table><thead><tr><th>User</th><th>Type</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>${
+      rows.map(t=>`<tr><td>${escapeHtml(t.user?.username||t.user||"—")}</td><td>${escapeHtml(t.type)}</td><td>${money(t.amount)}</td><td>${badge(t.status)}</td><td>${date(t.createdAt)}</td></tr>`).join("")
+    }</tbody></table>`;
+  }catch(err){ box.innerHTML=`<div class="empty">${escapeHtml(err.message)}</div>`; }
+}
+function formatAuditRow(a){
+  const when = date(a.at || a.createdAt);
+  const action = a.action || a.type || "—";
+  // Server audit shape: details.actor, details.withdrawalId, details.amount, user
+  const details = a.details || {};
+  const target = a.target || a.user?._id || a.user || details.user || details.withdrawalId || details.actor || "";
+  const amount = a.amount != null ? a.amount : details.amount;
+  const summary = a.summary || (
+    details.withdrawalId ? ("Payout " + shortId(details.withdrawalId) + (amount!=null ? " · " + money(amount) : "")) :
+    (a.memo || a.message || a.error || "")
+  );
+  const who = target ? shortId(typeof target === "object" ? (target._id||target.id||"") : target) : "—";
+  const ok = a.ok === false || a.success === false ? false : true;
+  const statusLabel = a.ok === false ? "failed" : (a.status && String(a.status).length < 12 ? a.status : "ok");
+  return { when, action, who, summary, amount, ok, statusLabel, raw: a };
+}
+
+async function loadAudit(){
+  const box = $("auditTable");
+  if(!box) return;
+  box.innerHTML = '<div class="loading">Loading activity…</div>';
+  try{
+    const data = await api("/api/v1/admin/audit");
+    const serverRows = data.data || data.logs || [];
+    const sessionRows = state.sessionAudit || [];
+    // Session first (richer detail), then server
+    const merged = [
+      ...sessionRows.map(a => ({ ...a, _src: "session" })),
+      ...serverRows.map(a => ({ ...a, _src: "server" }))
+    ];
+    renderAuditTable(merged);
+  }catch(e){
+    renderSessionAudit();
+  }
+}
+
+function renderSessionAudit(){
+  renderAuditTable((state.sessionAudit||[]).map(a => ({ ...a, _src: "session" })));
+}
+
+function renderAuditTable(rows){
+  const box = $("auditTable");
+  if(!box) return;
+  if(!rows || !rows.length){
+    box.innerHTML = '<div class="empty">No activity yet. Actions you run will show up here.</div>';
+    return;
+  }
+  const formatted = rows.map(formatAuditRow);
+  box.innerHTML = `
+    <div class="notice" style="margin:12px">Recent admin actions · who · what · amount</div>
+    <table>
+      <thead>
+        <tr>
+          <th>When</th>
+          <th>Action</th>
+          <th>Who / target</th>
+          <th>What happened</th>
+          <th>Amount</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${formatted.map((r,i) => `
+          <tr>
+            <td style="white-space:nowrap">${escapeHtml(r.when)}</td>
+            <td><b>${escapeHtml(r.action)}</b></td>
+            <td class="mono" style="font-size:12px">${escapeHtml(r.who)}</td>
+            <td>${escapeHtml(r.summary || "—")}</td>
+            <td>${r.amount != null ? money(r.amount) : "—"}</td>
+            <td>${r.ok ? badge("ok") : badge("failed")}</td>
+          </tr>`).join("")}
+      </tbody>
+    </table>`;
+}
+
+
+
+/* Admin alerts badge */
+async function refreshAdminNotifs(){
+  const list = $("adminNotifList");
+  const dot = $("adminNotifDot");
+  const items = [];
+  try{
+    const dash = await api("/api/v1/admin/dashboard");
+    const d = dash.data || {};
+    const pendWd = Number(d.withdrawals?.pending?.count ?? d.pendingWithdrawals ?? 0);
+    if(pendWd > 0){
+      items.push({ t: pendWd + " pending payout" + (pendWd>1?"s":""), m: "Open Payouts queue to review", page: "queue" });
+    }
+  }catch(e){}
+  try{
+    const subs = await api("/api/v1/admin/sponsored-tasks/submissions/list?status=pending");
+    const n = (subs.data || []).length;
+    if(n > 0){
+      items.push({ t: n + " proof" + (n>1?"s":"") + " to review", m: "Sponsored task submissions waiting", page: "sponsored" });
+    }
+  }catch(e){}
+  const total = items.length;
+  // sum counts for badge number
+  let badgeN = 0;
+  items.forEach(i => {
+    const m = String(i.t).match(/^(\d+)/);
+    if(m) badgeN += Number(m[1]);
+  });
+  if(dot){
+    if(badgeN > 0){ dot.textContent = badgeN > 99 ? "99+" : String(badgeN); dot.classList.add("show"); }
+    else { dot.classList.remove("show"); }
+  }
+  if(list){
+    if(!items.length) list.innerHTML = '<div class="empty" style="padding:16px">No alerts</div>';
+    else list.innerHTML = items.map(i => `<div class="item" onclick="showPage('${i.page}');$('adminNotifDrop').classList.remove('open')"><div class="t">${escapeHtml(i.t)}</div><div class="m">${escapeHtml(i.m)}</div></div>`).join("");
+  }
+  return badgeN;
+}
+function toggleAdminNotifs(){
+  const drop = $("adminNotifDrop");
+  if(!drop) return;
+  drop.classList.toggle("open");
+  if(drop.classList.contains("open")) refreshAdminNotifs();
+}
+document.addEventListener("click", (e) => {
+  const drop = $("adminNotifDrop");
+  const btn = $("adminNotifBtn");
+  if(drop && btn && drop.classList.contains("open") && !drop.contains(e.target) && !btn.contains(e.target)){
+    drop.classList.remove("open");
+  }
+});
+
+function openEditTask(id){
+  const t = (state.spTasksCache || []).find(x => String(x._id||x.id) === String(id));
+  if(!t) return toast("Task not found — refresh list");
+  $("editTaskId").value = id;
+  $("editTitle").value = t.title || "";
+  $("editDesc").value = t.description || "";
+  $("editUrl").value = t.targetUrl || "";
+  $("editImageUrl").value = t.imageUrl || "";
+  $("editReward").value = t.rewardAmount != null ? t.rewardAmount : "";
+  $("editMax").value = t.maxCompletions != null ? t.maxCompletions : "";
+  $("editNeedsProof").checked = t.needsProof !== false;
+  $("editActive").checked = !!t.active;
+  $("editTaskMsg").textContent = "";
+  $("editTaskModal").classList.add("show");
+}
+function closeEditTask(){ $("editTaskModal")?.classList.remove("show"); }
+
+async function saveEditTask(){
+  const id = $("editTaskId").value;
+  const body = {
+    title: ($("editTitle").value || "").trim(),
+    description: ($("editDesc").value || "").trim(),
+    targetUrl: ($("editUrl").value || "").trim(),
+    imageUrl: ($("editImageUrl").value || "").trim(),
+    rewardAmount: Number($("editReward").value || 0),
+    needsProof: !!$("editNeedsProof").checked,
+    active: !!$("editActive").checked
+  };
+  const maxRaw = ($("editMax").value || "").trim();
+  body.maxCompletions = maxRaw === "" ? null : Number(maxRaw);
+  if(!body.title || !body.targetUrl){ $("editTaskMsg").className="msg error"; $("editTaskMsg").textContent="Title and URL required"; return; }
+  try{
+    await api("/api/v1/admin/sponsored-tasks/"+encodeURIComponent(id), { method:"PATCH", body: JSON.stringify(body) });
+    toast("Task updated");
+    closeEditTask();
+    await loadSponsoredTasksAdmin();
+  }catch(e){
+    $("editTaskMsg").className="msg error";
+    $("editTaskMsg").textContent = e.message;
+  }
+}
+
+async function deleteSponsoredTask(id){
+  if(!id) return;
+  if(!confirm("Permanently delete this sponsored task?\nUses engine action sponsored.delete — cannot be undone.")) return;
+  try{
+    // Same pattern as user.delete: Action → Resource → operation delete · data.id
+    await executeAction("sponsored.delete", { id: String(id) }, { memo: "admin-hard-delete", force: true });
+    toast("Sponsored task permanently deleted");
+    await loadSponsoredTasksAdmin();
+    await loadSponsoredSubs();
+  }catch(e){
+    toast(e.message || "Delete failed — ensure action sponsored.delete is enabled in the API");
+  }
+}
+
+
+/* —— Landing page redacted payout proofs —— */
+const LP_KEY = "wf_landing_proofs";
+function getLandingProofs(){
+  try{
+    const arr = JSON.parse(localStorage.getItem(LP_KEY) || "[]");
+    return Array.isArray(arr) ? arr : [];
+  }catch(e){ return []; }
+}
+function setLandingProofs(list){
+  localStorage.setItem(LP_KEY, JSON.stringify(list.slice(0, 12)));
+  renderLandingProofs();
+}
+function fileToCompressedDataUrl(file, maxW, quality){
+  return new Promise((resolve, reject) => {
+    if(!file.type || !file.type.startsWith("image/")) return reject(new Error("Choose an image"));
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      try{
+        let w = img.naturalWidth || img.width;
+        let h = img.naturalHeight || img.height;
+        if(w > maxW){ h = Math.round(h * (maxW / w)); w = maxW; }
+        const c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        c.getContext("2d").drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        let q = quality, dataUrl = c.toDataURL("image/jpeg", q);
+        while(dataUrl.length > 400000 && q > 0.45){ q -= 0.08; dataUrl = c.toDataURL("image/jpeg", q); }
+        resolve(dataUrl);
+      }catch(err){ URL.revokeObjectURL(url); reject(err); }
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Could not read image")); };
+    img.src = url;
+  });
+}
+
+
+
+
+
+
+
+/* —— Payout history (approved + rejected) —— */
+async function loadPayoutHistory(){
+  const box = $("payoutHistoryTable");
+  if(box) box.innerHTML = '<div class="loading">Loading…</div>';
+  try{
+    // Prefer full withdrawals list from cache / API
+    let rows = [];
+    try{
+      if(typeof loadWithdrawals === "function"){
+        await loadWithdrawals();
+      }
+    }catch(e){}
+    rows = (state.withdrawalsCache || []).slice();
+    if(!rows.length){
+      // try engine / API fallbacks commonly used
+      try{
+        const r = await executeAction("withdrawal.find", { limit: 200 }, { silent: true });
+        const data = r?.result?.[0]?.result?.data || r?.result?.[0]?.result || r?.data || [];
+        if(Array.isArray(data)) rows = data;
+      }catch(e){}
+    }
+    if(!rows.length){
+      try{
+        const res = await api("/api/v1/admin/withdrawals");
+        const data = res?.data || res?.withdrawals || [];
+        if(Array.isArray(data)) rows = data;
+      }catch(e){}
+    }
+    state.payoutHistoryCache = rows;
+    renderPayoutHistory();
+  }catch(e){
+    if(box) box.innerHTML = '<div class="empty">'+(e.message||"Failed to load")+'</div>';
+  }
+}
+
+function wdBankInfo(w){
+  const b = w.bank || w.bankDetails || w.payout || w.payment || {};
+  const name = w.accountName || w.account_name || b.accountName || b.account_name || w.fullName || "—";
+  const number = w.accountNumber || w.account_number || b.accountNumber || b.account_number || w.account || "—";
+  const bank = w.bankName || w.bank_name || b.bankName || b.bank_name || b.name || w.bank || "—";
+  const code = w.bankCode || w.bank_code || b.bankCode || b.code || "";
+  return { name, number, bank, code };
+}
+
+function renderPayoutHistory(){
+  const box = $("payoutHistoryTable");
+  if(!box) return;
+  const filt = ($("phFilter")?.value || "all");
+  const q = (($("phSearch")?.value || "").trim().toLowerCase());
+  let rows = (state.payoutHistoryCache || state.withdrawalsCache || []).filter(w => {
+    const st = String(w.status||"").toLowerCase();
+    return st === "approved" || st === "rejected" || st === "paid" || st === "completed";
+  });
+  const approved = rows.filter(w => /approved|paid|completed/.test(String(w.status||"").toLowerCase()));
+  const rejected = rows.filter(w => String(w.status||"").toLowerCase() === "rejected");
+  if($("phStatApproved")) $("phStatApproved").textContent = String(approved.length);
+  if($("phStatRejected")) $("phStatRejected").textContent = String(rejected.length);
+
+  if(filt === "approved") rows = approved;
+  else if(filt === "rejected") rows = rejected;
+
+  if(q){
+    rows = rows.filter(w => {
+      const bank = wdBankInfo(w);
+      const blob = [w.user, w.userId, w.username, w.email, bank.name, bank.number, bank.bank, w.reason, w.rejectionReason, w.adminNote, w._id, w.id].join(" ").toLowerCase();
+      return blob.includes(q);
+    });
+  }
+
+  if(!rows.length){
+    box.innerHTML = '<div class="empty">No approved or rejected withdrawals in this view</div>';
+    return;
+  }
+
+  box.innerHTML = `<table><thead><tr>
+    <th>User / Account ID</th>
+    <th>Amount</th>
+    <th>Bank details</th>
+    <th>Status</th>
+    <th>Reason / note</th>
+    <th>Dates</th>
+  </tr></thead><tbody>${
+    rows.map(w => {
+      const id = w._id || w.id || "";
+      const uid = w.user || w.userId || w.user_id || "";
+      const bank = wdBankInfo(w);
+      const st = String(w.status||"").toLowerCase();
+      const reason = w.rejectionReason || w.reason || w.adminNote || w.note || (st==="rejected" ? "—" : "—");
+      const created = w.createdAt || w.created_at || w.requestedAt;
+      const processed = w.processedAt || w.updatedAt || w.reviewedAt || w.approvedAt || w.rejectedAt;
+      return `<tr>
+        <td>
+          <b>${escapeHtml(w.username || w.email || shortId(uid) || "—")}</b>
+          <div class="mono meta">User: ${escapeHtml(shortId(uid))}</div>
+          <div class="mono meta">WD: ${escapeHtml(shortId(id))}</div>
+        </td>
+        <td><b>${escapeHtml(typeof money==="function"?money(w.amount):w.amount)}</b></td>
+        <td style="font-size:12px;line-height:1.45">
+          <div><b>${escapeHtml(String(bank.bank))}</b></div>
+          <div>${escapeHtml(String(bank.name))}</div>
+          <div class="mono">${escapeHtml(String(bank.number))}</div>
+          ${bank.code?`<div class="meta">Code: ${escapeHtml(String(bank.code))}</div>`:""}
+        </td>
+        <td>${badge(st==="completed"||st==="paid"?"approved":st)}</td>
+        <td style="font-size:12px;max-width:220px">${escapeHtml(String(reason))}</td>
+        <td style="font-size:11px;white-space:nowrap">
+          <div>Req: ${created?date(created):"—"}</div>
+          <div>Proc: ${processed?date(processed):"—"}</div>
+        </td>
+      </tr>`;
+    }).join("")
+  }</tbody></table>`;
+}
+
+
+/* WatchFlix Ads admin — variable slots, image upload, submission review */
+const WF_ADS_KEY = "wf_watchflix_ads_v2";
+const WF_SUB_KEY = "wf_ads_submissions_v1";
+const WCOIN_PER_NAIRA = 5;
+
+function getWfStore(){
+  try{
+    const s = JSON.parse(localStorage.getItem(WF_ADS_KEY)||"null");
+    if(s && Array.isArray(s.campaigns)) return s;
+  }catch(e){}
+  return { dailyLimit: 10, campaigns: [] };
+}
+function setWfStore(s){ localStorage.setItem(WF_ADS_KEY, JSON.stringify(s)); }
+function getWfSubs(){
+  try{ return JSON.parse(localStorage.getItem(WF_SUB_KEY)||"[]"); }catch(e){ return []; }
+}
+function setWfSubs(list){ localStorage.setItem(WF_SUB_KEY, JSON.stringify(list.slice(0,500))); }
+
+function loadWfAdsAdminForm(){
+  renderWfCampaigns();
+  renderWfSubs();
+  const s = getWfStore();
+  if($("wfDailyLimit")) $("wfDailyLimit").value = s.dailyLimit != null ? s.dailyLimit : 10;
+  if($("wfStatLimit")) $("wfStatLimit").textContent = String(s.dailyLimit != null ? s.dailyLimit : 10);
+  if($("wfStatCamps")) $("wfStatCamps").textContent = String((s.campaigns||[]).length);
+}
+
+function saveWfGlobal(){
+  const s = getWfStore();
+  s.dailyLimit = Math.max(1, Number($("wfDailyLimit")?.value||10));
+  setWfStore(s);
+  if($("wfStatLimit")) $("wfStatLimit").textContent = String(s.dailyLimit);
+  const m = $("wfGlobalMsg");
+  if(m){ m.className="msg ok"; m.textContent="Daily limit: "+s.dailyLimit; }
+  toast("Saved");
+}
+
+function renderWfCampaigns(){
+  const box = $("wfCampaignTable");
+  if(!box) return;
+  const rows = getWfStore().campaigns || [];
+  if($("wfStatCamps")) $("wfStatCamps").textContent = String(rows.length);
+  if(!rows.length){ box.innerHTML = '<div class="empty">No campaigns yet</div>'; return; }
+  box.innerHTML = `<table><thead><tr><th>Title</th><th>Offers</th><th>Reward</th><th>Status</th><th></th></tr></thead><tbody>${
+    rows.map(c => {
+      const n = (c.slots&&c.slots.length) || 0;
+      return `<tr>
+        <td><b>${escapeHtml(c.title||"—")}</b><div class="meta mono">${escapeHtml(c.id)}</div></td>
+        <td>${n}</td>
+        <td>${escapeHtml(c.rewardWcoin)} WC</td>
+        <td>${c.active!==false?badge("success"):badge("danger")}</td>
+        <td class="actions">
+          <button class="btn" type="button" onclick="toggleWfCampaign('${escapeHtml(c.id)}')">${c.active!==false?"Deactivate":"Activate"}</button>
+          <button class="btn primary" type="button" onclick="openWfEditor('${escapeHtml(c.id)}')">Edit</button>
+          <button class="btn danger" type="button" onclick="deleteWfCampaign('${escapeHtml(c.id)}')">Delete</button>
+        </td>
+      </tr>`;
+    }).join("")
+  }</tbody></table>`;
+}
+
+function emptySlot(){ return { title:"", description:"", imageUrl:"", cta:"Go!", url:"" }; }
+
+function openWfEditor(id){
+  const s = getWfStore();
+  const ed = $("wfEditor");
+  if(!ed) return;
+  ed.style.display = "block";
+  let c = id ? s.campaigns.find(x => String(x.id)===String(id)) : null;
+  if(!c){
+    c = { id: "c_"+Date.now().toString(36), title:"", active:true, rewardWcoin:150, durationSec:12, slots:[emptySlot(),emptySlot(),emptySlot()] };
+    $("wfEditorTitle").textContent = "New pack";
+  } else $("wfEditorTitle").textContent = "Edit pack";
+  $("wfEditId").value = c.id;
+  $("wfEditTitle").value = c.title || "";
+  $("wfEditActive").value = c.active === false ? "false" : "true";
+  $("wfEditReward").value = c.rewardWcoin != null ? c.rewardWcoin : 150;
+  $("wfEditSec").value = c.durationSec != null ? c.durationSec : 12;
+  $("wfEditSlotCount").value = Math.max(1, Math.min(10, (c.slots&&c.slots.length)||1));
+  window._wfEditSlots = (c.slots && c.slots.length ? c.slots.map(x => ({...x})) : [emptySlot()]);
+  rebuildWfSlots();
+  $("wfEditMsg").textContent = "";
+  ed.scrollIntoView({ behavior:"smooth", block:"start" });
+}
+
+function closeWfEditor(){ const ed=$("wfEditor"); if(ed) ed.style.display="none"; }
+
+function rebuildWfSlots(){
+  const n = Math.max(1, Math.min(10, Number($("wfEditSlotCount")?.value||1)));
+  let slots = window._wfEditSlots || [];
+  while(slots.length < n) slots.push(emptySlot());
+  slots = slots.slice(0, n);
+  window._wfEditSlots = slots;
+  const box = $("wfEditSlots");
+  if(!box) return;
+  box.innerHTML = slots.map((sl,i) => `
+    <div class="action-group" style="margin:0">
+      <h3>Offer ${i+1}</h3>
+      <div class="field"><label>Title</label><input id="wfSlot${i}title" value="${escapeHtml(sl.title||"")}" oninput="syncWfSlot(${i},'title',this.value)"></div>
+      <div class="field"><label>Description</label><textarea id="wfSlot${i}desc" oninput="syncWfSlot(${i},'description',this.value)">${escapeHtml(sl.description||"")}</textarea></div>
+      <div class="field">
+        <label>Image</label>
+        <div class="file-row">
+          <input type="file" id="wfSlot${i}file" accept="image/*" onchange="uploadWfSlotImage(${i}, this)">
+        </div>
+        <img id="wfSlot${i}prev" class="task-preview" alt="" style="${sl.imageUrl?'display:block':''}" src="${escapeHtml(sl.imageUrl||"")}">
+        <input id="wfSlot${i}img" type="hidden" value="${escapeHtml(sl.imageUrl||"")}">
+        <div class="meta" style="font-size:11px;margin-top:4px;color:var(--muted)">Upload like sponsored banners (Cloudinary)</div>
+      </div>
+      <div class="field"><label>CTA label</label><input id="wfSlot${i}cta" value="${escapeHtml(sl.cta||"Go!")}" oninput="syncWfSlot(${i},'cta',this.value)"></div>
+      <div class="field"><label>Direct link</label><input id="wfSlot${i}url" value="${escapeHtml(sl.url||"")}" placeholder="https://…" oninput="syncWfSlot(${i},'url',this.value)"></div>
+    </div>
+  `).join("");
+}
+
+function syncWfSlot(i, key, val){
+  if(!window._wfEditSlots) window._wfEditSlots = [];
+  if(!window._wfEditSlots[i]) window._wfEditSlots[i] = emptySlot();
+  window._wfEditSlots[i][key] = val;
+}
+
+async function uploadWfSlotImage(i, input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  const msg = $("wfEditMsg");
+  try{
+    if(msg){ msg.className="msg"; msg.textContent="Uploading image for offer "+(i+1)+"…"; }
+    const form = new FormData();
+    form.append("title", "WfAdsSlot "+Date.now());
+    form.append("description", "WatchFlix Ads slot image");
+    form.append("targetUrl", "https://watchflix.app/ads-slot");
+    form.append("rewardAmount", "1");
+    form.append("platform", "internal");
+    form.append("needsProof", "false");
+    form.append("active", "false");
+    form.append("currency", "NGN");
+    form.append("image", file, file.name||"slot.jpg");
+    const data = await apiUpload("/api/v1/admin/sponsored-tasks", form);
+    const imageUrl = data?.data?.imageUrl || "";
+    if(!imageUrl) throw new Error("No imageUrl returned");
+    syncWfSlot(i, "imageUrl", imageUrl);
+    const prev = $("wfSlot"+i+"prev");
+    const hid = $("wfSlot"+i+"img");
+    if(prev){ prev.src = imageUrl; prev.style.display = "block"; }
+    if(hid) hid.value = imageUrl;
+    const tid = data?.data?._id || data?.data?.id;
+    if(tid){
+      try{ await executeAction("sponsored.delete", { id: String(tid) }, { memo:"wfads-img", force:true }); }
+      catch(e){
+        try{ await api("/api/v1/admin/sponsored-tasks/"+encodeURIComponent(tid), { method:"PATCH", body: JSON.stringify({ active:false }) }); }catch(e2){}
+      }
+    }
+    if(msg){ msg.className="msg ok"; msg.textContent="Image saved for offer "+(i+1); }
+  }catch(e){
+    if(msg){ msg.className="msg error"; msg.textContent=e.message||"Upload failed"; }
+  }
+}
+
+function saveWfCampaign(){
+  const n = Math.max(1, Math.min(10, Number($("wfEditSlotCount")?.value||1)));
+  const slots = [];
+  for(let i=0;i<n;i++){
+    const fromMem = (window._wfEditSlots||[])[i] || emptySlot();
+    slots.push({
+      title: ($("wfSlot"+i+"title")?.value||"").trim() || fromMem.title || ("Offer "+(i+1)),
+      description: ($("wfSlot"+i+"desc")?.value||"").trim() || fromMem.description || "",
+      imageUrl: ($("wfSlot"+i+"img")?.value||"").trim() || fromMem.imageUrl || "",
+      cta: ($("wfSlot"+i+"cta")?.value||"").trim() || fromMem.cta || "Go!",
+      url: ($("wfSlot"+i+"url")?.value||"").trim() || fromMem.url || ""
+    });
+  }
+  const row = {
+    id: $("wfEditId").value,
+    title: ($("wfEditTitle")?.value||"").trim() || "WatchFlix Ads",
+    active: ($("wfEditActive")?.value||"true") === "true",
+    rewardWcoin: Number($("wfEditReward")?.value||150),
+    durationSec: Number($("wfEditSec")?.value||12),
+    slots
+  };
+  const s = getWfStore();
+  const idx = s.campaigns.findIndex(x => String(x.id)===String(row.id));
+  if(idx>=0) s.campaigns[idx] = row; else s.campaigns.push(row);
+  setWfStore(s);
+  $("wfEditMsg").className="msg ok";
+  $("wfEditMsg").textContent="Saved · "+slots.length+" offer(s)";
+  toast("Campaign saved");
+  renderWfCampaigns();
+  closeWfEditor();
+}
+
+function toggleWfCampaign(id){
+  const s = getWfStore();
+  const c = s.campaigns.find(x => String(x.id)===String(id));
+  if(!c) return;
+  c.active = !(c.active !== false);
+  setWfStore(s);
+  renderWfCampaigns();
+  toast(c.active?"Activated":"Deactivated");
+}
+function deleteWfCampaign(id){
+  if(!confirm("Delete this pack?")) return;
+  const s = getWfStore();
+  s.campaigns = (s.campaigns||[]).filter(x => String(x.id)!==String(id));
+  setWfStore(s);
+  renderWfCampaigns();
+  toast("Deleted");
+}
+
+function renderWfSubs(){
+  const box = $("wfSubTable");
+  if(!box) return;
+  const filt = ($("wfSubFilter")?.value||"pending");
+  let rows = getWfSubs();
+  const pend = rows.filter(r => r.status==="pending").length;
+  const appr = rows.filter(r => r.status==="approved").length;
+  if($("wfStatPending")) $("wfStatPending").textContent = String(pend);
+  if($("wfStatApproved")) $("wfStatApproved").textContent = String(appr);
+  if(filt !== "all") rows = rows.filter(r => r.status === filt);
+  if(!rows.length){ box.innerHTML = '<div class="empty">No submissions</div>'; updateWfBulkBar(); return; }
+  box.innerHTML = `<table><thead><tr>
+    <th><input type="checkbox" class="check" id="wfCheckAll" onchange="toggleWfCheckAll(this)"></th>
+    <th>User</th><th>Task</th><th>Session</th><th>Started</th><th>Completed</th><th>Reward</th><th>Status</th><th></th>
+  </tr></thead><tbody>${
+    rows.map(r => {
+      const id = r.id;
+      return `<tr>
+        <td>${r.status==="pending"?`<input type="checkbox" class="check wf-sub-check" data-id="${escapeHtml(id)}" onchange="updateWfBulkBar()">`:""}</td>
+        <td><b>${escapeHtml(r.username||"—")}</b><div class="mono meta">${escapeHtml(shortId(r.user))}</div></td>
+        <td>${escapeHtml(r.taskTitle||r.task)}<div class="mono meta">${escapeHtml(shortId(r.task))}</div></td>
+        <td class="mono" style="font-size:11px">${escapeHtml(r.session||"—")}</td>
+        <td style="white-space:nowrap;font-size:12px">${r.startedAt?date(r.startedAt):"—"}</td>
+        <td style="white-space:nowrap;font-size:12px">${r.completedAt?date(r.completedAt):"—"}</td>
+        <td>${escapeHtml(r.rewardWcoin)} WC</td>
+        <td>${badge(r.status)}${r.rejectionReason?`<div class="meta">${escapeHtml(r.rejectionReason)}</div>`:""}</td>
+        <td class="actions">${r.status==="pending"?`
+          <button class="btn success" type="button" onclick="reviewWfSub('${escapeHtml(id)}','approved')">Approve</button>
+          <button class="btn danger" type="button" onclick="reviewWfSub('${escapeHtml(id)}','rejected')">Reject</button>`:"—"}</td>
+      </tr>`;
+    }).join("")
+  }</tbody></table>`;
+  updateWfBulkBar();
+}
+
+function toggleWfCheckAll(el){
+  document.querySelectorAll(".wf-sub-check").forEach(c => { c.checked = !!el.checked; });
+  updateWfBulkBar();
+}
+function updateWfBulkBar(){
+  const n = document.querySelectorAll(".wf-sub-check:checked").length;
+  const bar = $("wfBulkBar");
+  if($("wfBulkCount")) $("wfBulkCount").textContent = n + " selected";
+  if(bar) bar.classList.toggle("show", n > 0);
+}
+function selectedWfSubIds(){
+  return [...document.querySelectorAll(".wf-sub-check:checked")].map(c => c.getAttribute("data-id"));
+}
+
+async function reviewWfSub(id, status){
+  let reason = "";
+  if(status === "rejected"){
+    reason = prompt("Rejection reason (optional)") || "";
+  }
+  await applyWfReview([id], status, reason);
+}
+
+async function bulkWfSubs(status){
+  const ids = selectedWfSubIds();
+  if(!ids.length) return toast("Select submissions first");
+  let reason = "";
+  if(status === "rejected"){
+    reason = prompt("Rejection reason for all selected (optional)") || "";
+  }
+  if(!confirm((status==="approved"?"Approve":"Reject") + " " + ids.length + " submission(s)?")) return;
+  await applyWfReview(ids, status, reason);
+}
+
+async function applyWfReview(ids, status, reason){
+  const list = getWfSubs();
+  let credited = 0, failed = 0;
+  for(const id of ids){
+    const row = list.find(r => String(r.id)===String(id));
+    if(!row || row.status !== "pending") continue;
+    if(status === "approved"){
+      const amountNgn = Math.max(1, Math.round(Number(row.rewardWcoin||0) / WCOIN_PER_NAIRA));
+      try{
+        await executeAction("wallet.credit", {
+          user: row.user,
+          amount: amountNgn,
+          description: "WatchFlix Ads · " + (row.taskTitle||row.task) + " · " + (row.session||"")
+        }, { memo: "wfads-approve" });
+        row.status = "approved";
+        row.rejectionReason = "";
+        row.reviewedAt = new Date().toISOString();
+        credited++;
+      }catch(e){
+        failed++;
+        toast(e.message||"Credit failed for "+(row.username||id));
+      }
+    } else {
+      row.status = "rejected";
+      row.rejectionReason = reason || "";
+      row.reviewedAt = new Date().toISOString();
+    }
+  }
+  setWfSubs(list);
+  renderWfSubs();
+  if(status==="approved") toast("Approved "+credited+(failed?" · "+failed+" failed":""));
+  else toast("Rejected "+ids.length);
+}
+
+
+
+
+/* Landing proofs — mirror sponsored campaign image upload */
+function clearLpImage(){
+  const f = $("lpImageFile");
+  const prev = $("lpImagePreview");
+  if(f) f.value = "";
+  if(prev){ prev.src = ""; prev.style.display = "none"; }
+  state.lpPendingFile = null;
+  const msg = $("lpMsg");
+  if(msg){ msg.className = "msg"; msg.textContent = ""; }
+}
+
+async function onLpImageFile(input){
+  const file = input.files && input.files[0];
+  const msg = $("lpMsg");
+  const prev = $("lpImagePreview");
+  if(!file){
+    clearLpImage();
+    return;
+  }
+  try{
+    state.lpPendingFile = file;
+    const url = URL.createObjectURL(file);
+    if(prev){ prev.src = url; prev.style.display = "block"; }
+    if($("lpUrl")) $("lpUrl").value = "";
+    if(msg){ msg.className = "msg ok"; msg.textContent = "Selected: " + (file.name || "image") + " — tap Add to landing feed"; }
+  }catch(e){
+    if(msg){ msg.className = "msg error"; msg.textContent = e.message || "Image failed"; }
+  }
+}
+
+async function addLandingProofs(){
+  const msg = $("lpMsg");
+  const urlPaste = ($("lpUrl")?.value || "").trim();
+  const fileInput = $("lpImageFile");
+  const file = state.lpPendingFile || (fileInput && fileInput.files && fileInput.files[0]) || null;
+
+  if(!urlPaste && !file){
+    if(msg){ msg.className = "msg error"; msg.textContent = "Choose an image or paste a URL"; }
+    return;
+  }
+  const btn = $("lpAddBtn");
+  if(btn) btn.disabled = true;
+  try{
+    const list = getLandingProofs();
+    if(urlPaste){
+      list.push({ url: urlPaste, at: new Date().toISOString(), source: "url" });
+      if($("lpUrl")) $("lpUrl").value = "";
+    }
+    if(file){
+      if(msg){ msg.className = "msg"; msg.textContent = "Uploading to Cloudinary…"; }
+      const form = new FormData();
+      form.append("title", "LandingProof " + Date.now());
+      form.append("description", "Redacted payout proof for landing page — do not show as campaign");
+      form.append("targetUrl", "https://watchflix.app/landing-proof");
+      form.append("rewardAmount", "1");
+      form.append("platform", "internal");
+      form.append("needsProof", "false");
+      form.append("active", "false");
+      form.append("currency", "NGN");
+      form.append("image", file, file.name || "proof.jpg");
+      const data = await apiUpload("/api/v1/admin/sponsored-tasks", form);
+      const imageUrl = (data && data.data && data.data.imageUrl) || (data && data.imageUrl) || "";
+      if(!imageUrl) throw new Error("No imageUrl returned — try the same file under Sponsored → Campaign image first");
+      list.push({ url: imageUrl, at: new Date().toISOString(), source: "cloudinary", taskId: (data.data && (data.data._id || data.data.id)) || null });
+      const tid = data.data && (data.data._id || data.data.id);
+      if(tid){
+        try{
+          await executeAction("sponsored.delete", { id: String(tid) }, { memo: "landing-proof-cleanup", force: true });
+        }catch(e){
+          try{
+            await api("/api/v1/admin/sponsored-tasks/" + encodeURIComponent(tid), {
+              method: "PATCH",
+              body: JSON.stringify({ active: false })
+            });
+          }catch(e2){}
+        }
+      }
+    }
+    setLandingProofs(list);
+    clearLpImage();
+    if(msg){ msg.className = "msg ok"; msg.textContent = "Saved · " + getLandingProofs().length + " proof(s) on landing feed"; }
+    toast("Landing proofs updated");
+    renderLandingProofs();
+  }catch(e){
+    console.error(e);
+    if(msg){ msg.className = "msg error"; msg.textContent = e.message || "Upload failed"; }
+    toast(e.message || "Upload failed");
+  }finally{
+    if(btn) btn.disabled = false;
+  }
+}
+
+
+
+function removeLandingProof(i){
+  const list = getLandingProofs();
+  list.splice(i, 1);
+  setLandingProofs(list);
+  toast("Removed");
+}
+function clearLandingProofs(){
+  if(!confirm("Clear all landing payout proofs?")) return;
+  localStorage.removeItem(LP_KEY);
+  renderLandingProofs();
+  toast("Cleared");
+}
+function exportLandingProofs(){
+  const urls = getLandingProofs().map(x => x.url || x).filter(Boolean);
+  const text = JSON.stringify(urls, null, 2);
+  navigator.clipboard.writeText(text).then(()=>toast("Copied URL list")).catch(()=>prompt("Copy:", text));
+}
+function renderLandingProofs(){
+  const box = $("lpGrid");
+  const list = getLandingProofs();
+  if($("lpCount")) $("lpCount").textContent = String(list.length);
+  if(!box) return;
+  if(!list.length){
+    box.innerHTML = '<div class="empty">No proofs yet — upload 6–8 redacted payout screenshots</div>';
+    return;
+  }
+  box.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px">` +
+    list.map((item,i) => {
+      const src = typeof item === "string" ? item : item.url;
+      const label = (item && item.name) ? escapeHtml(item.name) : ("Proof "+(i+1));
+      return `<div style="background:#fafbfc;border-radius:12px;padding:10px;border:1px solid var(--border)">
+        <img src="${escapeHtml(src)}" alt="" style="width:100%;height:90px;object-fit:cover;border-radius:8px;cursor:pointer;background:#eee" onclick="openProofModal(this.src)" onerror="this.style.opacity=.3">
+        <div class="meta" style="margin-top:6px;font-size:11px">${label}</div>
+        <button class="btn danger" type="button" style="margin-top:6px;width:100%" onclick="removeLandingProof(${i})">Remove</button>
+      </div>`;
+    }).join("") + `</div>`;
+}
+
+
+/* Sponsored tasks admin */
+state.spSubsCache = [];
+state.spTasksCache = [];
+
+function openProofModal(url){
+  if(!url) return;
+  const m = $("proofModal"); const img = $("proofModalImg");
+  if(!m || !img) return;
+  img.src = url;
+  m.classList.add("show");
+}
+function closeProofModal(){
+  const m = $("proofModal"); const img = $("proofModalImg");
+  if(m) m.classList.remove("show");
+  if(img) img.src = "";
+}
+
+function onSpImageUrl(el){
+  const v = (el.value||"").trim();
+  $("spImage").value = v;
+  const prev = $("spImagePreview");
+  if(v){ prev.src = v; prev.style.display = "block"; }
+  else { prev.style.display = "none"; }
+}
+
+async function onSpImageFile(input){
+  const file = input.files && input.files[0];
+  const msg = $("spCreateMsg");
+  const prev = $("spImagePreview");
+  if(!file){
+    if(prev) prev.style.display="none";
+    return;
+  }
+  try{
+    const url = URL.createObjectURL(file);
+    if(prev){ prev.src = url; prev.style.display = "block"; }
+    if($("spImageUrl")) $("spImageUrl").value = "";
+    if(msg){ msg.className="msg ok"; msg.textContent="Image selected · will upload to Cloudinary on create"; }
+  }catch(e){
+    if(msg){ msg.className="msg error"; msg.textContent=e.message||"Image failed"; }
+  }
+}
+
+function compressAdminImage(file, maxWidth, quality){
+  return new Promise((resolve, reject) => {
+    if(!file.type || !file.type.startsWith("image/")) return reject(new Error("Choose an image file"));
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      try{
+        let w = img.naturalWidth || img.width;
+        let h = img.naturalHeight || img.height;
+        if(w > maxWidth){ h = Math.round(h * (maxWidth / w)); w = maxWidth; }
+        const c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        c.getContext("2d").drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        let q = quality, dataUrl = c.toDataURL("image/jpeg", q);
+        while(dataUrl.length > 550000 && q > 0.45){ q -= 0.08; dataUrl = c.toDataURL("image/jpeg", q); }
+        if(dataUrl.length > 900000) reject(new Error("Image still too large — use a smaller file or paste a CDN URL"));
+        else resolve(dataUrl);
+      }catch(err){ URL.revokeObjectURL(url); reject(err); }
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Could not read image")); };
+    img.src = url;
+  });
+}
+
+async function loadSponsoredTasksAdmin(){
+  const box=$("spTasksTable"); if(!box) return;
+  box.innerHTML='<div class="loading">Loading…</div>';
+  try{
+    const data=await api("/api/v1/admin/sponsored-tasks");
+    let rows=data.data||[];
+    state.spTasksCache = rows;
+    const filt = ($("spTaskFilter")?.value||"all");
+    const q = ($("spTaskSearch")?.value||"").trim().toLowerCase();
+    if(filt==="active") rows = rows.filter(t=>t.active);
+    if(filt==="inactive") rows = rows.filter(t=>!t.active);
+    if(q) rows = rows.filter(t => ((t.title||"")+" "+(t.targetUrl||"")).toLowerCase().includes(q));
+    const active = (state.spTasksCache||[]).filter(t=>t.active).length;
+    const completions = (state.spTasksCache||[]).reduce((s,t)=>s+Number(t.completionCount||0),0);
+    if($("spStatActive")) $("spStatActive").textContent = String(active);
+    if($("spStatCompletions")) $("spStatCompletions").textContent = String(completions);
+    if(!rows.length){ box.innerHTML='<div class="empty">No tasks match</div>'; return; }
+    box.innerHTML=`<table><thead><tr><th>Campaign</th><th>Reward</th><th>Cap</th><th>Active</th><th>Done</th><th></th></tr></thead><tbody>${
+      rows.map(t=>{
+        const id=t._id||t.id;
+        const img=t.imageUrl||"";
+        return `<tr>
+          <td>
+            <div style="display:flex;gap:10px;align-items:center">
+              ${img?`<img class="proof-thumb" src="${escapeHtml(img)}" alt="" onclick="openProofModal(this.src)" onerror="this.style.display='none'">`:""}
+              <div>
+                <b>${escapeHtml(t.title||"—")}</b>
+                <div class="meta mono">${escapeHtml(shortId(id))}</div>
+                <div class="meta" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(t.targetUrl||"")}</div>
+              </div>
+            </div>
+          </td>
+          <td>${money(t.rewardAmount)}</td>
+          <td>${t.maxCompletions!=null && t.maxCompletions!=="" ? escapeHtml(t.maxCompletions) : "∞"}</td>
+          <td>${t.active?badge("success"):badge("danger")}</td>
+          <td>${escapeHtml(t.completionCount??0)}</td>
+          <td class="actions">
+            <button class="btn" type="button" onclick="toggleSponsoredActive('${escapeHtml(id)}', ${t.active? "false":"true"})">${t.active?"Deactivate":"Activate"}</button>
+            <button class="btn primary" type="button" onclick="openEditTask('${escapeHtml(id)}')">Edit</button>
+            <button class="btn danger" type="button" onclick="deleteSponsoredTask('${escapeHtml(id)}')">Delete</button>
+          </td>
+        </tr>`;
+      }).join("")
+    }</tbody></table>`;
+  }catch(e){ box.innerHTML=`<div class="empty">${escapeHtml(e.message)}</div>`; }
+}
+
+async function createSponsoredTask(){
+  const title=($("spTitle")?.value||"").trim();
+  const description=($("spDesc")?.value||"").trim();
+  const targetUrl=($("spUrl")?.value||"").trim();
+  const imageUrlPaste=($("spImageUrl")?.value||"").trim();
+  const rewardAmount=Number($("spReward")?.value||0);
+  const platform=($("spPlatform")?.value||"social").trim();
+  const needsProof=!!$("spNeedsProof")?.checked;
+  const fileInput=$("spImageFile");
+  const file=fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
+  const out=$("spCreateMsg");
+  if(!title||!description||!targetUrl){ if(out){out.className="msg error";out.textContent="Title, description, target URL required";} return; }
+  if(!(rewardAmount>=0)){ if(out){out.className="msg error";out.textContent="Reward required";} return; }
+  try{
+    if(out){ out.className="msg"; out.textContent=file?"Uploading image to Cloudinary…":"Creating…"; }
+    let data;
+    const maxRaw = ($("spMaxCompletions")?.value || "").trim();
+    const maxCompletions = maxRaw === "" ? null : Number(maxRaw);
+    if(file){
+      const form=new FormData();
+      form.append("title", title);
+      form.append("description", description);
+      form.append("targetUrl", targetUrl);
+      form.append("rewardAmount", String(rewardAmount));
+      form.append("platform", platform);
+      form.append("needsProof", needsProof ? "true" : "false");
+      form.append("active", "true");
+      form.append("currency", "NGN");
+      if(maxCompletions != null && maxCompletions > 0) form.append("maxCompletions", String(maxCompletions));
+      form.append("image", file, file.name || "banner.jpg");
+      data = await apiUpload("/api/v1/admin/sponsored-tasks", form);
+    } else {
+      const body={ title, description, targetUrl, rewardAmount, platform, needsProof, active:true, currency:"NGN" };
+      if(imageUrlPaste) body.imageUrl=imageUrlPaste;
+      if(maxCompletions != null && maxCompletions > 0) body.maxCompletions = maxCompletions;
+      data = await api("/api/v1/admin/sponsored-tasks",{ method:"POST", body:JSON.stringify(body) });
+    }
+    if($("spMaxCompletions")) $("spMaxCompletions").value = "";
+    const img = data?.data?.imageUrl || "";
+    if(out){
+      out.className="msg ok";
+      out.textContent = img ? ("Task created · image saved") : "Task created";
+    }
+    toast("Sponsored task created");
+    $("spTitle").value=""; $("spDesc").value=""; $("spUrl").value=""; 
+    if($("spImage")) $("spImage").value="";
+    if($("spImageUrl")) $("spImageUrl").value="";
+    if($("spImageFile")) $("spImageFile").value="";
+    if($("spImagePreview")) $("spImagePreview").style.display="none";
+    await loadSponsoredTasksAdmin();
+    await loadSponsoredSubs();
+  }catch(e){ if(out){ out.className="msg error"; out.textContent=e.message; } }
+}
+
+async function apiUpload(path, formData){
+  const headers={ "X-API-Key": PROJECT_KEY };
+  if(state.token) headers.Authorization="Bearer "+state.token;
+  // Do not set Content-Type — browser sets multipart boundary
+  let res;
+  try{ res=await fetch(API_URL+path,{ method:"POST", headers, body: formData }); }
+  catch(e){ throw new Error(e.message||"Network error"); }
+  const text=await res.text();
+  let data=null;
+  try{ data=text?JSON.parse(text):null; }catch{ data={ message:text||"Invalid JSON" }; }
+  if(res.status===401){ $("sessionBanner")?.classList.add("show"); throw new Error(backendMessage(data,"Session expired")); }
+  if(!res.ok){ const err=new Error(backendMessage(data,"HTTP "+res.status)); err.status=res.status; err.data=data; throw err; }
+  return data;
+}
+
+async function toggleSponsoredActive(id, active){
+  try{
+    await api("/api/v1/admin/sponsored-tasks/"+encodeURIComponent(id),{ method:"PATCH", body:JSON.stringify({ active: active===true || active==="true" }) });
+    toast("Updated");
+    await loadSponsoredTasksAdmin();
+  }catch(e){ toast(e.message); }
+}
+
+async function loadSponsoredSubs(){
+  const box=$("spSubsTable"); if(!box) return;
+  box.innerHTML='<div class="loading">Loading…</div>';
+  try{
+    const st=($("spSubStatus")?.value||"").trim();
+    const q=st?("?status="+encodeURIComponent(st)):"";
+    const data=await api("/api/v1/admin/sponsored-tasks/submissions/list"+q);
+    const rows=data.data||[];
+    state.spSubsCache = rows;
+    // stats from full list when filter is pending-only, also fetch counts opportunistically
+    try{
+      const all = await api("/api/v1/admin/sponsored-tasks/submissions/list");
+      const allRows = all.data||[];
+      const pend = allRows.filter(s=>String(s.status).toLowerCase()==="pending").length;
+      const appr = allRows.filter(s=>String(s.status).toLowerCase()==="approved").length;
+      if($("spStatPending")) $("spStatPending").textContent = String(pend);
+      if($("spStatApproved")) $("spStatApproved").textContent = String(appr);
+    }catch(e){}
+    renderSpSubs(rows);
+  }catch(e){ box.innerHTML=`<div class="empty">${escapeHtml(e.message)}</div>`; }
+}
+
+function filterSpSubsLocal(){
+  const q = ($("spSubSearch")?.value||"").trim().toLowerCase();
+  let rows = state.spSubsCache || [];
+  if(q){
+    rows = rows.filter(s=>{
+      const user=s.user||{};
+      const task=s.task||{};
+      const blob = ((user.username||"")+" "+(user.email||"")+" "+(task.title||"")+" "+(s.status||"")).toLowerCase();
+      return blob.includes(q);
+    });
+  }
+  renderSpSubs(rows);
+}
+
+function renderSpSubs(rows){
+  const box=$("spSubsTable"); if(!box) return;
+  if(!rows.length){ box.innerHTML='<div class="empty">No submissions</div>'; return; }
+  box.innerHTML=`<table><thead><tr><th>When</th><th>User</th><th>Task</th><th>Reward</th><th>Proof</th><th>Status</th><th>Fraud</th><th></th></tr></thead><tbody>${
+    rows.map(s=>{
+      const id=s._id||s.id;
+      const user=s.user||{};
+      const task=s.task||{};
+      const uid=user._id||user.id||(typeof s.user==="string"?s.user:"");
+      const st=String(s.status||"").toLowerCase();
+      const proof=s.proofUrl||"";
+      return `<tr>
+        <td style="white-space:nowrap">${date(s.createdAt)}</td>
+        <td><b>${escapeHtml(user.username||"—")}</b><div class="meta">${escapeHtml(user.email||"")}</div>
+          <div class="mono meta">${escapeHtml(shortId(uid))}</div></td>
+        <td>${escapeHtml(task.title||"—")}</td>
+        <td>${money(s.rewardAmount??task.rewardAmount)}</td>
+        <td>${proof?`<img class="proof-thumb" src="${escapeHtml(proof)}" alt="proof" onclick="openProofModal(this.src)" onerror="this.style.display='none'">`: "—"}</td>
+        <td>${badge(s.status)}</td>
+        <td>${escapeHtml(s.fraudScore??0)} ${Array.isArray(s.fraudFlags)&&s.fraudFlags.length?"· "+escapeHtml(s.fraudFlags.join(",")):""}</td>
+        <td class="actions">${st==="pending"?`
+          <button class="btn success" type="button" onclick="approveSponsoredSub('${escapeHtml(id)}')">Approve</button>
+          <button class="btn danger" type="button" onclick="rejectSponsoredSub('${escapeHtml(id)}')">Reject</button>`:"—"}</td>
+      </tr>`;
+    }).join("")
+  }</tbody></table>`;
+}
+
+async function approveSponsoredSub(id){
+  if(!confirm("Approve submission and credit reward?")) return;
+  try{
+    await api("/api/v1/admin/sponsored-tasks/submissions/"+encodeURIComponent(id)+"/approve",{ method:"POST", body:JSON.stringify({}) });
+    toast("Approved");
+    await loadSponsoredSubs();
+    await loadSponsoredTasksAdmin();
+  }catch(e){ toast(e.message); }
+}
+async function rejectSponsoredSub(id){
+  const reason=prompt("Rejection reason (optional)")||"";
+  if(!confirm("Reject this submission?")) return;
+  try{
+    await api("/api/v1/admin/sponsored-tasks/submissions/"+encodeURIComponent(id)+"/reject",{ method:"POST", body:JSON.stringify({ reason, rejectionReason: reason }) });
+    toast("Rejected");
+    await loadSponsoredSubs();
+  }catch(e){ toast(e.message); }
+}
+
+
+document.addEventListener("change", (e)=>{
+  if(e.target && e.target.id==="spTaskFilter") loadSponsoredTasksAdmin();
+});
+if(state.token){
+  if(!isAdminAccount(state.user, state.token)){
+    logout();
+  } else {
+    showApp();
+  }
+}
+</script>
+
+<div id="editTaskModal" class="edit-modal" onclick="if(event.target===this)closeEditTask()">
+  <div class="box">
+    <h3 style="margin:0 0 14px;font-size:16px;font-weight:800;color:#1b365d">Edit sponsored task</h3>
+    <input type="hidden" id="editTaskId">
+    <div class="field"><label>Title</label><input id="editTitle"></div>
+    <div class="field"><label>Description</label><textarea id="editDesc"></textarea></div>
+    <div class="field"><label>Target URL</label><input id="editUrl"></div>
+    <div class="field"><label>Image URL</label><input id="editImageUrl" placeholder="https://…"></div>
+    <div class="field"><label>Reward (NGN)</label><input id="editReward" type="number" step="1" min="0"></div>
+    <div class="field"><label>Max completions (blank = unlimited)</label><input id="editMax" type="number" min="1" step="1" placeholder="Unlimited"></div>
+    <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin:8px 0"><input type="checkbox" id="editNeedsProof"> Requires proof</label>
+    <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin:8px 0"><input type="checkbox" id="editActive"> Active</label>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn primary" type="button" onclick="saveEditTask()">Save changes</button>
+      <button class="btn" type="button" onclick="closeEditTask()">Cancel</button>
+    </div>
+    <div id="editTaskMsg" class="msg"></div>
+  </div>
+</div>
+<div id="proofModal" class="proof-modal" onclick="if(event.target===this)closeProofModal()">
+  <button type="button" class="close-x" onclick="closeProofModal()">×</button>
+  <img id="proofModalImg" alt="Proof preview">
+</div>
+</body>
+</html>
