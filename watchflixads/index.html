@@ -144,8 +144,9 @@ function showMsg(text, type){
 }
 
 function mapTaskToCampaign(task){
-  if(!task) return null;
+  if(!task || typeof task !== "object") return null;
   const id = String(task._id || task.id || "");
+  if(!id) return null;
   const meta = task.metadata || task.meta || {};
   let slots = task.slots || meta.slots || task.stages || meta.stages || task.offers || meta.offers || null;
   if(!Array.isArray(slots) || !slots.length){
@@ -193,14 +194,20 @@ function isWatchFlixTask(t){
 }
 
 /** Latest submission for this user + task from history API */
+function taskIdOf(sub){
+  if(!sub) return "";
+  const t = sub.task;
+  if(t == null) return String(sub.taskId || sub.metadata?.task || "");
+  if(typeof t === "string") return t;
+  if(typeof t === "object") return String(t._id || t.id || "");
+  return String(t);
+}
 function latestSubForTask(history, taskId){
-  const rows = (history || []).filter(s => {
-    const tid = typeof s.task === "object" ? (s.task._id || s.task.id) : s.task;
-    return String(tid) === String(taskId);
-  });
+  if(!taskId) return null;
+  const rows = (history || []).filter(s => s && String(taskIdOf(s)) === String(taskId));
   if(!rows.length) return null;
   rows.sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
-  return rows[0];
+  return rows[0] || null;
 }
 
 let campaign = null;
@@ -444,7 +451,10 @@ async function loadHistory(){
     });
     const body = await res.json().catch(() => ({}));
     if(!res.ok) return [];
-    return Array.isArray(body.data) ? body.data : [];
+    const list = Array.isArray(body.data) ? body.data
+      : (Array.isArray(body.history) ? body.history
+      : (Array.isArray(body) ? body : []));
+    return list.filter(Boolean);
   }catch(e){ return []; }
 }
 
@@ -481,11 +491,12 @@ async function loadCampaign(){
     const wantedId = qs("id");
     let task = null;
     if(wantedId){
-      task = active.find(t => String(t._id || t.id) === String(wantedId))
-        || rows.find(t => String(t._id || t.id) === String(wantedId));
+      task = active.find(t => t && String(t._id || t.id || "") === String(wantedId))
+        || rows.find(t => t && String(t._id || t.id || "") === String(wantedId))
+        || null;
     }
     if(!task){
-      task = active.find(isWatchFlixTask) || active[0] || null;
+      task = active.find(t => t && isWatchFlixTask(t)) || active.find(Boolean) || null;
     }
     campaign = mapTaskToCampaign(task);
     if(!campaign){
@@ -522,7 +533,7 @@ async function loadCampaign(){
         // Rejected → allow full retry; clear local stage progress
         state.packStatus = null;
         clearStageProgress(campaign.id);
-        setStatusBanner("rejected", sub.rejectionReason || sub.reason || "");
+        setStatusBanner("rejected", (sub && (sub.rejectionReason || sub.reason)) || "");
         showMsg("Previous attempt was rejected. Complete all stages again.", "err");
       }
     } else {
