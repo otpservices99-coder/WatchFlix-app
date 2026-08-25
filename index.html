@@ -139,13 +139,77 @@
             background: #d1fae5;
         }
     </style>
+    <style id="darkModeStyles">
+        body.dark-mode { background-color: #0f172a; color: #e2e8f0; }
+        body.dark-mode .glass { background: rgba(15,23,42,0.92); border-color: rgba(51,65,85,0.5); }
+        body.dark-mode .text-slate-800, body.dark-mode .text-slate-900 { color: #f1f5f9; }
+        body.dark-mode .text-slate-700 { color: #cbd5e1; }
+        body.dark-mode .text-slate-600 { color: #94a3b8; }
+        body.dark-mode .text-slate-500 { color: #94a3b8; }
+        body.dark-mode .text-slate-400 { color: #64748b; }
+        body.dark-mode .bg-white { background-color: #1e293b; }
+        body.dark-mode .bg-slate-50 { background-color: #0f172a; }
+        body.dark-mode .bg-slate-100 { background-color: #1e293b; }
+        body.dark-mode .bg-slate-900 { background-color: #020617; }
+        body.dark-mode .border-slate-100, body.dark-mode .border-slate-200 { border-color: #334155; }
+        body.dark-mode .hover\:bg-slate-100:hover { background-color: #334155; }
+        body.dark-mode .hover\:text-slate-900:hover { color: #f1f5f9; }
+        body.dark-mode #mobileMenu { background: rgba(15,23,42,0.95); border-color: #334155; }
+        body.dark-mode #mobileMenu a { color: #e2e8f0; }
+        body.dark-mode .money-pattern { background-image: radial-gradient(circle at 1px 1px, rgba(16,185,129,0.08) 1px, transparent 0); }
+        body.dark-mode .bg-emerald-50 { background-color: rgba(6,78,59,0.25); }
+        body.dark-mode .bg-emerald-100 { background-color: rgba(6,78,59,0.35); }
+        body.dark-mode .bg-amber-50 { background-color: rgba(120,53,15,0.15); }
+        body.dark-mode .bg-amber-100 { background-color: rgba(120,53,15,0.25); }
+        body.dark-mode .bg-blue-50 { background-color: rgba(30,58,138,0.15); }
+        body.dark-mode .bg-blue-100 { background-color: rgba(30,58,138,0.25); }
+        body.dark-mode .bg-purple-50 { background-color: rgba(88,28,135,0.15); }
+        body.dark-mode .bg-purple-100 { background-color: rgba(88,28,135,0.25); }
+        body.dark-mode .bg-rose-50 { background-color: rgba(136,19,55,0.15); }
+        body.dark-mode .bg-orange-100 { background-color: rgba(124,45,18,0.25); }
+        body.dark-mode .bg-red-100 { background-color: rgba(127,29,29,0.25); }
+        body.dark-mode .bg-green-100 { background-color: rgba(6,78,59,0.25); }
+        body.dark-mode .bg-indigo-100 { background-color: rgba(49,46,129,0.25); }
+        body.dark-mode .bg-sky-100 { background-color: rgba(12,74,110,0.25); }
+        body.dark-mode .bg-slate-50\/50 { background-color: rgba(15,23,42,0.5); }
+        body.dark-mode .hover\:border-emerald-300:hover { border-color: #059669; }
+        body.dark-mode .hover\:bg-emerald-50\/50:hover { background-color: rgba(6,78,59,0.2); }
+        body.dark-mode .group.open\:bg-white[open] { background-color: #1e293b; }
+        body.dark-mode .group.open\:border-slate-200[open] { border-color: #334155; }
+        body.dark-mode details.group { background-color: #1e293b; border-color: #334155; }
+        body.dark-mode details.group summary { color: #f1f5f9; }
+        body.dark-mode .bg-white\/10 { background-color: rgba(255,255,255,0.05); }
+        body.dark-mode .border-white\/10 { border-color: rgba(255,255,255,0.1); }
+        body.dark-mode .hover\:bg-white\/20:hover { background-color: rgba(255,255,255,0.1); }
+        body.dark-mode .sticky-cta { background-color: #1e293b; border-color: #334155; }
+        body.dark-mode #a2hsBanner { background-color: #0f172a; }
+        body.dark-mode .text-emerald-600 { color: #34d399; }
+        body.dark-mode .text-emerald-700 { color: #6ee7b7; }
+        body.dark-mode .text-amber-600 { color: #fbbf24; }
+        body.dark-mode .text-amber-700 { color: #fbbf24; }
+        body.dark-mode .text-blue-600 { color: #60a5fa; }
+        body.dark-mode .text-blue-700 { color: #60a5fa; }
+        body.dark-mode .text-purple-600 { color: #c084fc; }
+        body.dark-mode .text-purple-700 { color: #c084fc; }
+        body.dark-mode .text-rose-600 { color: #fb7185; }
+        body.dark-mode .text-orange-700 { color: #fb923c; }
+        body.dark-mode .text-red-600 { color: #fca5a5; }
+        body.dark-mode .text-red-700 { color: #fca5a5; }
+        body.dark-mode .text-green-800 { color: #86efac; }
+        body.dark-mode .text-indigo-700 { color: #a5b4fc; }
+        body.dark-mode .text-sky-700 { color: #7dd3fc; }
+        body.dark-mode .gradient-text { background: linear-gradient(135deg, #34d399 0%, #10b981 40%, #fbbf24 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        body.dark-mode .from-emerald-500\/10 { --tw-gradient-from: rgba(16,185,129,0.05); }
+        body.dark-mode .via-slate-900 { --tw-gradient-via: #0f172a; }
+        body.dark-mode .to-amber-500\/10 { --tw-gradient-to: rgba(245,158,11,0.05); }
+    </style>
 </head>
 <body class="font-sans text-slate-800 antialiased bg-white">
 
     <!-- Navbar -->
     <nav class="fixed top-0 w-full z-50 glass border-b border-slate-100/80">
         <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-2.5">
+            <a onclick="window.location.href='index.html'" href="index.html" class="flex items-center gap-2.5">
                 <div class="w-9 h-9 rounded-xl p-[2px] shadow-lg shadow-emerald-500/25" style="background:conic-gradient(from 210deg,#047857,#34d399,#a7f3d0,#059669)">
                     <div class="w-full h-full rounded-[10px] bg-white flex items-center justify-center">
                         <span class="font-black text-lg bg-gradient-to-br from-emerald-500 to-emerald-700 bg-clip-text text-transparent">W</span>
@@ -163,19 +227,29 @@
                 <a href="#faq" class="hover:text-emerald-600 transition">FAQ</a>
             </div>
             <div class="hidden md:flex items-center gap-4">
-                <a href="login.html" class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition">Log In</a>
-                <a href="register.html" class="btn-primary text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-emerald-500/20">Create Free Account</a>
+                <button id="themeToggleDesktop" onclick="toggleTheme()" class="p-2 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition" title="Toggle theme" aria-label="Toggle dark mode">
+                    <svg id="themeIconSunDesktop" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <svg id="themeIconMoonDesktop" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                </button>
+                <a onclick="window.location.href='login.html'" href="login.html" class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition">Log In</a>
+                <a onclick="window.location.href='register.html'" href="register.html" class="btn-primary text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-emerald-500/20">Create Free Account</a>
             </div>
-            <button id="menuBtn" class="md:hidden p-2 text-slate-700">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-            </button>
+            <div class="flex items-center gap-1 md:hidden">
+                <button id="themeToggle" onclick="toggleTheme()" class="p-2 text-slate-700 rounded-lg hover:bg-slate-100 transition" title="Toggle theme" aria-label="Toggle dark mode">
+                    <svg id="themeIconSun" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <svg id="themeIconMoon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                </button>
+                <button id="menuBtn" class="p-2 text-slate-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
         </div>
         <div id="mobileMenu" class="hidden md:hidden glass border-t border-slate-100 px-6 py-4 space-y-3">
             <a href="#features" class="block py-2 text-slate-700 font-medium">How to Earn</a>
             <a href="#withdrawal" class="block py-2 text-slate-700 font-medium">Withdrawal</a>
             <a href="#features" class="block py-2 text-slate-700 font-medium">Tasks</a>
             <a href="#faq" class="block py-2 text-slate-700 font-medium">FAQ</a>
-            <a href="register.html" class="block btn-primary text-white text-center py-3 rounded-xl font-bold mt-2">Create Free Account</a>
+            <a onclick="window.location.href='register.html'" href="register.html" class="block btn-primary text-white text-center py-3 rounded-xl font-bold mt-2">Create Free Account</a>
         </div>
     </nav>
 
@@ -202,7 +276,7 @@
                         Complete eligible WatchFlix activities — tasks, campaigns, and platform challenges — to earn WCoin. A portion of advertising revenue funds the Rewards Pool. Rates can vary. No investment needed.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 mb-10">
-                        <a href="register.html" class="btn-primary text-white px-8 py-4 rounded-2xl font-bold text-center shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2">
+                        <a onclick="window.location.href='register.html'" href="register.html" class="btn-primary text-white px-8 py-4 rounded-2xl font-bold text-center shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2">
                             Start Earning Free
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                         </a>
@@ -456,7 +530,7 @@
                     <div class="text-sm text-slate-500 mb-2 uppercase tracking-wider font-semibold">Illustrative WCoin (example only)</div>
                     <div class="text-5xl md:text-6xl font-extrabold text-emerald-600 mb-4" id="totalEarnings">45,000 WCoin</div>
                     <p class="text-slate-400 text-sm max-w-md mx-auto">Illustrative only. Actual rewards depend on eligible tasks, approval, and Rewards Pool funding.</p>
-                    <a href="register.html" class="inline-flex items-center gap-2 mt-6 btn-primary text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-emerald-500/20">
+                    <a onclick="window.location.href='register.html'" href="register.html" class="inline-flex items-center gap-2 mt-6 btn-primary text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-emerald-500/20">
                         Start Earning Now
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                     </a>
@@ -547,10 +621,8 @@
                         </div>
                         <div id="liveWithdrawFeed" class="max-h-[240px] sm:max-h-[300px] overflow-y-auto overscroll-contain"></div>
                         <div class="mt-3 pt-3 border-t border-slate-100">
-                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Redacted payout proofs</div>
-                            <div id="payoutProofStrip" class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1"></div>
-                            <p class="text-[10px] sm:text-[11px] text-slate-400 mt-2 leading-relaxed">
-                                Illustrative activity. Proofs are managed in Admin → Landing. Your withdrawals appear in your dashboard after approval.
+                            <p class="text-[10px] sm:text-[11px] text-slate-400 leading-relaxed">
+                                Illustrative activity feed. Your real withdrawals appear in your dashboard after approval.
                             </p>
                         </div>
                     </div>
@@ -686,7 +758,7 @@
                             </div>
                         </div>
                     </div>
-                    <a href="register.html" class="inline-flex items-center gap-2 mt-8 btn-gold text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-amber-500/20">
+                    <a onclick="window.location.href='register.html'" href="register.html" class="inline-flex items-center gap-2 mt-8 btn-gold text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-amber-500/20">
                         Get My Referral Link
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                     </a>
@@ -1041,11 +1113,11 @@
                         Join thousands of users already turning free time into WCoin. Registration is free and takes 30 seconds.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="register.html" class="btn-gold text-white px-10 py-5 rounded-2xl text-lg font-bold shadow-2xl shadow-amber-500/20 inline-flex items-center justify-center gap-2">
+                        <a onclick="window.location.href='register.html'" href="register.html" class="btn-gold text-white px-10 py-5 rounded-2xl text-lg font-bold shadow-2xl shadow-amber-500/20 inline-flex items-center justify-center gap-2">
                             Create Free Account
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                         </a>
-                        <a href="login.html" class="bg-white/10 hover:bg-white/20 text-white px-10 py-5 rounded-2xl text-lg font-bold transition border border-white/10 inline-flex items-center justify-center">
+                        <a onclick="window.location.href='login.html'" href="login.html" class="bg-white/10 hover:bg-white/20 text-white px-10 py-5 rounded-2xl text-lg font-bold transition border border-white/10 inline-flex items-center justify-center">
                             Log In
                         </a>
                     </div>
@@ -1059,7 +1131,7 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid md:grid-cols-4 gap-12 mb-12">
                 <div class="md:col-span-2">
-                    <a href="index.html" class="flex items-center gap-2.5 mb-4">
+                    <a onclick="window.location.href='index.html'" href="index.html" class="flex items-center gap-2.5 mb-4">
                         <div class="w-8 h-8 rounded-lg p-[2px]" style="background:conic-gradient(from 210deg,#047857,#34d399,#a7f3d0,#059669)">
                             <div class="w-full h-full rounded-md bg-white flex items-center justify-center">
                                 <span class="font-black text-sm bg-gradient-to-br from-emerald-500 to-emerald-700 bg-clip-text text-transparent">W</span>
@@ -1077,16 +1149,16 @@
                         <li><a href="#features" class="hover:text-emerald-600 transition">How to Earn</a></li>
                         <li><a href="#withdrawal" class="hover:text-emerald-600 transition">Withdrawal</a></li>
                         <li><a href="#faq" class="hover:text-emerald-600 transition">FAQ</a></li>
-                        <li><a href="referral.html" class="hover:text-emerald-600 transition">Referral Program</a></li>
+                        <li><a onclick="window.location.href='referral.html'" href="referral.html" class="hover:text-emerald-600 transition">Referral Program</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-bold text-slate-900 mb-4">Company</h4>
                     <ul class="space-y-3 text-sm text-slate-500">
-                        <li><a href="about.html" class="hover:text-emerald-600 transition">About Us</a></li>
-                        <li><a href="blog.html" class="hover:text-emerald-600 transition">Blog</a></li>
-                        <li><a href="contact.html" class="hover:text-emerald-600 transition">Contact</a></li>
-                        <li><a href="privacy.html" class="hover:text-emerald-600 transition">Privacy Policy</a></li>
+                        <li><a onclick="window.location.href='about.html'" href="about.html" class="hover:text-emerald-600 transition">About Us</a></li>
+                        <li><a onclick="window.location.href='blog.html'" href="blog.html" class="hover:text-emerald-600 transition">Blog</a></li>
+                        <li><a onclick="window.location.href='contact.html'" href="contact.html" class="hover:text-emerald-600 transition">Contact</a></li>
+                        <li><a onclick="window.location.href='privacy.html'" href="privacy.html" class="hover:text-emerald-600 transition">Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>
@@ -1102,7 +1174,7 @@
     <!-- Sticky Mobile CTA -->
     <div id="stickyCta" class="sticky-cta fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-slate-200 p-4 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
         <div class="flex items-center gap-3">
-            <a href="register.html" class="flex-1 btn-primary text-white py-3.5 rounded-xl font-bold text-center shadow-lg shadow-emerald-500/20">
+            <a onclick="window.location.href='register.html'" href="register.html" class="flex-1 btn-primary text-white py-3.5 rounded-xl font-bold text-center shadow-lg shadow-emerald-500/20">
                 Create Free Account
             </a>
             <button id="closeSticky" class="p-2 text-slate-400 hover:text-slate-600">
@@ -1146,14 +1218,16 @@
             });
         });
 
-        // Smooth scroll
+        // Smooth scroll — only intercept if target section exists on this page
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
+                const href = this.getAttribute('href');
+                const target = document.querySelector(href);
                 if (target) {
+                    e.preventDefault();
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
+                // If target doesn't exist, let browser handle normally
             });
         });
 
@@ -1167,7 +1241,7 @@
         const totalEarnings = document.getElementById('totalEarnings');
 
                 // Live-ish rates (gentle fluctuation) — values in WCoin
-        let rateHour = 250, rateTask = 750, rateRef = 2500;
+        let rateHour = 150, rateTask = 650, rateRef = 2000;
         function tickRates() {
             // small random walk so estimates feel alive without large jumps
             rateHour = Math.max(180, Math.min(320, rateHour + (Math.random() * 12 - 6)));
@@ -1258,27 +1332,7 @@
 
     <script>
 (function(){
-  /* Redacted payout screenshots — drop files in assets/payouts/ (6–8 recommended).
-     Admin can later replace these paths with CDN/Cloudinary URLs from the dashboard. */
-  function loadPayoutProofList(){
-    const defaults = [
-      "assets/payouts/payout-1.jpg","assets/payouts/payout-2.jpg","assets/payouts/payout-3.jpg",
-      "assets/payouts/payout-4.jpg","assets/payouts/payout-5.jpg","assets/payouts/payout-6.jpg",
-      "assets/payouts/payout-7.jpg","assets/payouts/payout-8.jpg"
-    ];
-    try{
-      const raw = localStorage.getItem("wf_landing_proofs");
-      if(raw){
-        const arr = JSON.parse(raw);
-        if(Array.isArray(arr) && arr.length){
-          return arr.map(x => typeof x === "string" ? x : (x && x.url)).filter(Boolean);
-        }
-      }
-    }catch(e){}
-    return defaults;
-  }
-  let PAYOUT_PROOFS = loadPayoutProofList();
-
+  /* Live withdrawal feed — text only, no images */
   const firstNames = ["Chioma","Tunde","Amina","Emeka","Blessing","Ibrahim","Ngozi","Chidi","Fatima","Yusuf","Ada","Kemi","Segun","Zainab","Oluwaseun","Halima","Ifeanyi","Maryam","Bola","Chukwudi","Aisha","Femi","Nneka","Sani","Yetunde"];
   const lastInits = ["A.","B.","C.","D.","E.","F.","G.","H.","I.","J.","K.","M.","O.","S.","U."];
   const banks = [
@@ -1301,7 +1355,6 @@
     {t:"Approved", c:"text-emerald-700"},
     {t:"Processing", c:"text-amber-600"}
   ];
-
   function maskAcct(){ return "**** " + String(1000 + Math.floor(Math.random()*9000)); }
   function timeAgo(){
     const roll = Math.random();
@@ -1311,11 +1364,6 @@
     if(roll < 0.88) return (Math.floor(Math.random()*20)+1) + "d ago";
     return (Math.floor(Math.random()*28)+7) + "d ago";
   }
-  function pickProof(){
-    if(!PAYOUT_PROOFS.length) return "";
-    return PAYOUT_PROOFS[Math.floor(Math.random()*PAYOUT_PROOFS.length)];
-  }
-
   function row(){
     const name = firstNames[Math.floor(Math.random()*firstNames.length)] + " " + lastInits[Math.floor(Math.random()*lastInits.length)];
     const bank = banks[Math.floor(Math.random()*banks.length)];
@@ -1323,27 +1371,18 @@
     const st = statuses[Math.floor(Math.random()*statuses.length)];
     const when = timeAgo();
     const acct = maskAcct();
-    const img = pickProof();
-    const imgHtml = img
-      ? `<button type="button" class="flex-shrink-0 w-11 h-11 rounded-lg overflow-hidden border border-slate-200 bg-slate-100" onclick="window.openPayoutProof && window.openPayoutProof('${img.replace(/'/g,"")}')" title="View redacted proof">
-           <img src="${img}" alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.parentNode.style.display='none'">
-         </button>`
-      : "";
     return `<div class="flex items-center justify-between gap-3 py-3.5 border-b border-slate-100 last:border-0" style="animation:fadeIn .35s ease">
       <div class="flex items-center gap-3 min-w-0">
-        ${imgHtml}
         <div class="w-10 h-10 rounded-full ${bank.color} flex items-center justify-center font-bold text-[11px] flex-shrink-0">${bank.short}</div>
         <div class="min-w-0">
-          <div class="font-bold text-sm text-slate-800 truncate">${name} · <span class="${st.c}">${st.t}</span></div>
-          <div class="text-xs text-slate-400 truncate">${bank.name} · ${acct} · ${when}</div>
+          <div class="font-bold text-sm text-slate-800 truncate">${name} &middot; <span class="${st.c}">${st.t}</span></div>
+          <div class="text-xs text-slate-400 truncate">${bank.name} &middot; ${acct} &middot; ${when}</div>
         </div>
       </div>
       <div class="font-extrabold text-emerald-600 text-sm whitespace-nowrap">${amount.toLocaleString()} WC</div>
     </div>`;
   }
-
   let timer = null;
-
   function pushRow(){
     const box = document.getElementById('liveWithdrawFeed');
     if(!box) return;
@@ -1353,7 +1392,6 @@
     box.insertBefore(node, box.firstChild);
     while(box.children.length > 7) box.removeChild(box.lastChild);
   }
-
   function setStatus(live){
     const el = document.getElementById('liveFeedStatus');
     if(!el) return;
@@ -1365,7 +1403,6 @@
       el.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Idle';
     }
   }
-
   function scheduleNext(){
     if(timer) clearTimeout(timer);
     const pause = Math.random() < 0.28;
@@ -1373,42 +1410,10 @@
     const delay = pause ? (8000 + Math.random()*10000) : (2500 + Math.random()*3500);
     timer = setTimeout(() => {
       if(!pause) pushRow();
-      if(pause){
-        setStatus(true);
-        pushRow();
-        setTimeout(pushRow, 900 + Math.random()*1200);
-      }
+      if(pause){ setStatus(true); pushRow(); setTimeout(pushRow, 900 + Math.random()*1200); }
       scheduleNext();
     }, delay);
   }
-
-  function renderProofStrip(){
-    const strip = document.getElementById('payoutProofStrip');
-    if(!strip) return;
-    strip.innerHTML = PAYOUT_PROOFS.map((src,i) =>
-      `<button type="button" class="flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 hover:ring-2 hover:ring-emerald-400/40 transition" onclick="window.openPayoutProof('${src}')" title="Proof ${i+1}">
-        <img src="${src}" alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.parentNode.style.opacity='0.35'">
-      </button>`
-    ).join("");
-  }
-
-  window.openPayoutProof = function(src){
-    if(!src) return;
-    let m = document.getElementById('payoutProofModal');
-    if(!m){
-      m = document.createElement('div');
-      m.id = 'payoutProofModal';
-      m.style.cssText = 'display:none;position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.75);align-items:center;justify-content:center;padding:16px';
-      m.innerHTML = '<button type="button" style="position:absolute;top:16px;right:16px;width:40px;height:40px;border:0;border-radius:999px;background:#fff;font-weight:800;cursor:pointer" onclick="document.getElementById(\'payoutProofModal\').style.display=\'none\'">×</button><img id="payoutProofModalImg" alt="Redacted proof" style="max-width:min(920px,96vw);max-height:88vh;border-radius:12px;object-fit:contain;background:#111">';
-      m.addEventListener('click', function(e){ if(e.target===m) m.style.display='none'; });
-      document.body.appendChild(m);
-    }
-    const img = document.getElementById('payoutProofModalImg');
-    if(img) img.src = src;
-    m.style.display = 'flex';
-  };
-
-  // Live campaign count from public sponsored-tasks API
   async function loadLiveTaskCount(){
     const el = document.getElementById('liveTaskCount');
     if(!el) return;
@@ -1420,26 +1425,52 @@
       const rows = Array.isArray(data.data) ? data.data : [];
       const active = rows.filter(t => t && t.active !== false).length;
       el.textContent = String(active);
-    }catch(e){
-      el.textContent = '—';
-    }
+    }catch(e){ el.textContent = '—'; }
   }
-
   function boot(){
     const box = document.getElementById('liveWithdrawFeed');
-    if(box){
-      box.innerHTML = "";
-      for(let i=0;i<5;i++) pushRow();
-      scheduleNext();
-    }
-    renderProofStrip();
+    if(box){ box.innerHTML = ""; for(let i=0;i<5;i++) pushRow(); scheduleNext(); }
     loadLiveTaskCount();
     setInterval(loadLiveTaskCount, 60000);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
+})();</script>
+<style>@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}</style>
+<script>
+/* Theme toggle */
+(function(){
+    const LS_KEY = 'wf_theme';
+    function getTheme(){ try{ return localStorage.getItem(LS_KEY); }catch(e){ return null; } }
+    function setTheme(theme){ try{ localStorage.setItem(LS_KEY, theme); }catch(e){} }
+    function applyTheme(theme){
+        const isDark = theme === 'dark';
+        document.body.classList.toggle('dark-mode', isDark);
+        const sun = document.getElementById('themeIconSun');
+        const moon = document.getElementById('themeIconMoon');
+        if(sun) sun.classList.toggle('hidden', isDark);
+        if(moon) moon.classList.toggle('hidden', !isDark);
+        const sunD = document.getElementById('themeIconSunDesktop');
+        const moonD = document.getElementById('themeIconMoonDesktop');
+        if(sunD) sunD.classList.toggle('hidden', isDark);
+        if(moonD) moonD.classList.toggle('hidden', !isDark);
+    }
+    window.toggleTheme = function(){
+        const current = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+                applyTheme(next);
+        setTheme(next);
+    };
+
+    const saved = getTheme();
+
+    if (saved === 'dark') applyTheme('dark');
+    else applyTheme('light');
 })();
 </script>
-<style>@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}</style>
+
+<!-- Adsterra Social Bar -->
+<script src="https://guyprior.com/d5/31/00/d53100897c448dc3ffb3cfde0e31918f.js"></script>
+
 </body>
 </html>
