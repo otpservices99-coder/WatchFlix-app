@@ -299,7 +299,7 @@ body.theme-dark .wf-warn-red{color:#fecaca;background:rgba(239,68,68,.15)}
     <div class="logo-mark" style="margin:0 auto 12px"><div class="logo-mark-inner"><span>W</span></div></div>
     <h2 style="margin:0 0 8px;font-size:20px;font-weight:800">Sign in required</h2>
     <p style="color:var(--muted);font-size:14px;margin:0 0 18px">Open your account to continue.</p>
-    <a href="login.html" class="btn-primary" style="display:inline-block;width:auto;padding:12px 24px;text-decoration:none">Sign in</a>
+    <a href="login" class="btn-primary" style="display:inline-block;width:auto;padding:12px 24px;text-decoration:none">Sign in</a>
   </div>
 </div>
 
@@ -1407,7 +1407,7 @@ async function loadReferral(){
     const data=await api("/api/v1/referrals/me");
     state.referral=data;
     const code=data.referralCode||"";
-    const link=location.origin.replace(/\/$/,"")+"/register.html?ref="+encodeURIComponent(code);
+    const link=location.origin.replace(/\/$/,"")+"/register?ref="+encodeURIComponent(code);
     state.referralLink=link;
     const count=Number(data.referralCount??0);
     document.getElementById("refCode").textContent=code||"—";
