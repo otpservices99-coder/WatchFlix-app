@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WatchFlix — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070b16; --card:#12182b; --card2:#171e33; --line:#243049;
+  --text:#f1f5f9; --muted:#94a3b8; --green:#10b981; --green2:#059669;
+}
+body.theme-light{
+  --bg:#f0f4f8; --card:#ffffff; --card2:#f8fafc; --line:#e2e8f0;
+  --text:#0f172a; --muted:#64748b;
+}
+body.theme-light{
+  background:#f0f4f8 !important;
+  color:#0f172a !important;
+}
+body.theme-dark{
+  background:radial-gradient(900px 480px at 50% -10%, rgba(16,185,129,.12), transparent 55%), #070b16;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  margin:0;min-height:100vh;font-family:"Plus Jakarta Sans",system-ui,sans-serif;
+  background:radial-gradient(900px 480px at 50% -10%, rgba(16,185,129,.12), transparent 55%), var(--bg);
+  color:var(--text); transition:background .25s,color .25s;
+}
+.app{max-width:430px;margin:0 auto;padding:14px 16px 110px;min-height:100vh}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;position:relative}
+.brand{display:flex;align-items:center;gap:10px}
+.logo-mark{
+  width:42px;height:42px;border-radius:12px;
+  background:conic-gradient(from 210deg,#047857,#34d399,#a7f3d0,#059669);padding:2px;
+  box-shadow:0 8px 24px rgba(16,185,129,.3);
+}
+.logo-mark-inner{width:100%;height:100%;border-radius:10px;background:#0b1220;display:grid;place-items:center}
+body.theme-light .logo-mark-inner{background:#fff}
+.logo-mark-inner span{font-weight:900;font-size:17px;background:linear-gradient(135deg,#34d399,#059669);-webkit-background-clip:text;color:transparent}
+.brand-text .name{font-weight:900;font-size:14px;letter-spacing:.08em}
+.brand-text .tag{font-size:9px;color:var(--muted);letter-spacing:.12em;font-weight:700;margin-top:2px}
+.icon-round{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--line);
+  background:rgba(255,255,255,.04);display:grid;place-items:center;cursor:pointer;color:var(--muted);
+}
+body.theme-light .icon-round{background:#fff}
+.welcome{font-size:13px;color:var(--muted);margin-bottom:4px}
+.welcome b{color:var(--text)}
+.page-title{font-size:26px;font-weight:800;letter-spacing:-.03em;margin:0 0 14px}
+
+.currency-switch{display:inline-flex;gap:4px;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:3px;margin-bottom:12px}
+.currency-switch button{border:0;background:transparent;color:var(--muted);font-size:11px;font-weight:800;padding:6px 12px;border-radius:999px;cursor:pointer}
+.currency-switch button.active{background:linear-gradient(135deg,#059669,#10b981);color:#fff}
+
+.hero{
+  border-radius:24px;padding:14px;position:relative;overflow:hidden;
+  background:linear-gradient(145deg,#0d9488 0%,#059669 42%,#047857 100%);
+  box-shadow:0 20px 50px -18px rgba(5,150,105,.5);color:#fff;
+}
+.hero-tabs{display:flex;gap:4px;background:rgba(0,0,0,.18);border-radius:14px;padding:4px;margin-bottom:14px}
+.hero-tabs button{flex:1;border:0;background:transparent;color:rgba(255,255,255,.75);font-size:11px;font-weight:700;padding:8px 4px;border-radius:11px;cursor:pointer}
+.hero-tabs button.active{background:#fff;color:#047857}
+.hero-bal-label{font-size:12px;opacity:.85;font-weight:600}
+.hero-bal{font-size:32px;font-weight:800;letter-spacing:-.03em;margin:6px 0 2px}
+.hero-coin{font-size:13px;font-weight:700;margin-top:6px;opacity:.95}
+.hero-sub{font-size:12px;opacity:.75}
+.hero-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.hero-actions button{border:0;border-radius:14px;padding:12px 10px;font-weight:800;font-size:13px;cursor:pointer}
+.btn-light{background:#fff;color:#047857}
+.btn-ghost-light{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.45)!important}
+.hero-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:12px;opacity:.9}
+.chip{background:rgba(0,0,0,.22);border-radius:999px;padding:4px 10px;font-weight:800;font-size:11px}
+
+.banner{
+  margin:14px 0;border-radius:20px;overflow:hidden;position:relative;
+  background:linear-gradient(120deg,#0f172a,#064e3b 55%,#022c22);border:1px solid rgba(16,185,129,.25);
+  min-height:120px;padding:16px;
+}
+body.theme-light .banner{background:linear-gradient(120deg,#ecfdf5,#d1fae5);border-color:#a7f3d0;color:#064e3b}
+.banner h3{margin:0 0 4px;font-size:10px;letter-spacing:.16em;color:#6ee7b7;font-weight:800}
+body.theme-light .banner h3{color:#047857}
+.banner h2{margin:0;font-size:20px;font-weight:800;line-height:1.15}
+.banner p{margin:8px 0 0;font-size:12px;color:#94a3b8;max-width:70%}
+body.theme-light .banner p{color:#065f46}
+
+.section{margin-top:18px}
+.section h2{margin:0 0 10px;font-size:16px;font-weight:800}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--card);border-radius:18px;padding:12px 8px;border:1px solid var(--line)}
+.quick button{border:0;background:transparent;color:var(--muted);font-size:10px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px}
+.qico{width:44px;height:44px;border-radius:50%;display:grid;place-items:center}
+.qico svg{width:18px;height:18px}
+
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+.field{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;font-weight:600;background:var(--card2);color:var(--text);outline:none;margin-top:6px}
+.field:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.15)}
+label.lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.btn-primary{width:100%;border:0;border-radius:14px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#059669,#10b981);box-shadow:0 10px 28px -10px rgba(16,185,129,.45)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:12px;font-weight:800;font-size:13px;cursor:pointer;background:var(--card2);color:var(--text)}
+.tx{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.tx:last-child{border-bottom:0}
+.msg{font-size:12px;font-weight:700;text-align:center;margin-top:10px}
+.msg.ok{color:#34d399}.msg.err{color:#f87171}
+body.theme-light .msg.ok{color:#059669} body.theme-light .msg.err{color:#dc2626}
+
+.bank-list{display:none;position:absolute;left:0;right:0;top:100%;margin-top:4px;max-height:200px;overflow:auto;background:var(--card2);border:1px solid var(--line);border-radius:14px;z-index:40}
+.bank-list.open{display:block}
+.bank-item{width:100%;text-align:left;border:0;background:transparent;padding:11px 14px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer}
+.bank-item:hover{background:rgba(16,185,129,.12)}
+.bank-wrap{position:relative}
+.wd-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.wd-stat{border-radius:16px;padding:14px;border:1px solid var(--line);background:var(--card2)}
+.wd-stat .l{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase}
+.wd-stat .v{font-size:20px;font-weight:800;margin-top:6px}
+.wd-stat.pending .v{color:#f59e0b}.wd-stat.paid .v{color:#10b981}
+.wd-method-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.wd-method-tabs button{border:1px solid var(--line);background:var(--card2);color:var(--muted);border-radius:12px;padding:10px;font-weight:800;font-size:12px;cursor:pointer}
+.wd-method-tabs button.active{border-color:#10b981;color:#10b981;background:rgba(16,185,129,.08)}
+.calc-box{margin-top:14px;padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--card2)}
+.calc-row{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:end}
+.calc-eq{font-weight:800;color:var(--muted);padding-bottom:12px}
+.calc-hint{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.4}
+
+/* Sponsored cards — large image, content, then actions */
+.ad-card{
+  border-radius:20px;overflow:hidden;border:1px solid var(--line);background:var(--card);
+  margin-bottom:16px;box-shadow:0 12px 32px rgba(0,0,0,.18);
+}
+body.theme-light .ad-card{box-shadow:0 10px 28px rgba(15,23,42,.08)}
+.ad-cover{width:100%;height:240px;background:linear-gradient(135deg,#064e3b,#10b981);position:relative;overflow:hidden}
+.ad-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.ad-cover .fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:#fff}
+.ad-body{padding:16px}
+.ad-body h4{margin:0 0 8px;font-size:17px;font-weight:800;letter-spacing:-.02em}
+.ad-body .desc{margin:0;font-size:13px;color:var(--muted);line-height:1.55}
+.ad-reward{display:inline-flex;margin-top:12px;padding:6px 12px;border-radius:999px;background:rgba(16,185,129,.15);color:#10b981;font-size:12px;font-weight:800}
+.ad-steps{margin-top:12px;padding:12px;border-radius:12px;background:var(--card2);border:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.55}
+.ad-steps b{color:var(--text)}
+.ad-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.ad-actions a,.ad-actions label,.ad-actions button{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;
+  border-radius:14px;padding:12px 10px;font-weight:800;font-size:13px;cursor:pointer;border:0;
+}
+.ad-actions .go{background:linear-gradient(135deg,#059669,#10b981);color:#fff}
+.ad-actions .proof{background:var(--card2);color:var(--text);border:1.5px solid var(--line)!important}
+.ad-actions .disabled-btn{opacity:.55;pointer-events:none;cursor:not-allowed}
+.ad-status{
+  margin-top:10px;padding:10px 12px;border-radius:12px;font-size:12px;font-weight:700;text-align:center;
+}
+.ad-status.pending{background:rgba(245,158,11,.12);color:#f59e0b}
+.ad-status.rejected{background:rgba(248,113,113,.12);color:#f87171}
+.ad-status.approved{background:rgba(16,185,129,.12);color:#10b981}
+
+.dock{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(430px,100%);
+  background:color-mix(in srgb, var(--bg) 92%, transparent);backdrop-filter:blur(16px);
+  border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(5,1fr);align-items:end;padding:6px 4px 12px;z-index:50;
+}
+.dock button{
+  border:0;background:none;color:var(--muted);font-size:10px;font-weight:700;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;padding:6px 2px;min-height:52px;
+}
+.dock button.active{color:#10b981}
+.dock svg{width:22px;height:22px}
+.dock-theme{
+  width:52px;height:52px;border-radius:50%;margin:0 auto 2px;
+  background:linear-gradient(145deg,#10b981,#059669);color:#fff!important;
+  box-shadow:0 10px 28px rgba(16,185,129,.35);border:3px solid var(--bg);
+  display:grid!important;place-items:center;padding:0!important;min-height:52px;
+}
+.dock-theme svg{width:24px;height:24px;stroke-width:2.5}
+
+.notif-btn{position:relative}
+.notif-badge{position:absolute;top:2px;right:2px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:#ef4444;color:#fff;font-size:9px;font-weight:800;display:grid;place-items:center;border:2px solid var(--bg)}
+.notif-panel{display:none;position:absolute;right:0;top:52px;width:min(320px,calc(100vw - 32px));background:var(--card);border:1px solid var(--line);border-radius:16px;z-index:70;box-shadow:0 18px 40px rgba(0,0,0,.25);overflow:hidden}
+.notif-panel.open{display:block}
+.notif-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);font-size:13px}
+.notif-head button{border:0;background:none;color:#10b981;font-weight:700;font-size:11px;cursor:pointer}
+.notif-list{max-height:280px;overflow:auto}
+.notif-item{padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+.notif-item.unread{background:rgba(16,185,129,.08)}
+.notif-item .t{font-size:13px;font-weight:700}
+.notif-item .m{font-size:12px;color:var(--muted);margin-top:3px}
+.notif-item .d{font-size:10px;color:var(--muted);margin-top:6px}
+.notif-empty{padding:24px;text-align:center;color:var(--muted);font-size:13px}
+
+.profile-head{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(145deg,#059669,#34d399);display:grid;place-items:center;font-weight:800;font-size:20px;position:relative}
+.avatar .ok{position:absolute;right:0;bottom:0;width:16px;height:16px;border-radius:50%;background:#10b981;border:2px solid var(--card)}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;padding-top:12px;border-top:1px solid var(--line)}
+.stat-row .v{font-weight:800;font-size:14px;margin-top:4px}
+.stat-row .l{font-size:10px;color:var(--muted);font-weight:600}
+.menu-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.menu-row:last-child{border-bottom:0}
+.menu-ico{width:40px;height:40px;border-radius:12px;background:rgba(16,185,129,.12);color:#10b981;display:grid;place-items:center}
+.ref-count{display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,.12);color:#10b981;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:800;margin-top:8px}
+.auth-gate{max-width:430px;margin:80px auto;padding:24px;text-align:center}
+.auth-gate .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px}
+.soon-box{text-align:center;padding:28px 12px;color:var(--muted);font-size:13px}
+
+.health-card{
+  margin-bottom:14px;padding:16px;border-radius:18px;border:1px solid var(--line);
+  background:linear-gradient(145deg, rgba(16,185,129,.12), var(--card));
+  box-shadow:0 8px 24px rgba(15,23,42,.06);
+}
+body.theme-dark .health-card{background:linear-gradient(145deg, rgba(16,185,129,.16), var(--card));}
+.health-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.health-top .title{font-size:13px;font-weight:800;letter-spacing:.02em}
+.health-val{font-weight:900;font-size:18px;color:#059669}
+.health-val.warn{color:#d97706}.health-val.danger{color:#dc2626}
+.health-bar{height:12px;border-radius:999px;background:rgba(15,23,42,.08);overflow:hidden}
+body.theme-dark .health-bar{background:rgba(255,255,255,.08)}
+.health-bar > i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#059669,#34d399);width:100%;transition:width .35s}
+.health-bar.warn > i{background:linear-gradient(90deg,#d97706,#fbbf24)}
+.health-bar.danger > i{background:linear-gradient(90deg,#dc2626,#f87171)}
+.health-hint{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.45}
+.health-badge{
+  display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;
+  padding:4px 8px;border-radius:999px;background:rgba(16,185,129,.15);color:#059669;margin-bottom:8px
+}
+.ad-timer{margin-top:10px;font-size:12px;font-weight:700;color:#f59e0b;text-align:center}
+
+
+/* WatchFlix Ads — offers */
+.wfads-wrap{margin-bottom:20px}
+.wfads-card{
+  border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#0b1220;color:#f1f5f9;
+  box-shadow:0 16px 40px rgba(0,0,0,.25);position:relative;
+}
+body.theme-light .wfads-card{background:#0f172a}
+.wfads-progress{
+  position:absolute;top:0;left:0;right:0;height:4px;background:rgba(255,255,255,.12);z-index:5
+}
+.wfads-progress > i{
+  display:block;height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#3b82f6);
+  transition:width .1s linear;border-radius:0 2px 2px 0
+}
+.wfads-stage{padding:0 0 16px}
+.wfads-visual{
+  height:200px;background:radial-gradient(circle at 50% 30%,#064e3b,#020617 70%);
+  display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden
+}
+.wfads-visual img{width:100%;height:100%;object-fit:cover}
+.wfads-visual .placeholder{text-align:center;padding:20px;color:#94a3b8;font-size:13px;font-weight:700}
+.wfads-dots{display:flex;gap:6px;justify-content:center;padding:10px 0 0}
+.wfads-dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25)}
+.wfads-dots span.on{background:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.25)}
+.wfads-body{padding:14px 16px 0}
+.wfads-body h3{margin:0 0 6px;font-size:16px;font-weight:800}
+.wfads-body p{margin:0;font-size:13px;color:#94a3b8;line-height:1.5}
+.wfads-meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:11px;color:#64748b;font-weight:700}
+.wfads-cta{
+  margin:14px 16px 0;width:calc(100% - 32px);border:0;border-radius:14px;padding:14px;
+  font-weight:800;font-size:15px;cursor:pointer;color:#0f172a;background:#38bdf8;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 10px 28px rgba(56,189,248,.35)
+}
+.wfads-cta:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.wfads-cta.done{background:#10b981;color:#fff}
+.wfads-clicks{display:flex;gap:8px;padding:12px 16px 4px;justify-content:center}
+.wfads-clicks i{
+  width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.2);
+  display:grid;place-items:center;font-size:11px;font-weight:800;color:#64748b;font-style:normal
+}
+.wfads-clicks i.ok{border-color:#10b981;background:rgba(16,185,129,.2);color:#34d399}
+.wfads-foot{padding:8px 16px 14px;font-size:11px;color:#64748b;text-align:center;line-height:1.4}
+.wfads-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.wfads-head h2{margin:0;font-size:16px;font-weight:800}
+.wfads-badge{font-size:10px;font-weight:800;padding:4px 8px;border-radius:999px;background:rgba(59,130,246,.15);color:#3b82f6}
+
+
+.wf-gate-card{
+  border-radius:18px;border:1px solid var(--line);background:var(--card);padding:14px;margin-bottom:10px
+}
+.wf-gate-card h4{margin:0 0 6px;font-size:15px;font-weight:800}
+.wf-gate-card p{margin:0;font-size:12px;color:var(--muted);line-height:1.45}
+.wf-gate-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px}
+.wf-gate-row .rew{font-size:12px;font-weight:800;color:#10b981}
+.wf-gate-btn{
+  border:0;border-radius:12px;padding:10px 14px;font-weight:800;font-size:13px;cursor:pointer;
+  background:linear-gradient(135deg,#0284c7,#38bdf8);color:#fff
+}
+.wf-gate-btn:disabled{opacity:.45;cursor:not-allowed}
+.wf-warn-red{
+  margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(239,68,68,.4);
+  background:rgba(239,68,68,.1);color:#b91c1c;font-size:11px;font-weight:700;line-height:1.45;display:none
+}
+body.theme-dark .wf-warn-red{color:#fecaca;background:rgba(239,68,68,.15)}
+.wf-warn-red.show{display:block}
+
+</style>
+</head>
+<body class="theme-light">
+<div id="authGate" class="auth-gate" style="display:none">
+  <div class="card">
+    <div class="logo-mark" style="margin:0 auto 12px"><div class="logo-mark-inner"><span>W</span></div></div>
+    <h2 style="margin:0 0 8px;font-size:20px;font-weight:800">Sign in required</h2>
+    <p style="color:var(--muted);font-size:14px;margin:0 0 18px">Open your account to continue.</p>
+    <a href="login.html" class="btn-primary" style="display:inline-block;width:auto;padding:12px 24px;text-decoration:none">Sign in</a>
+  </div>
+</div>
+
+<div id="app" class="app" style="display:none">
+  <div class="top">
+    <div class="brand">
+      <div class="logo-mark"><div class="logo-mark-inner"><span>W</span></div></div>
+      <div class="brand-text">
+        <div class="name">WATCHFLIX</div>
+        <div class="tag">WATCH · FINISH · COLLECT</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button type="button" class="icon-round notif-btn" id="notifBtn" onclick="toggleNotifPanel()" title="Notifications">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5"/><path d="M9 17a3 3 0 006 0"/></svg>
+        <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+      </button>
+      <button type="button" class="icon-round" onclick="refreshAll()" title="Refresh">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-2.6-6.3"/><path d="M21 3v6h-6"/></svg>
+      </button>
+    </div>
+    <div id="notifPanel" class="notif-panel">
+      <div class="notif-head"><strong>Notifications</strong><button type="button" onclick="markAllNotifsRead()">Mark all read</button></div>
+      <div id="notifList" class="notif-list"><div class="notif-empty">No notifications yet</div></div>
+    </div>
+  </div>
+
+  <div id="tab-home" class="panel active">
+    
+    <div class="card" id="rewardsHowCard" style="margin-bottom:14px;font-size:12px;color:var(--muted);line-height:1.5;position:relative;padding-right:36px">
+      <button type="button" aria-label="Close" onclick="closeRewardsHow()" style="position:absolute;top:10px;right:10px;width:28px;height:28px;border:0;border-radius:8px;background:var(--soft);color:var(--muted);font-size:16px;font-weight:800;cursor:pointer;line-height:1">×</button>
+      <div style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:13px">How rewards work</div>
+      WatchFlix rewards users for eligible platform activities. A portion of advertising revenue is allocated to the Rewards Pool.
+      Because advertising revenue changes over time, reward availability and rates may vary.
+      Completing eligible activities qualifies you for WCoin; clicking ads is not itself a reward condition.
+      <div style="margin-top:8px;font-weight:800;color:var(--text)">5 WCoin = ₦1</div>
+    </div>
+
+    <div class="welcome">Welcome back, <b id="helloName">User</b></div>
+    <h1 class="page-title">Dashboard</h1>
+    <div class="currency-switch" id="currencySwitch">
+      <button type="button" class="active" data-cur="NGN" onclick="setCurrency('NGN')">NGN</button>
+      <button type="button" data-cur="USDT" onclick="setCurrency('USDT')">USDT · BEP20</button>
+    </div>
+    <div class="hero">
+      <div class="hero-tabs">
+        <button type="button" class="active" data-slice="total" onclick="setHeroSlice('total')">Total</button>
+        <button type="button" data-slice="referral" onclick="setHeroSlice('referral')">Referral</button>
+        <button type="button" data-slice="task" onclick="setHeroSlice('task')">Task</button>
+        <button type="button" data-slice="withdrawn" onclick="setHeroSlice('withdrawn')">Paid</button>
+      </div>
+      <div class="hero-bal-label" id="heroLabel">Available balance</div>
+      <div class="hero-bal" id="heroAmount">0 WCoin</div>
+      <div class="hero-coin" id="heroCoin">0 WCoin</div>
+      <div class="hero-sub" id="heroSub">5,000 WCoin = ₦1,000</div>
+      <div class="hero-actions">
+        <button type="button" class="btn-light" onclick="goTab('earn')">Earn rewards</button>
+        <button type="button" class="btn-ghost-light" onclick="goTab('withdraw')">Withdraw</button>
+      </div>
+      <div class="hero-foot">
+        <div>Wallet<br><b id="heroWallet" style="font-size:15px">₦0.00</b></div>
+        <div class="chip" id="currencyChip">NGN</div>
+      </div>
+    </div>
+    <div class="banner">
+      <h3>INVITE · UNLOCK · COLLECT</h3>
+      <h2>Invite friends<br>&amp; earn WCoin</h2>
+      <p id="bannerRefText">Share your link — earn 50 WCoin when friends join.</p>
+    </div>
+    <div class="section">
+      <h2>Quick actions</h2>
+      <div class="quick">
+        <button type="button" onclick="goTab('earn')"><div class="qico" style="background:#ecfdf5;color:#059669"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>Tasks</button>
+        <button type="button" onclick="goTab('withdraw')"><div class="qico" style="background:#d1fae5;color:#047857"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>Cash out</button>
+        <button type="button" onclick="scrollReferral()"><div class="qico" style="background:#fef3c7;color:#d97706"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>Refer</button>
+        <button type="button" onclick="goTab('activity')"><div class="qico" style="background:#e0e7ff;color:#4f46e5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 10l7-7 7 7"/></svg></div>History</button>
+      </div>
+    </div>
+    <div class="section" id="referralSection">
+      <h2>Your referral</h2>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;gap:10px">
+          <div>
+            <div style="font-size:12px;color:var(--muted);font-weight:600">Code</div>
+            <div id="refCode" style="font-weight:800;font-size:18px;letter-spacing:.06em;margin-top:4px">—</div>
+            <div class="ref-count"><span id="refCount">0</span> referrals</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:12px;color:var(--muted);font-weight:600">Reward</div>
+            <div id="refReward" style="font-weight:800;color:#10b981;margin-top:4px">—</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-top:12px">Link</div>
+        <div id="refLink" style="font-size:12px;word-break:break-all;color:var(--muted);margin:4px 0 12px">—</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button type="button" class="btn-ghost" onclick="copyReferral()">Copy</button>
+          <button type="button" class="btn-primary" onclick="shareReferral()">Share</button>
+        </div>
+        <div id="refStatus" style="font-size:11px;color:var(--muted);margin-top:10px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-earn" class="panel">
+    
+    <div class="wfads-wrap" id="wfAdsSection">
+      <div class="wf-gate-card" style="text-align:left">
+        <div class="wfads-head" style="margin-bottom:8px">
+          <h2 style="margin:0">WatchFlix Ads</h2>
+          <span class="wfads-badge">Activity</span>
+        </div>
+        <p style="margin:0 0 10px;font-size:13px;color:var(--muted);line-height:1.5">
+          Open the activity page to complete today’s WatchFlix stages. Rewards are for finishing the activity and admin review — not for clicking ads.
+        </p>
+        <p id="wfAdsGateHint" style="font-size:11px;color:var(--muted);margin:0 0 12px;line-height:1.4"></p>
+        <div class="wf-warn-red" id="wfAdsGateWarn">
+          You must complete <b>every stage</b> on the next page, then submit for review. Skipping a stage means no reward.
+        </div>
+        <div class="wf-gate-row" style="margin-top:14px">
+          <span class="rew" id="wfAdsGateReward" style="display:none"></span>
+          <button type="button" class="wf-gate-btn" id="wfAdsGateBtn" onclick="goToWatchFlixAds()">Continue to activity</button>
+        </div>
+      </div>
+    </div>
+    <h1 class="page-title" style="font-size:22px;margin-top:8px">Featured tasks</h1>
+
+    <div class="card" style="margin-bottom:14px;font-size:12px;color:var(--muted);line-height:1.55">
+      <b style="color:var(--text)">How to earn</b><br>
+      1. Open the task · 2. Complete it · 3. Upload a clear screenshot · 4. Wait for approval — WCoin is added when approved.
+    </div>
+    <div id="sponsoredList"></div>
+    <p id="earnMsg" class="msg" style="display:none"></p>
+  </div>
+
+  <div id="tab-ads" class="panel">
+    <h1 class="page-title" style="font-size:22px">Advertise</h1>
+    <div class="banner" style="min-height:0;margin:0 0 12px">
+      <h3>GROW YOUR BRAND</h3>
+      <h2 style="font-size:18px">Reach active earners</h2>
+      <p>Request a sponsored placement. Reviewed before publish.</p>
+    </div>
+    <div class="card">
+      <div style="margin-bottom:10px"><label class="lbl">Campaign title</label><input id="advTitle" class="field" type="text" placeholder="e.g. Follow our page"></div>
+      <div style="margin-bottom:10px"><label class="lbl">Destination link</label><input id="advUrl" class="field" type="url" placeholder="https://…"></div>
+      <div style="margin-bottom:10px"><label class="lbl">What users should do</label><textarea id="advDesc" class="field" rows="3" placeholder="Short instructions"></textarea></div>
+      <div style="margin-bottom:12px"><label class="lbl">Contact</label><input id="advContact" class="field" type="text" placeholder="Email or WhatsApp"></div>
+      <button type="button" class="btn-primary" onclick="submitAdRequest()">Submit request</button>
+      <div id="advMsg" class="msg" style="display:none"></div>
+    </div>
+  </div>
+
+  <div id="tab-activity" class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h1 class="page-title" style="font-size:22px;margin:0">History</h1>
+      <button type="button" class="icon-round" onclick="loadTransactions()">↻</button>
+    </div>
+    <div class="card" id="txList" style="margin-top:12px"></div>
+  </div>
+
+  <div id="tab-withdraw" class="panel">
+    <h1 class="page-title" style="font-size:22px">Withdraw</h1>
+    <div class="wd-stats">
+      <div class="wd-stat pending"><div class="l">Pending</div><div class="v" id="balPending">0 WC</div></div>
+      <div class="wd-stat paid"><div class="l">Paid out</div><div class="v" id="balWithdrawn">0 WC</div></div>
+    </div>
+    <div class="calc-box">
+      <div style="font-weight:800;font-size:13px;margin-bottom:10px">WCoin calculator</div>
+      <div class="calc-row">
+        <div><label class="lbl">WCoin</label><input id="calcWcoin" class="field" type="number" min="0" value="5000" oninput="syncCalcFromWcoin()"></div>
+        <div class="calc-eq">=</div>
+        <div><label class="lbl">Naira</label><input id="calcNaira" class="field" type="number" min="0" value="1000" oninput="syncCalcFromNaira()"></div>
+      </div>
+      <div class="calc-hint">5 WCoin = ₦1 · 5,000 WCoin = ₦1,000</div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="wd-method-tabs">
+        <button type="button" class="active" id="mBank" onclick="setWdMethod('bank')">Bank transfer</button>
+        <button type="button" id="mCrypto" onclick="setWdMethod('crypto')">USDT BEP20</button>
+      </div>
+      <div id="wdBankForm">
+        <p style="margin:0 0 12px;font-size:12px;color:var(--muted)">Min <span id="minWdLabel">₦1,000</span> · Paid after approval</p>
+        <div style="margin-bottom:12px"><label class="lbl">Amount (WCoin)</label><input id="wdAmount" class="field" type="number" min="0" step="1" placeholder="5000"><div style="font-size:11px;color:var(--muted);margin-top:4px" id="wdAmountNairaHint">≈ ₦0</div></div>
+        <div class="bank-wrap" style="margin-bottom:12px">
+          <label class="lbl">Bank</label>
+          <input id="wdBankSearch" class="field" type="text" placeholder="Search bank…" autocomplete="off" oninput="filterBanks()" onfocus="openBankList()">
+          <input type="hidden" id="wdBank">
+          <div id="bankList" class="bank-list"></div>
+        </div>
+        <div id="customBankWrap" style="margin-bottom:12px;display:none">
+          <label class="lbl">Custom bank</label><input id="wdBankCustom" class="field" type="text">
+        </div>
+        <div style="margin-bottom:12px"><label class="lbl">Account number</label><input id="wdAccount" class="field" type="text" inputmode="numeric"></div>
+        <div style="margin-bottom:14px"><label class="lbl">Account name</label><input id="wdName" class="field" type="text"></div>
+        <button type="button" id="wdBtn" class="btn-primary" onclick="requestWithdraw()">Request payout</button>
+        <div id="wdMsg" class="msg" style="display:none"></div>
+      </div>
+      <div id="wdCryptoForm" style="display:none">
+        <div class="soon-box"><b style="color:var(--text)">USDT (BEP20) coming soon</b><br>Bank transfer is available now.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-profile" class="panel">
+    <h1 class="page-title" style="font-size:22px;margin-bottom:4px">Profile</h1>
+    <p style="margin:0 0 14px;color:var(--muted);font-size:13px">Account &amp; preferences</p>
+    <div class="health-card" id="healthCard">
+      <div class="health-badge">ACCOUNT STATUS</div>
+      <div class="health-top">
+        <span class="title">Account health</span>
+        <span class="health-val" id="healthVal">100%</span>
+      </div>
+      <div class="health-bar" id="healthBar"><i id="healthFill" style="width:100%"></i></div>
+      <div class="health-hint" id="healthHint">Open a task, finish it, then upload proof. Skipping after you open reduces health.</div>
+    </div>
+    <div class="card">
+      <div class="profile-head">
+        <div class="avatar" id="avatarLetter">W<span class="ok"></span></div>
+        <div>
+          <div style="font-weight:800;font-size:16px" id="accUser">—</div>
+          <div style="font-size:12px;color:var(--muted)" id="accEmail">—</div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div><div class="l">Earned</div><div class="v" id="profEarned">0 WC</div></div>
+        <div><div class="l">Referrals</div><div class="v" id="statRefs">0</div></div>
+        <div><div class="l">Balance</div><div class="v" id="profBal">0 WC</div></div>
+      </div>
+    </div>
+    <div class="section"><h2>Account</h2>
+      <div class="card" style="padding:8px 16px">
+        <div class="menu-row" onclick="goTab('withdraw')"><div class="menu-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/></svg></div><div style="flex:1"><div style="font-weight:700">Payouts</div><div style="font-size:12px;color:var(--muted)">Bank &amp; future crypto</div></div><span style="color:var(--muted)">›</span></div>
+        <div class="menu-row" onclick="goTab('activity')"><div class="menu-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div style="flex:1"><div style="font-weight:700">History</div><div style="font-size:12px;color:var(--muted)">Earnings &amp; withdrawals</div></div><span style="color:var(--muted)">›</span></div>
+        <div class="menu-row" onclick="toggleTheme()"><div class="menu-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2"/></svg></div><div style="flex:1"><div style="font-weight:700">Appearance</div><div style="font-size:12px;color:var(--muted)">Light / dark</div></div><span style="color:var(--muted)">›</span></div>
+        <div class="menu-row" onclick="logout()"><div class="menu-ico" style="background:rgba(248,113,113,.12);color:#f87171"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></div><div style="flex:1"><div style="font-weight:700">Sign out</div><div style="font-size:12px;color:var(--muted)">End session</div></div><span style="color:var(--muted)">›</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;word-break:break-all">ID: <span id="accId">—</span></div>
+    </div>
+  </div>
+</div>
+
+<nav class="dock" id="dock">
+  <button type="button" class="active" data-tab="home" onclick="goTab('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 01-1 1h-5v-6H10v6H5a1 1 0 01-1-1v-9.5z"/></svg>Home</button>
+  <button type="button" data-tab="earn" onclick="goTab('earn')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Tasks</button>
+  <button type="button" class="dock-theme" onclick="toggleTheme()" title="Theme">
+    <svg id="dockSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg id="dockMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:none"><path d="M21 14.5A8.5 8.5 0 1110.5 3 7 7 0 0021 14.5z"/></svg>
+  </button>
+  <button type="button" data-tab="withdraw" onclick="goTab('withdraw')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Wallet</button>
+  <button type="button" data-tab="profile" onclick="goTab('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0116 0"/></svg>More</button>
+</nav>
+
+<script>
+const API_URL="https://global-api-platform-production.up.railway.app";
+const API_KEY="ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c";
+const LS={token:"wf_token",user:"wf_user",theme:"wf_theme",payout:"wf_payout",health:"wf_health",opened:"wf_opened_tasks"};
+const WCOIN_PER_NAIRA=5;
+const NIGERIAN_BANKS=["Access Bank","Citibank Nigeria","Ecobank Nigeria","Fidelity Bank","First Bank of Nigeria","First City Monument Bank (FCMB)","Globus Bank","Guaranty Trust Bank (GTBank)","Heritage Bank","Keystone Bank","Optimus Bank","Parallex Bank","Polaris Bank","Premium Trust Bank","Providus Bank","Stanbic IBTC Bank","Standard Chartered Bank","Sterling Bank","SunTrust Bank","Titan Trust Bank","Union Bank of Nigeria","United Bank for Africa (UBA)","Unity Bank","Wema Bank","Zenith Bank","Jaiz Bank","Lotus Bank","TAJBank","OPay","PalmPay","Kuda Bank","Moniepoint","VBank","Sparkle","Rubies Bank (Carbon)","ALAT by Wema","FairMoney","9 Payment Service Bank","Hope Payment Service Bank","MoMo PSB","Other / Not listed"];
+
+const state={
+  token:localStorage.getItem(LS.token)||"",
+  user:JSON.parse(localStorage.getItem(LS.user)||"null"),
+  settings:null,wallet:null,offers:[],referral:null,referralLink:"",
+  heroSlice:"total",currency:"NGN",wdMethod:"bank",
+  sponsored:[], submissions:[], notifications:[], notifOpen:false
+};
+
+const money=v=>new Intl.NumberFormat("en-NG",{style:"currency",currency:"NGN",maximumFractionDigits:2}).format(Number(v)||0);
+const nairaToWcoin=n=>Math.round((Number(n)||0)*WCOIN_PER_NAIRA);
+const wcoinLabel=n=>new Intl.NumberFormat("en-NG").format(nairaToWcoin(n))+" WCoin";
+const escapeHtml=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+
+function logout(){localStorage.removeItem(LS.token);localStorage.removeItem(LS.user);location.href="login.html"}
+function userId(){return state.user?.id||state.user?._id||""}
+function requireAuth(){
+  if(!state.token||!state.user){
+    document.getElementById("authGate").style.display="block";
+    document.getElementById("app").style.display="none";
+    document.getElementById("dock").style.display="none";
+    return false;
+  }
+  document.getElementById("authGate").style.display="none";
+  document.getElementById("app").style.display="block";
+  document.getElementById("dock").style.display="grid";
+  return true;
+}
+function applyTheme(theme){
+  const light = theme === "light";
+  document.body.classList.remove("theme-light", "theme-dark");
+  document.body.classList.add(light ? "theme-light" : "theme-dark");
+  const sun = document.getElementById("dockSun");
+  const moon = document.getElementById("dockMoon");
+  // Light mode: show moon (switch to dark). Dark mode: show sun (switch to light).
+  if(sun) sun.style.display = light ? "none" : "block";
+  if(moon) moon.style.display = light ? "block" : "none";
+  try { localStorage.setItem(LS.theme, light ? "light" : "dark"); } catch(e) {}
+}
+function toggleTheme(ev){
+  if(ev){ try{ ev.preventDefault(); ev.stopPropagation(); }catch(e){} }
+  applyTheme(document.body.classList.contains("theme-light") ? "dark" : "light");
+}
+function initTheme(){
+  let saved = null;
+  try { saved = localStorage.getItem(LS.theme); } catch(e) {}
+  // Default WHITE / light unless user chose dark
+  if(saved === "dark") applyTheme("dark");
+  else applyTheme("light");
+}
+
+
+function closeRewardsHow(){
+  const el = document.getElementById("rewardsHowCard");
+  if(el) el.style.display = "none";
+}
+
+function goTab(name){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  document.getElementById("tab-"+name)?.classList.add("active");
+  document.querySelectorAll(".dock button[data-tab]").forEach(b=>b.classList.toggle("active",b.getAttribute("data-tab")===name));
+  if(name==="activity") loadTransactions();
+  if(name==="earn"){ initWfAds(); loadSponsoredTasks(); }
+  if(name==="home") window.scrollTo({top:0,behavior:"smooth"});
+}
+function scrollReferral(){goTab("home");setTimeout(()=>document.getElementById("referralSection")?.scrollIntoView({behavior:"smooth"}),60)}
+
+function setCurrency(cur){
+  state.currency=cur;
+  document.querySelectorAll("#currencySwitch button").forEach(b=>b.classList.toggle("active",b.getAttribute("data-cur")===cur));
+  document.getElementById("currencyChip").textContent=cur==="USDT"?"USDT":"NGN";
+  if(cur==="USDT"){
+    document.getElementById("heroAmount").textContent="Coming soon";
+    document.getElementById("heroCoin").textContent="USDT · BEP20";
+    document.getElementById("heroSub").textContent="Crypto payouts not enabled yet";
+    document.getElementById("heroWallet").textContent="—";
+  } else {
+    setHeroSlice(state.heroSlice);
+    const el=document.getElementById("heroWallet");
+    if(el) el.textContent=wcoinLabel(state.wallet?.balance);
+  }
+}
+
+function sumTx(rows, pred){
+  let s = 0;
+  (rows||[]).forEach(t => {
+    if(pred(t)) s += Number(t.amount) || 0;
+  });
+  return s;
+}
+function isReferralTx(t){
+  const ty = String(t.type||"").toLowerCase();
+  const d = String(t.description||"").toLowerCase();
+  return ty.includes("referral") || d.includes("referral") || d.includes("invite");
+}
+function isTaskTx(t){
+  const ty = String(t.type||"").toLowerCase();
+  const d = String(t.description||"").toLowerCase();
+  if(isReferralTx(t)) return false;
+  if(ty === "withdrawal" || ty === "debit" || ty === "penalty") return false;
+  return ty === "earning" || ty === "reward" || ty === "credit" || d.includes("sponsored") || d.includes("task") || d.includes("offer") || d.includes("ad");
+}
+async function loadEarningsBreakdown(){
+  try{
+    const body = await engine("transaction.find", { filter: { user: userId() } });
+    let rows = [];
+    if(body.result && !Array.isArray(body.result) && Array.isArray(body.result.data)) rows = body.result.data;
+    else {
+      const step = Array.isArray(body.result) ? body.result[0] : null;
+      const inner = step?.result || {};
+      rows = Array.isArray(inner.data) ? inner.data : (Array.isArray(inner) ? inner : []);
+    }
+    state.txRows = rows;
+    const refFromTx = sumTx(rows, t => isReferralTx(t) && String(t.status||"completed").toLowerCase() !== "failed");
+    const taskFromTx = sumTx(rows, t => isTaskTx(t) && String(t.status||"completed").toLowerCase() !== "failed");
+    // Prefer referral API totals when present
+    const refApi = Number(state.referral?.totalReferralEarnings ?? state.referral?.referralEarnings ?? state.referral?.earned ?? 0);
+    state.earnBreakdown = {
+      referral: refApi > 0 ? refApi : refFromTx,
+      task: taskFromTx,
+      withdrawn: Number(state.wallet?.totalWithdrawn) || 0,
+      balance: Number(state.wallet?.balance) || 0,
+      earned: Number(state.wallet?.totalEarned) || (refFromTx + taskFromTx)
+    };
+  }catch(e){
+    state.earnBreakdown = {
+      referral: 0,
+      task: 0,
+      withdrawn: Number(state.wallet?.totalWithdrawn) || 0,
+      balance: Number(state.wallet?.balance) || 0,
+      earned: Number(state.wallet?.totalEarned) || 0
+    };
+  }
+  if(state.currency !== "USDT") setHeroSlice(state.heroSlice || "total");
+}
+
+function setHeroSlice(slice){
+  state.heroSlice = slice;
+  document.querySelectorAll(".hero-tabs button").forEach(b => b.classList.toggle("active", b.getAttribute("data-slice") === slice));
+  if(state.currency === "USDT") return setCurrency("USDT");
+  const w = state.wallet || {};
+  const b = state.earnBreakdown || {};
+  const map = {
+    total: { v: Number(w.balance) || 0, label: "Available balance", sub: "Ready to withdraw · 5 WCoin = ₦1" },
+    referral: { v: Number(b.referral) || 0, label: "Referral earnings", sub: "From successful invites" },
+    task: { v: Number(b.task) || 0, label: "Task earnings", sub: "Sponsored & offer rewards" },
+    withdrawn: { v: Number(w.totalWithdrawn) || Number(b.withdrawn) || 0, label: "Total paid out", sub: "Approved withdrawals" }
+  };
+  const m = map[slice] || map.total;
+  const elL = document.getElementById("heroLabel");
+  const elA = document.getElementById("heroAmount");
+  const elC = document.getElementById("heroCoin");
+  const elS = document.getElementById("heroSub");
+  if(elL) elL.textContent = m.label;
+  if(elA) elA.textContent = wcoinLabel(m.v);
+  if(elC) elC.textContent = money(m.v) + " NGN ledger";
+  if(elS) elS.textContent = m.sub;
+}
+function setWdMethod(m){
+  state.wdMethod=m;
+  document.getElementById("mBank").classList.toggle("active",m==="bank");
+  document.getElementById("mCrypto").classList.toggle("active",m==="crypto");
+  document.getElementById("wdBankForm").style.display=m==="bank"?"block":"none";
+  document.getElementById("wdCryptoForm").style.display=m==="crypto"?"block":"none";
+}
+
+async function api(path,options={}){
+  const headers={"Content-Type":"application/json","X-API-Key":API_KEY,...(state.token?{Authorization:"Bearer "+state.token}:{}),...(options.headers||{})};
+  const res=await fetch(API_URL+path,{...options,headers});
+  const data=await res.json().catch(()=>({}));
+  if(res.status===401){logout();throw new Error("Session expired")}
+  if(!res.ok||data.success===false) throw new Error(data.message||data.error||("HTTP "+res.status));
+  return data;
+}
+async function engine(action,data){
+  const res=await fetch(API_URL+"/api/v1/engine",{method:"POST",headers:{"Content-Type":"application/json","X-API-Key":API_KEY,Authorization:"Bearer "+state.token},body:JSON.stringify({action,data})});
+  const body=await res.json().catch(()=>({}));
+  if(res.status===401){logout();throw new Error("Session expired")}
+  const stepFail=Array.isArray(body.result)&&body.result.some(r=>r&&r.success===false);
+  if(!res.ok||body.success===false||stepFail) throw new Error((body.result&&body.result[0]&&body.result[0].error)||body.message||"Request failed");
+  return body;
+}
+function unwrapWallet(body){
+  if(body?.result&&!Array.isArray(body.result)&&body.result.data) return body.result.data;
+  const step=Array.isArray(body.result)?body.result[0]:null;
+  const inner=step?.result!=null?step.result:(body.result||{});
+  return inner.data||inner.wallet||inner||{};
+}
+
+function taskIdOf(sub){
+  const t=sub.task;
+  if(!t) return "";
+  if(typeof t==="string") return t;
+  return t._id||t.id||"";
+}
+function latestSubForTask(taskId){
+  const rows=(state.submissions||[]).filter(s=>taskIdOf(s)===taskId);
+  if(!rows.length) return null;
+  rows.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  return rows[0];
+}
+
+
+/* —— Account health (local, per user) —— */
+function healthKey(){ return LS.health + "_" + (userId() || "guest"); }
+function getHealth(){
+  try{
+    const v = Number(localStorage.getItem(healthKey()));
+    if(Number.isFinite(v) && v >= 0 && v <= 100) return v;
+  }catch(e){}
+  return 100;
+}
+function setHealth(v){
+  v = Math.max(0, Math.min(100, Math.round(v)));
+  try{ localStorage.setItem(healthKey(), String(v)); }catch(e){}
+  renderHealth();
+  if(v <= 50) maybeWarnHealth(v);
+  return v;
+}
+function renderHealth(){
+  const v = getHealth();
+  const val = document.getElementById("healthVal");
+  const bar = document.getElementById("healthBar");
+  const fill = document.getElementById("healthFill");
+  const hint = document.getElementById("healthHint");
+  if(val){
+    val.textContent = v + "%";
+    val.classList.remove("warn","danger");
+    if(v <= 50) val.classList.add("danger");
+    else if(v <= 70) val.classList.add("warn");
+  }
+  if(fill) fill.style.width = v + "%";
+  if(bar){
+    bar.classList.remove("warn","danger");
+    if(v <= 50) bar.classList.add("danger");
+    else if(v <= 70) bar.classList.add("warn");
+  }
+  if(hint){
+    if(v <= 50) hint.textContent = "Health is low. Finish tasks you open or your account may be limited.";
+    else if(v < 100) hint.textContent = "Health " + v + "%. Open task → finish → upload proof. Skipping costs 5%.";
+    else hint.textContent = "Open a task, finish it, then upload proof. Skipping after you open reduces health.";
+  }
+}
+async function maybeWarnHealth(v){
+  const flagKey = "wf_health_warned_" + (userId()||"guest");
+  try{
+    if(localStorage.getItem(flagKey) === "1" && v > 45) return;
+    localStorage.setItem(flagKey, "1");
+  }catch(e){}
+  alert("Account health is at " + v + "%. Please complete tasks you open. Admins have been notified.");
+  // Best-effort admin signal via notification to self log + optional engine
+  try{
+    await engine("notification.send", {
+      user: userId(),
+      title: "Account health warning",
+      message: "Your account health is " + v + "%. Complete opened tasks to avoid limits.",
+      type: "system"
+    });
+  }catch(e){}
+  try{
+    const key = "wf_admin_health_alerts";
+    const prev = JSON.parse(localStorage.getItem(key) || "[]");
+    prev.unshift({ userId: userId(), username: state.user?.username, health: v, at: new Date().toISOString() });
+    localStorage.setItem(key, JSON.stringify(prev.slice(0, 50)));
+  }catch(e){}
+}
+function penalizeIncompleteTask(taskId, reason){
+  const opened = getOpenedMap();
+  const row = opened[taskId];
+  if(!row || row.completed || row.penalized) return;
+  row.penalized = true;
+  opened[taskId] = row;
+  saveOpenedMap(opened);
+  const next = setHealth(getHealth() - 5);
+  console.warn("Health -5%", reason, taskId, "now", next);
+}
+function getOpenedMap(){
+  try{ return JSON.parse(localStorage.getItem(LS.opened + "_" + (userId()||"guest")) || "{}"); }catch(e){ return {}; }
+}
+function saveOpenedMap(map){
+  try{ localStorage.setItem(LS.opened + "_" + (userId()||"guest"), JSON.stringify(map)); }catch(e){}
+}
+function markTaskOpened(taskId){
+  const map = getOpenedMap();
+  // Penalize any other opened incomplete tasks first
+  Object.keys(map).forEach(id => {
+    if(id !== taskId && map[id] && !map[id].completed && !map[id].penalized && map[id].timerDone){
+      penalizeIncompleteTask(id, "abandoned");
+    }
+  });
+  map[taskId] = { openedAt: Date.now(), timerDone: false, completed: false, penalized: false };
+  saveOpenedMap(map);
+}
+function markTaskTimerDone(taskId){
+  const map = getOpenedMap();
+  if(!map[taskId]) map[taskId] = { openedAt: Date.now(), completed: false, penalized: false };
+  map[taskId].timerDone = true;
+  saveOpenedMap(map);
+}
+function markTaskCompleted(taskId){
+  const map = getOpenedMap();
+  if(!map[taskId]) map[taskId] = {};
+  map[taskId].completed = true;
+  saveOpenedMap(map);
+}
+
+/* Network ads (Monetag / Adsterra / CPA) — 20s watch timer for FUTURE use */
+const NETWORK_ADS_LIVE = false;
+const NETWORK_AD_TIMER = { seconds: 20, minGapMs: 45000, lastClick: 0, interval: null };
+
+async function startNetworkAdSession(provider, buttonEl, timerEl){
+  // Call this when Monetag/Adsterra scripts are wired
+  if(!NETWORK_ADS_LIVE){
+    if(timerEl) timerEl.textContent = "Network ads coming soon";
+    return;
+  }
+  const now = Date.now();
+  if(now - NETWORK_AD_TIMER.lastClick < NETWORK_AD_TIMER.minGapMs){
+    alert("Please wait before watching another ad.");
+    return;
+  }
+  if(await checkAdBlocker()){ alert("Please disable your AdBlocker to earn WCoin."); return; }
+  NETWORK_AD_TIMER.lastClick = now;
+  let left = NETWORK_AD_TIMER.seconds;
+  if(buttonEl){ buttonEl.disabled = true; buttonEl.style.opacity = "0.55"; }
+  if(timerEl) timerEl.textContent = "Watching · " + left + "s";
+  clearInterval(NETWORK_AD_TIMER.interval);
+  NETWORK_AD_TIMER.interval = setInterval(() => {
+    left--;
+    if(timerEl) timerEl.textContent = left > 0 ? ("Watching · " + left + "s") : "Reward ready";
+    if(left <= 0){
+      clearInterval(NETWORK_AD_TIMER.interval);
+      if(buttonEl){ buttonEl.disabled = false; buttonEl.style.opacity = "1"; }
+      // When live: call earn/session + provider SDK completion here
+    }
+  }, 1000);
+}
+
+/** Sponsored tasks: must Open task first before Upload proof (no 20s timer here). */
+function openSponsoredTask(taskId, url, event){
+  if(event){ event.preventDefault(); }
+  if(event && event.isTrusted === false){
+    alert("Bot activity detected. Real taps only.");
+    return;
+  }
+  const ad = (state.sponsored||[]).find(t => String(t._id||t.id) === String(taskId));
+  if(ad && taskAtCapacity(ad)){
+    alert("This task has reached its maximum number of participants.");
+    renderSponsored();
+    return;
+  }
+  markTaskOpened(taskId);
+  const cleanUrl = normalizeUrl(url);
+  if(!cleanUrl || cleanUrl === "#"){
+    alert("This task link is broken. Please try another task.");
+    return;
+  }
+  try{ window.open(cleanUrl, "_blank", "noopener,noreferrer"); }catch(e){ location.href = cleanUrl; }
+  // Unlock proof on this card
+  const proofLabel = document.querySelector('label.proof[data-task="'+taskId+'"]');
+  const proofInput = document.getElementById("proofInput_"+taskId);
+  if(proofLabel){
+    proofLabel.classList.remove("disabled-btn");
+    proofLabel.style.pointerEvents = "";
+    proofLabel.style.opacity = "";
+  }
+  if(proofInput) proofInput.disabled = false;
+  const tip = document.getElementById("taskTimer_"+taskId);
+  if(tip){ tip.style.display = "block"; tip.textContent = "Task opened — complete it, then upload a clear screenshot."; tip.style.color = "#10b981"; }
+  renderSponsored(); // refresh lock state from opened map
+}
+
+function hasOpenedTask(taskId){
+  const row = getOpenedMap()[String(taskId)];
+  return !!(row && row.openedAt);
+}
+
+/* legacy name kept so old markup does not break */
+async function openTaskWithTimer(taskId, url, event){
+  return openSponsoredTask(taskId, url, event);
+}
+
+/* —— Saved payout details —— */
+function payoutKey(){ return LS.payout + "_" + (userId() || "guest"); }
+function loadSavedPayout(){
+  try{
+    const d = JSON.parse(localStorage.getItem(payoutKey()) || "null");
+    if(!d) return;
+    if(d.bank){ const el=document.getElementById("wdBank"); if(el) el.value=d.bank; const s=document.getElementById("wdBankSearch"); if(s) s.value=d.bank; }
+    if(d.account){ const el=document.getElementById("wdAccount"); if(el) el.value=d.account; }
+    if(d.name){ const el=document.getElementById("wdName"); if(el) el.value=d.name; }
+    if(d.customBank){ const el=document.getElementById("wdBankCustom"); if(el) el.value=d.customBank; }
+    if(d.bank === "Other / Not listed"){ const w=document.getElementById("customBankWrap"); if(w) w.style.display="block"; }
+  }catch(e){}
+}
+function savePayoutDetails(){
+  try{
+    const payload = {
+      bank: document.getElementById("wdBank")?.value || "",
+      customBank: document.getElementById("wdBankCustom")?.value || "",
+      account: document.getElementById("wdAccount")?.value || "",
+      name: document.getElementById("wdName")?.value || ""
+    };
+    localStorage.setItem(payoutKey(), JSON.stringify(payload));
+  }catch(e){}
+}
+function bindPayoutAutosave(){
+  ["wdAccount","wdName","wdBankCustom","wdBankSearch"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el && !el._payoutBound){
+      el.addEventListener("change", savePayoutDetails);
+      el.addEventListener("blur", savePayoutDetails);
+      el._payoutBound = true;
+    }
+  });
+  const amt=document.getElementById("wdAmount");
+  if(amt && !amt._hintBound){
+    amt.addEventListener("input", ()=>{
+      const wc = Number(amt.value)||0;
+      const naira = Math.round(wc / WCOIN_PER_NAIRA);
+      const h=document.getElementById("wdAmountNairaHint");
+      if(h) h.textContent = "≈ " + money(naira) + " (ledger)";
+    });
+    amt._hintBound = true;
+  }
+}
+
+
+
+
+
+/* —— WatchFlix Ads gateway only (player = watchflix-ads.html) —— */
+const WF_ADS_KEY_V2 = "wf_watchflix_ads_v2";
+const WF_ADS_KEY_V1 = "wf_watchflix_ads_v1";
+
+function loadWfAdsStore(){
+  try{
+    const s = JSON.parse(localStorage.getItem(WF_ADS_KEY_V2)||"null");
+    if(s && Array.isArray(s.campaigns)) return s;
+  }catch(e){}
+  try{
+    const v1 = JSON.parse(localStorage.getItem(WF_ADS_KEY_V1)||"null");
+    if(v1 && v1.slots){
+      return {
+        dailyLimit: 10,
+        campaigns: [{
+          id: "default",
+          title: "WatchFlix Ads",
+          active: v1.enabled !== false,
+          rewardWcoin: Number(v1.rewardWcoin)||150,
+          durationSec: Number(v1.durationSec)||12,
+          slots: (v1.slots||[]).slice(0,3)
+        }]
+      };
+    }
+  }catch(e){}
+  return { dailyLimit: 10, campaigns: [] };
+}
+
+function wfAdsCompletionsKey(){
+  const day = new Date().toISOString().slice(0,10);
+  return "wf_ads_completions_" + (userId()||"guest") + "_" + day;
+}
+function wfAdsCompletionsToday(){
+  try{ return JSON.parse(localStorage.getItem(wfAdsCompletionsKey())||"[]"); }catch(e){ return []; }
+}
+
+function initWfAds(){
+  const store = loadWfAdsStore();
+  const section = document.getElementById("wfAdsSection");
+  const hint = document.getElementById("wfAdsGateHint");
+  const btn = document.getElementById("wfAdsGateBtn");
+  const rew = document.getElementById("wfAdsGateReward");
+  const warn = document.getElementById("wfAdsGateWarn");
+  if(!section) return;
+
+  const active = (store.campaigns||[]).filter(c => c && c.active !== false);
+  if(!active.length){
+    section.style.display = "none";
+    return;
+  }
+  section.style.display = "block";
+
+  const limit = Number(store.dailyLimit) || 10;
+  const done = wfAdsCompletionsToday().length;
+  // Prefer first active campaign not completed today
+  let camp = active.find(c => !wfAdsCompletionsToday().some(x => String(x.campaignId)===String(c.id)));
+  if(!camp) camp = active[0];
+  window._wfAdsGatewayId = camp.id;
+
+  if(hint){
+    hint.textContent = "Today: " + done + " / " + limit + " · Open the activity page to continue";
+  }
+  if(rew){
+    rew.style.display = "inline";
+    rew.textContent = "Up to +" + (Number(camp.rewardWcoin)||0) + " WCoin (after review)";
+  }
+  if(warn) warn.classList.remove("show");
+
+  const atLimit = done >= limit;
+  const already = wfAdsCompletionsToday().some(x => String(x.campaignId)===String(camp.id));
+  if(btn){
+    btn.disabled = atLimit;
+    btn.textContent = atLimit ? "Daily limit reached" : (already ? "Open activity again" : "Continue to activity");
+  }
+}
+
+function goToWatchFlixAds(){
+  // Validate and navigate directly to watchflix.html (no query params)
+  const store = loadWfAdsStore();
+  const active = (store.campaigns||[]).filter(c => c && c.active !== false);
+  if(!active.length){
+    alert("No active campaigns right now. Check back later.");
+    return;
+  }
+  const limit = Number(store.dailyLimit) || 10;
+  const done = wfAdsCompletionsToday().length;
+  if(done >= limit){
+    alert("Daily limit reached. Come back tomorrow.");
+    return;
+  }
+  // Navigate to watchflix.html as a plain link — no query parameters
+  window.location.href = "watchflix.html";
+}
+
+
+
+async function loadSponsoredTasks(){
+  try{
+    const [tasksRes, histRes]=await Promise.all([
+      api("/api/v1/sponsored-tasks"),
+      api("/api/v1/sponsored-tasks/history").catch(()=>({data:[]}))
+    ]);
+    state.sponsored=Array.isArray(tasksRes.data)?tasksRes.data:(tasksRes.tasks||[]);
+    state.submissions=Array.isArray(histRes.data)?histRes.data:[];
+  }catch(e){
+    console.warn(e);
+    state.sponsored=[];
+    state.submissions=[];
+  }
+  notifyNewSponsoredTasks(state.sponsored||[]);
+  renderSponsored();
+}
+
+/** Detect newly published campaigns and surface them in the in-app notification tray */
+function seenTasksKey(){ return "wf_seen_tasks_" + (userId() || "guest"); }
+function notifyNewSponsoredTasks(tasks){
+  try{
+    const active = (tasks||[]).filter(t => t && t.active !== false);
+    const ids = active.map(t => String(t._id||t.id)).filter(Boolean);
+    const key = seenTasksKey();
+    let seen = [];
+    try{ seen = JSON.parse(localStorage.getItem(key)||"[]"); }catch(e){ seen = []; }
+    if(!Array.isArray(seen)) seen = [];
+    // First visit: seed without flooding
+    if(!seen.length && ids.length){
+      localStorage.setItem(key, JSON.stringify(ids));
+      return;
+    }
+    const seenSet = new Set(seen);
+    const fresh = active.filter(t => !seenSet.has(String(t._id||t.id)));
+    if(fresh.length){
+      const extra = fresh.map(t => ({
+        id: "task_"+String(t._id||t.id),
+        title: "New task available",
+        message: (t.title || "Featured task") + " · +" + nairaToWcoin(t.rewardAmount||t.reward||0) + " WCoin",
+        createdAt: t.createdAt || new Date().toISOString(),
+        read: false,
+        _local: true
+      }));
+      // Merge into notification state (newest first)
+      const existing = state.notifications || [];
+      const merged = [...extra, ...existing.filter(n => !extra.some(e => e.id === n.id))];
+      state.notifications = merged;
+      renderNotifs();
+      // Persist seen ids
+      const next = [...new Set([...seen, ...ids])];
+      localStorage.setItem(key, JSON.stringify(next));
+    } else {
+      // Still update seen with current ids so removals don't re-fire
+      localStorage.setItem(key, JSON.stringify([...new Set([...seen, ...ids])]));
+    }
+  }catch(e){ console.warn("notifyNewSponsoredTasks", e); }
+}
+
+function normalizeUrl(url){
+  if(!url) return "";
+  url = String(url).trim();
+  url = url.replace(/\s+/g, "");
+  if(!/^https?:\/\//i.test(url) && !/^mailto:/i.test(url) && !/^tel:/i.test(url)){
+    url = "https://" + url;
+  }
+  return url;
+}
+function isValidUrl(url){
+  try{ new URL(url); return true; }catch{ return false; }
+}
+function taskAtCapacity(ad){
+  const max = ad.maxCompletions;
+  if(max == null || max === "" || Number(max) <= 0) return false;
+  const done = Number(ad.completionCount || ad.completions || 0);
+  return done >= Number(max);
+}
+function taskSlotsLabel(ad){
+  const max = ad.maxCompletions;
+  const done = Number(ad.completionCount || ad.completions || 0);
+  if(max == null || max === "" || Number(max) <= 0) return "Open slots · unlimited";
+  const left = Math.max(0, Number(max) - done);
+  return done + " / " + max + " joined · " + left + " left";
+}
+
+
+function renderSponsored(){
+  const box=document.getElementById("sponsoredList");
+  if(!box) return;
+  const ads=(state.sponsored||[]).filter(a=>a&&a.active!==false);
+  // Hide tasks that this user already got approved
+  const visible=ads.filter(ad=>{
+    const id=ad._id||ad.id;
+    const sub=latestSubForTask(id);
+    if(sub && String(sub.status).toLowerCase()==="approved") return false;
+    return true;
+  });
+  if(!visible.length){
+    box.innerHTML=`<div class="card soon-box"><div style="font-weight:800;color:var(--text);margin-bottom:8px">No featured tasks</div>New campaigns will appear here with banners and rewards.</div>`;
+    return;
+  }
+  box.innerHTML=visible.map(ad=>{
+    const id=ad._id||ad.id;
+    const naira=Number(ad.rewardAmount||ad.reward||0);
+    const img=(ad.imageUrl||ad.image||"").trim();
+    let url=normalizeUrl(ad.targetUrl||ad.url||"");
+    if(!url || !isValidUrl(url)) url="#";
+    const needs=ad.needsProof!==false;
+    const desc=ad.description||"Complete the steps on the task page, then upload a clear screenshot.";
+    const sub=latestSubForTask(id);
+    const st=sub?String(sub.status||"").toLowerCase():"";
+    const pending=st==="pending";
+    const rejected=st==="rejected";
+    const full=taskAtCapacity(ad);
+    const slots=taskSlotsLabel(ad);
+    let statusHtml="";
+    const rawUrl = ad.targetUrl || ad.url || "";
+    const hasValidLink = isValidUrl(normalizeUrl(rawUrl));
+    if(!hasValidLink && !full) statusHtml=`<div class="ad-status rejected">Task link unavailable — admin will fix soon</div>`;
+    else if(full) statusHtml=`<div class="ad-status rejected">Slots full (${escapeHtml(slots)}) — no more entries for this task</div>`;
+    else if(pending) statusHtml=`<div class="ad-status pending">Proof under review — you can’t submit again until it’s decided</div>`;
+    else if(rejected) statusHtml=`<div class="ad-status rejected">Previous proof rejected${sub.rejectionReason?": "+escapeHtml(sub.rejectionReason):""}. You can try again.</div>`;
+    const proofDisabled=pending || full;
+    return `<div class="ad-card">
+      <div class="ad-cover">
+        ${img
+          ? `<img src="${escapeHtml(img)}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="fallback" style="display:none"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M21 15l-5-5-4 4-2-2-5 5"/></svg><span style="font-weight:800">Featured task</span></div>`
+          : `<div class="fallback"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M21 15l-5-5-4 4-2-2-5 5"/></svg><span style="font-weight:800">Featured task</span></div>`}
+      </div>
+      <div class="ad-body">
+        <h4>${escapeHtml(ad.title||"Featured task")}</h4>
+        <p class="desc">${escapeHtml(desc)}</p>
+        <div class="ad-reward">+${nairaToWcoin(naira)} WCoin · ${money(naira)}</div>
+        <div class="ad-reward" style="margin-top:8px;background:rgba(15,23,42,.06);color:var(--muted)">${escapeHtml(slots)}</div>
+        <div class="ad-steps"><b>What to do:</b> Open the task → complete the action → upload a <b>screenshot proof</b> → wait for approval.</div>
+        ${statusHtml}
+        <div class="ad-actions">
+          ${full
+            ? `<button type="button" class="go disabled-btn" disabled style="opacity:.55;grid-column:1/-1">Slots full</button>`
+            : !hasValidLink
+              ? `<button type="button" class="go disabled-btn" disabled style="opacity:.55;grid-column:1/-1">Link unavailable</button>`
+              : `<a class="go" id="openTaskBtn_${escapeHtml(id)}" href="${escapeHtml(url)}" target="_blank" rel="noopener" onclick="openSponsoredTask('${escapeHtml(id)}','${escapeHtml(url)}',event)">Open task</a>
+          ${needs
+            ? (function(){
+                const canProof = !proofDisabled && hasOpenedTask(id);
+                return `<label class="proof ${canProof?"":"disabled-btn"}" data-task="${escapeHtml(id)}" style="${canProof?"":"pointer-events:none;opacity:.55"}">
+                 Upload proof
+                 <input id="proofInput_${escapeHtml(id)}" type="file" accept="image/*" hidden ${canProof?"":"disabled"} onchange="submitProof('${escapeHtml(id)}', this)">
+               </label>`;
+              })()
+            : `<button type="button" class="proof" disabled>No proof needed</button>`}`}
+        </div>
+        <div class="ad-timer" id="taskTimer_${escapeHtml(id)}" style="display:${hasOpenedTask(id) && !pending ? "block":"none"};color:#10b981">${hasOpenedTask(id) && !pending ? "Task opened — finish it, then upload proof":""}</div>
+        <div id="proofMsg_${escapeHtml(id)}" class="msg" style="display:none;text-align:left"></div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+async function submitProof(taskId, input){
+  const msg=document.getElementById("proofMsg_"+taskId);
+  const ad = (state.sponsored||[]).find(t => String(t._id||t.id) === String(taskId));
+  if(ad && taskAtCapacity(ad)){
+    if(msg){msg.style.display="block";msg.className="msg err";msg.textContent="Slots full — this task is no longer accepting proofs."}
+    input.value=""; renderSponsored(); return;
+  }
+  if(!hasOpenedTask(taskId)){
+    if(msg){msg.style.display="block";msg.className="msg err";msg.textContent="Open the task first, complete it, then upload proof."}
+    input.value=""; return;
+  }
+  if(!input.files||!input.files[0]) return;
+  const file=input.files[0];
+  if(!file.type||!file.type.startsWith("image/")){
+    if(msg){msg.style.display="block";msg.className="msg err";msg.textContent="Please choose an image file"}
+    input.value=""; return;
+  }
+  if(msg){msg.style.display="block";msg.className="msg";msg.textContent="Uploading proof…"}
+  try{
+    const form=new FormData();
+    form.append("proof", file, file.name||"proof.jpg");
+    form.append("proofType","image");
+    const deviceId=localStorage.getItem("wf_device_id")||"";
+    if(deviceId) form.append("deviceId", deviceId);
+    const res=await fetch(API_URL+"/api/v1/sponsored-tasks/"+encodeURIComponent(taskId)+"/submit",{
+      method:"POST",
+      headers:{"X-API-Key":API_KEY,...(state.token?{Authorization:"Bearer "+state.token}:{})},
+      body:form
+    });
+    const data=await res.json().catch(()=>({}));
+    if(res.status===401){logout();throw new Error("Session expired")}
+    if(!res.ok||data.success===false) throw new Error(data.message||data.error||"Upload failed");
+    if(msg){msg.className="msg ok";msg.textContent=data.message||"Proof submitted — waiting for review"}
+    markTaskCompleted(taskId);
+    initWfAds();
+  await loadSponsoredTasks();
+  }catch(e){
+    if(msg){msg.className="msg err";msg.textContent=e.message||"Submit failed"}
+  }finally{input.value=""}
+}
+
+function syncCalcFromWcoin(){const w=Number(document.getElementById("calcWcoin").value)||0;document.getElementById("calcNaira").value=String(Math.round(w/WCOIN_PER_NAIRA))}
+function syncCalcFromNaira(){const n=Number(document.getElementById("calcNaira").value)||0;document.getElementById("calcWcoin").value=String(Math.round(n*WCOIN_PER_NAIRA))}
+function openBankList(){document.getElementById("bankList").classList.add("open");filterBanks()}
+function filterBanks(){
+  const q=(document.getElementById("wdBankSearch").value||"").trim().toLowerCase();
+  const list=document.getElementById("bankList");
+  const items=NIGERIAN_BANKS.filter(b=>!q||b.toLowerCase().includes(q));
+  list.innerHTML=items.map(b=>`<button type="button" class="bank-item" onclick="selectBank('${b.replace(/'/g,"\\'")}')">${escapeHtml(b)}</button>`).join("")||`<div style="padding:12px;font-size:13px;color:var(--muted)">No match — choose Other / Not listed</div>`;
+  list.classList.add("open");
+}
+function selectBank(name){
+  document.getElementById("wdBank").value=name;document.getElementById("wdBankSearch").value=name;
+  document.getElementById("bankList").classList.remove("open");
+  document.getElementById("customBankWrap").style.display=name==="Other / Not listed"?"block":"none";
+  savePayoutDetails();
+}
+function selectedBankName(){
+  const v=document.getElementById("wdBank").value;
+  if(v==="Other / Not listed") return (document.getElementById("wdBankCustom").value||"").trim();
+  return (v||document.getElementById("wdBankSearch").value||"").trim();
+}
+document.addEventListener("click",e=>{
+  const bl=document.getElementById("bankList"),bs=document.getElementById("wdBankSearch");
+  if(bl&&bs&&bl.classList.contains("open")&&!bl.contains(e.target)&&e.target!==bs) bl.classList.remove("open");
+  const panel=document.getElementById("notifPanel"),btn=document.getElementById("notifBtn");
+  if(panel&&btn&&panel.classList.contains("open")&&!panel.contains(e.target)&&!btn.contains(e.target)) panel.classList.remove("open");
+});
+
+async function loadSettings(){
+  try{
+    const data=await api("/api/v1/settings");
+    state.settings=data.data||data;
+    const min=Number(state.settings.minimumWithdrawal??1000);
+    const el=document.getElementById("minWdLabel");
+    if(el) el.textContent=wcoinLabel(min*WCOIN_PER_NAIRA)+" ("+money(min)+")";
+  }catch(e){}
+}
+async function loadWallet(){
+  const body=await engine("wallet.view",{user:userId()});
+  const w=unwrapWallet(body)||{};
+  state.wallet=w;
+  const setTxt=(id,val)=>{const el=document.getElementById(id); if(el) el.textContent=val;};
+  setTxt("balPending", wcoinLabel(w.pendingBalance));
+  setTxt("balWithdrawn", wcoinLabel(w.totalWithdrawn));
+  setTxt("profEarned", wcoinLabel(w.totalEarned));
+  setTxt("profBal", wcoinLabel(w.balance));
+  setTxt("heroWallet", wcoinLabel(w.balance));
+  if(state.currency==="NGN") setHeroSlice(state.heroSlice||"total");
+  else setCurrency("USDT");
+}
+async function loadTransactions(){
+  const box=document.getElementById("txList");
+  box.innerHTML='<div style="color:var(--muted);text-align:center;padding:20px;font-size:13px">Loading…</div>';
+  try{
+    const body=await engine("transaction.find",{filter:{user:userId()}});
+    let rows=[];
+    if(body.result&&!Array.isArray(body.result)&&Array.isArray(body.result.data)) rows=body.result.data;
+    else{const step=Array.isArray(body.result)?body.result[0]:null;const inner=step?.result||{};rows=Array.isArray(inner.data)?inner.data:(Array.isArray(inner)?inner:[])}
+    if(!rows.length){box.innerHTML='<div style="color:var(--muted);text-align:center;padding:24px;font-size:13px">No activity yet.</div>';return}
+    box.innerHTML=rows.slice(0,40).map(t=>{
+      const ty=String(t.type||"").toLowerCase();const pos=ty==="earning"||ty==="reward";
+      const amt=Number(t.amount)||0;
+      return `<div class="tx"><div style="min-width:0"><div style="font-weight:700;font-size:13px">${escapeHtml(t.description||t.type||"Tx")}</div><div style="font-size:11px;color:var(--muted)">${escapeHtml(t.type||"")} · ${t.createdAt?new Date(t.createdAt).toLocaleString():""}</div></div><div style="text-align:right"><div style="font-weight:800;color:${pos?"#10b981":"var(--text)"}">${pos?"+":""}${nairaToWcoin(amt)} WC</div><div style="font-size:11px;color:var(--muted)">${money(amt)}</div></div></div>`;
+    }).join("");
+  }catch(e){box.innerHTML=`<div class="msg err">${escapeHtml(e.message)}</div>`}
+}
+async function loadReferral(){
+  try{
+    const data=await api("/api/v1/referrals/me");
+    state.referral=data;
+    const code=data.referralCode||"";
+    const link=location.origin.replace(/\/$/,"")+"/register.html?ref="+encodeURIComponent(code);
+    state.referralLink=link;
+    const count=Number(data.referralCount??0);
+    document.getElementById("refCode").textContent=code||"—";
+    document.getElementById("refLink").textContent=link;
+    document.getElementById("refCount").textContent=String(count);
+    document.getElementById("statRefs").textContent=String(count);
+    // Display policy: 50 WCoin per successful invite (WatchFlix rate)
+    const REF_REWARD_WCOIN = 50;
+    document.getElementById("refReward").textContent="+"+REF_REWARD_WCOIN+" WC";
+    document.getElementById("bannerRefText").textContent=data.enabled!==false?("Earn "+REF_REWARD_WCOIN+" WCoin per successful invite"):"Referral paused";
+    document.getElementById("refStatus").textContent=data.enabled!==false?(count+" total · "+Number(data.rewardedReferrals||0)+" rewarded"):"Disabled";
+    if(state.wallet) await loadEarningsBreakdown();
+  }catch(e){document.getElementById("bannerRefText").textContent="Share your link when referral is available."}
+}
+async function copyReferral(){if(!state.referralLink)return;try{await navigator.clipboard.writeText(state.referralLink);document.getElementById("refStatus").textContent="Link copied"}catch{prompt("Copy link:",state.referralLink)}}
+async function shareReferral(){if(!state.referralLink)return;if(navigator.share){try{await navigator.share({title:"WatchFlix",text:"Join WatchFlix",url:state.referralLink})}catch{}}else await copyReferral()}
+
+async function requestWithdraw(){
+  const wcoinAmt=Number(document.getElementById("wdAmount").value);
+  // Convert WCoin input → NGN ledger amount for API
+  const amount=Math.round(wcoinAmt / WCOIN_PER_NAIRA);
+  const bank=selectedBankName();
+  const account=document.getElementById("wdAccount").value.trim();
+  const name=document.getElementById("wdName").value.trim();
+  const btn=document.getElementById("wdBtn");
+  const min=Number(state.settings?.minimumWithdrawal??1000);
+  const bal=Number(state.wallet?.balance||0);
+  const profileName=String(state.user?.username||state.user?.name||"").trim();
+  document.getElementById("wdMsg").style.display="none";
+  if(!(wcoinAmt>0)) return showWd("Enter amount in WCoin",true);
+  if(amount<min) return showWd("Minimum is "+wcoinLabel(min*WCOIN_PER_NAIRA)+" ("+money(min)+")",true);
+  if(amount>bal) return showWd("Higher than your balance ("+wcoinLabel(bal)+")",true);
+  if(!bank||!account||!name) return showWd("Bank, account number and name required",true);
+  // Account name must match dashboard username
+  const norm=s=>String(s||"").toLowerCase().replace(/\s+/g," ").trim();
+  if(profileName && norm(name) !== norm(profileName)){
+    return showWd("Account name must match your WatchFlix username: "+profileName, true);
+  }
+  if(!confirm("Request payout of "+wcoinLabel(wcoinAmt)+" (≈ "+money(amount)+")?")) return;
+  savePayoutDetails();
+  btn.disabled=true;btn.textContent="Submitting…";
+  try{
+    await engine("withdrawal.request",{user:userId(),amount,method:"Bank Transfer",account:bank+" · "+account+" · "+name,details:{bank,accountNumber:account,accountName:name,wcoin:wcoinAmt}});
+    showWd("Request submitted. Paid after approval.",false);
+    document.getElementById("wdAmount").value="";
+    await loadWallet();await loadTransactions();
+  }catch(e){showWd(e.message||"Failed",true)}
+  finally{btn.disabled=false;btn.textContent="Request payout"}
+}
+function showWd(t,err){const m=document.getElementById("wdMsg");m.style.display="block";m.className="msg "+(err?"err":"ok");m.textContent=t}
+
+function notifKey(){return "wf_notif_read_"+(userId()||"guest")}
+function loadReadSet(){try{return new Set(JSON.parse(localStorage.getItem(notifKey())||"[]"))}catch{return new Set()}}
+function saveReadSet(set){localStorage.setItem(notifKey(),JSON.stringify([...set]))}
+async function loadNotifications(){
+  const badge=document.getElementById("notifBadge"), listEl=document.getElementById("notifList");
+  try{
+    const data=await api("/api/v1/notifications");
+    const list=Array.isArray(data.data)?data.data:[];
+    const readSet=loadReadSet();
+    state.notifications=list.map((n,i)=>({
+      id:String(n._id||n.id||i),
+      title:n.title||"Update",
+      message:n.message||"",
+      createdAt:n.createdAt||null,
+      read:!!n.read||readSet.has(String(n._id||n.id||i))
+    })).sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
+    renderNotifs();
+  }catch{
+    if(listEl) listEl.innerHTML='<div class="notif-empty">No notifications yet</div>';
+    if(badge) badge.style.display="none";
+  }
+}
+function renderNotifs(){
+  const badge=document.getElementById("notifBadge"), listEl=document.getElementById("notifList");
+  const items=state.notifications||[];
+  const unread=items.filter(n=>!n.read).length;
+  if(badge){ if(unread>0){badge.style.display="grid";badge.textContent=unread>9?"9+":String(unread)} else badge.style.display="none"; }
+  if(!listEl) return;
+  if(!items.length){listEl.innerHTML='<div class="notif-empty">No notifications yet</div>';return}
+  listEl.innerHTML=items.slice(0,40).map(n=>`<div class="notif-item ${n.read?"":"unread"}" onclick="markNotifRead('${escapeHtml(n.id)}')"><div class="t">${escapeHtml(n.title)}</div><div class="m">${escapeHtml(n.message)}</div><div class="d">${n.createdAt?new Date(n.createdAt).toLocaleString():""}</div></div>`).join("");
+}
+function markNotifRead(id){const s=loadReadSet();s.add(id);saveReadSet(s);state.notifications=(state.notifications||[]).map(n=>n.id===id?{...n,read:true}:n);renderNotifs()}
+function markAllNotifsRead(){const s=loadReadSet();(state.notifications||[]).forEach(n=>s.add(n.id));saveReadSet(s);state.notifications=(state.notifications||[]).map(n=>({...n,read:true}));renderNotifs()}
+function toggleNotifPanel(){const panel=document.getElementById("notifPanel");panel.classList.toggle("open");if(panel.classList.contains("open")) loadNotifications()}
+
+function submitAdRequest(){
+  const title=(document.getElementById("advTitle")?.value||"").trim();
+  const url=(document.getElementById("advUrl")?.value||"").trim();
+  const desc=(document.getElementById("advDesc")?.value||"").trim();
+  const contact=(document.getElementById("advContact")?.value||"").trim();
+  const msg=document.getElementById("advMsg");
+  if(!title||!url||!contact){if(msg){msg.style.display="block";msg.className="msg err";msg.textContent="Title, link and contact required";}return}
+  try{const prev=JSON.parse(localStorage.getItem("wf_ad_requests")||"[]");prev.unshift({title,url,description:desc,contact,userId:userId(),createdAt:new Date().toISOString()});localStorage.setItem("wf_ad_requests",JSON.stringify(prev.slice(0,20)))}catch(e){}
+  if(msg){msg.style.display="block";msg.className="msg ok";msg.textContent="Request saved. We’ll contact you after review."}
+  ["advTitle","advUrl","advDesc","advContact"].forEach(id=>{const el=document.getElementById(id);if(el)el.value=""})
+}
+
+function fillAccount(){
+  const u=state.user||{};
+  document.getElementById("helloName").textContent=u.username||u.email||"User";
+  document.getElementById("accUser").textContent=u.username||"—";
+  document.getElementById("accEmail").textContent=u.email||"—";
+  document.getElementById("accId").textContent=userId()||"—";
+  document.getElementById("avatarLetter").childNodes[0].textContent=(u.username||"W").charAt(0).toUpperCase();
+}
+async function refreshAll(){
+  if(!requireAuth()) return;
+  fillAccount();
+  renderHealth();
+  loadSavedPayout();
+  bindPayoutAutosave();
+  await loadSettings();
+  await loadReferral();
+  await loadSponsoredTasks();
+  try{ await loadWallet(); }catch(e){ console.warn(e); alert(e.message); }
+  await loadEarningsBreakdown();
+  await loadTransactions();
+  await loadNotifications();
+}
+initTheme();
+if(requireAuth()) refreshAll();
+window.addEventListener("beforeunload", ()=>{
+  const map=getOpenedMap();
+  Object.keys(map).forEach(id=>{
+    if(map[id] && map[id].timerDone && !map[id].completed && !map[id].penalized){
+      penalizeIncompleteTask(id, "leave");
+    }
+  });
+});
+</script>
+</body>
+</html>
