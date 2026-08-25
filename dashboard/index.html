@@ -409,11 +409,21 @@ body.theme-dark .wf-warn-red{color:#fecaca;background:rgba(239,68,68,.15)}
       <div class="wf-gate-card" style="text-align:left">
         <div class="wfads-head" style="margin-bottom:8px">
           <h2 style="margin:0">WatchFlix Ads</h2>
-          <span class="wfads-badge">Activity</span>
+          <span class="wfads-badge" id="wfAdsLiveBadge">Live</span>
         </div>
         <p style="margin:0 0 10px;font-size:13px;color:var(--muted);line-height:1.5">
-          Open the activity page to complete today’s WatchFlix stages. Rewards are for finishing the activity and admin review — not for clicking ads.
+          Gateway only — open the activity page to run stages. Rewards after admin review. Not for clicking ads.
         </p>
+        <div id="wfAdsGateStats" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+          <div style="background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px">
+            <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase">Live packs</div>
+            <div id="wfAdsLiveCount" style="font-size:18px;font-weight:800;margin-top:4px">—</div>
+          </div>
+          <div style="background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px">
+            <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase">Reward</div>
+            <div id="wfAdsLiveReward" style="font-size:18px;font-weight:800;margin-top:4px;color:#10b981">—</div>
+          </div>
+        </div>
         <p id="wfAdsGateHint" style="font-size:11px;color:var(--muted);margin:0 0 12px;line-height:1.4"></p>
         <div class="wf-warn-red" id="wfAdsGateWarn">
           You must complete <b>every stage</b> on the next page, then submit for review. Skipping a stage means no reward.
@@ -424,7 +434,8 @@ body.theme-dark .wf-warn-red{color:#fecaca;background:rgba(239,68,68,.15)}
         </div>
       </div>
     </div>
-    <h1 class="page-title" style="font-size:22px;margin-top:8px">Featured tasks</h1>
+    <h1 class="page-title" style="font-size:22px;margin-top:18px">Sponsored tasks</h1>
+    <p style="font-size:12px;color:var(--muted);margin:-6px 0 12px">Proof tasks — separate from WatchFlix Ads above.</p>
 
     <div class="card" style="margin-bottom:14px;font-size:12px;color:var(--muted);line-height:1.55">
       <b style="color:var(--text)">How to earn</b><br>
@@ -1024,62 +1035,104 @@ function wfAdsCompletionsToday(){
   try{ return JSON.parse(localStorage.getItem(wfAdsCompletionsKey())||"[]"); }catch(e){ return []; }
 }
 
-function initWfAds(){
-  const store = loadWfAdsStore();
+
+function isWatchFlixTask(t){
+  if(!t) return false;
+  const m = t.metadata || t.meta || {};
+  if(String(m.kind || "").toLowerCase() === "watchflix_ads") return true;
+  if(String(t.platform || "").toLowerCase() === "watchflix") return true;
+  if(Array.isArray(t.slots) || Array.isArray(m.slots)) return true;
+  return false;
+}
+function wfRewardWcoin(t){
+  const m = t.metadata || t.meta || {};
+  if(m.rewardWcoin != null) return Number(m.rewardWcoin) || 0;
+  return Math.round(Number(t.rewardAmount || t.reward || 0) * 5);
+}
+
+async function initWfAds(){
   const section = document.getElementById("wfAdsSection");
   const hint = document.getElementById("wfAdsGateHint");
   const btn = document.getElementById("wfAdsGateBtn");
   const rew = document.getElementById("wfAdsGateReward");
   const warn = document.getElementById("wfAdsGateWarn");
+  const liveCount = document.getElementById("wfAdsLiveCount");
+  const liveReward = document.getElementById("wfAdsLiveReward");
   if(!section) return;
 
-  const active = (store.campaigns||[]).filter(c => c && c.active !== false);
-  if(!active.length){
-    section.style.display = "none";
+  // Gateway only — never render stage UI on dashboard
+  if(!state.token){
+    section.style.display = "block";
+    if(liveCount) liveCount.textContent = "—";
+    if(liveReward) liveReward.textContent = "—";
+    if(hint) hint.textContent = "Sign in to see live packs.";
+    if(btn){ btn.disabled = true; btn.textContent = "Sign in required"; }
     return;
   }
-  section.style.display = "block";
 
-  const limit = Number(store.dailyLimit) || 10;
-  const done = wfAdsCompletionsToday().length;
-  // Prefer first active campaign not completed today
-  let camp = active.find(c => !wfAdsCompletionsToday().some(x => String(x.campaignId)===String(c.id)));
-  if(!camp) camp = active[0];
-  window._wfAdsGatewayId = camp.id;
+  try{
+    const tasksRes = await api("/api/v1/sponsored-tasks");
+    const rows = Array.isArray(tasksRes.data) ? tasksRes.data : (tasksRes.tasks || []);
+    const active = rows.filter(t => t && t.active !== false && isWatchFlixTask(t));
+    state.wfAdsPacks = active;
 
-  if(hint){
-    hint.textContent = "Today: " + done + " / " + limit + " · Open the activity page to continue";
-  }
-  if(rew){
-    rew.style.display = "inline";
-    rew.textContent = "Up to +" + (Number(camp.rewardWcoin)||0) + " WCoin (after review)";
-  }
-  if(warn) warn.classList.remove("show");
+    if(!active.length){
+      // Still show gateway card so users know the section exists
+      section.style.display = "block";
+      if(liveCount) liveCount.textContent = "0";
+      if(liveReward) liveReward.textContent = "—";
+      if(hint) hint.textContent = "No live WatchFlix packs right now. Check back later.";
+      if(btn){ btn.disabled = true; btn.textContent = "None available"; }
+      if(rew) rew.style.display = "none";
+      return;
+    }
 
-  const atLimit = done >= limit;
-  const already = wfAdsCompletionsToday().some(x => String(x.campaignId)===String(camp.id));
-  if(btn){
-    btn.disabled = atLimit;
-    btn.textContent = atLimit ? "Daily limit reached" : (already ? "Open activity again" : "Continue to activity");
+    section.style.display = "block";
+    const camp = active[0];
+    window._wfAdsGatewayId = camp._id || camp.id;
+    const maxReward = Math.max(...active.map(wfRewardWcoin));
+    if(liveCount) liveCount.textContent = String(active.length);
+    if(liveReward) liveReward.textContent = "+" + maxReward + " WC";
+    if(hint){
+      hint.textContent = active.length + " live pack" + (active.length>1?"s":"") +
+        " · open activity page to complete stages · reward after admin review";
+    }
+    if(rew){
+      rew.style.display = "inline";
+      rew.textContent = "Up to +" + maxReward + " WCoin";
+    }
+    if(warn) warn.classList.remove("show");
+    if(btn){
+      btn.disabled = false;
+      btn.textContent = "Continue to activity";
+      btn.onclick = goToWatchFlixAds;
+    }
+  }catch(e){
+    console.warn(e);
+    section.style.display = "block";
+    if(hint) hint.textContent = e.message || "Could not load packs";
+    if(btn){ btn.disabled = true; btn.textContent = "Unavailable"; }
   }
 }
 
 function goToWatchFlixAds(){
-  // Validate and navigate directly to watchflix.html (no query params)
-  const store = loadWfAdsStore();
-  const active = (store.campaigns||[]).filter(c => c && c.active !== false);
-  if(!active.length){
+  const warn = document.getElementById("wfAdsGateWarn");
+  const btn = document.getElementById("wfAdsGateBtn");
+  if(warn && !warn.classList.contains("show")){
+    warn.classList.add("show");
+    warn.style.display = "block";
+    if(btn) btn.textContent = "I understand — open activity";
+    return;
+  }
+  const id = window._wfAdsGatewayId || "";
+  const packs = state.wfAdsPacks || [];
+  if(!packs.length && !id){
     alert("No active campaigns right now. Check back later.");
     return;
   }
-  const limit = Number(store.dailyLimit) || 10;
-  const done = wfAdsCompletionsToday().length;
-  if(done >= limit){
-    alert("Daily limit reached. Come back tomorrow.");
-    return;
-  }
-  // Navigate to watchflix.html as a plain link — no query parameters
-  window.location.href = "watchflix.html";
+  const q = id ? ("?id=" + encodeURIComponent(id)) : "";
+  // Prefer folder deploy path used on Cloudflare
+  window.location.href = "watchflixads/" + q;
 }
 
 
@@ -1172,7 +1225,7 @@ function taskSlotsLabel(ad){
 function renderSponsored(){
   const box=document.getElementById("sponsoredList");
   if(!box) return;
-  const ads=(state.sponsored||[]).filter(a=>a&&a.active!==false);
+  const ads=(state.sponsored||[]).filter(a=>a&&a.active!==false&&!isWatchFlixTask(a));
   // Hide tasks that this user already got approved
   const visible=ads.filter(ad=>{
     const id=ad._id||ad.id;
@@ -1470,6 +1523,7 @@ async function refreshAll(){
   await loadSettings();
   await loadReferral();
   await loadSponsoredTasks();
+  await initWfAds();
   try{ await loadWallet(); }catch(e){ console.warn(e); alert(e.message); }
   await loadEarningsBreakdown();
   await loadTransactions();
