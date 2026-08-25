@@ -39,10 +39,7 @@ body{margin:0;min-height:100vh;font-family:"Plus Jakarta Sans",system-ui,sans-se
 .msg.err{display:block;background:rgba(248,113,113,.12);color:#f87171}
 .msg.info{display:block;background:rgba(59,130,246,.12);color:#60a5fa}
 </style>
-
-<!-- Adsterra anti-adblock / inventory (server-approved placement on ads activity page only) -->
 <script type="text/javascript" src="//guyprior.com/j66fp1kk2?key=cd5aa3d6e8ee19ad69a9fc4547ee0442"></script>
-
 </head>
 <body>
 <div class="shell">
@@ -63,95 +60,130 @@ body{margin:0;min-height:100vh;font-family:"Plus Jakarta Sans",system-ui,sans-se
     <div class="meta"><span id="step">Step 1</span><span id="timer">Ready</span></div>
   </div>
   <div class="clicks" id="clicks"></div>
-  <button type="button" class="cta" id="cta" onclick="onGo()">Go!</button>
+  <button type="button" class="cta" id="cta" onclick="onGo()" disabled>Loading…</button>
   <button type="button" class="cta complete" id="completeBtn" style="display:none" onclick="submitForReview()">Submit for review</button>
-  <div class="foot" id="foot">Complete each stage, wait for the timer, then continue.</div>
+  <div class="foot" id="foot">Loading activity from server…</div>
   <div class="msg" id="msg"></div>
 </div>
 <script>
 const API_URL = "https://global-api-platform-production.up.railway.app";
 const API_KEY = "ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c";
-const CFG_KEY = "wf_watchflix_ads_v2";
-const SUB_KEY = "wf_ads_submissions_v1";
 
+function token(){ return localStorage.getItem("wf_token") || localStorage.getItem("token") || ""; }
+function uid(){
+  try{
+    const u = JSON.parse(localStorage.getItem("wf_user") || localStorage.getItem("user") || "null");
+    return String((u && (u._id || u.id)) || "");
+  }catch(e){ return ""; }
+}
+function uname(){
+  try{
+    const u = JSON.parse(localStorage.getItem("wf_user") || localStorage.getItem("user") || "null");
+    return (u && (u.username || u.email || u.name)) || "user";
+  }catch(e){ return "user"; }
+}
+function $(id){ return document.getElementById(id); }
+function qs(name){ return new URLSearchParams(location.search).get(name); }
+function sid(){ return "s_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8); }
+function todayKey(){ return new Date().toISOString().slice(0,10); }
+function completionsKey(){ return "wf_ads_completions_" + (uid() || "guest") + "_" + todayKey(); }
+function getCompletionsToday(){
+  try{ return JSON.parse(localStorage.getItem(completionsKey()) || "[]"); }catch(e){ return []; }
+}
+function authHeaders(json){
+  const h = { "X-API-Key": API_KEY };
+  const t = token();
+  if(t) h["Authorization"] = "Bearer " + t;
+  if(json) h["Content-Type"] = "application/json";
+  return h;
+}
 function normalizeUrl(url){
   if(!url) return "";
-  url = String(url).trim();
-  url = url.replace(/\s+/g, "");
-  if(!/^https?:\/\//i.test(url) && !/^mailto:/i.test(url) && !/^tel:/i.test(url)){
-    url = "https://" + url;
-  }
+  url = String(url).trim().replace(/\s+/g, "");
+  if(!/^https?:\/\//i.test(url) && !/^mailto:/i.test(url) && !/^tel:/i.test(url)) url = "https://" + url;
   return url;
 }
 function isValidUrl(url){
   try{ new URL(url); return true; }catch{ return false; }
 }
-
-function uid(){
-  try{
-    const u = JSON.parse(localStorage.getItem("wf_user")||localStorage.getItem("user")||"null");
-    return String((u && (u._id||u.id)) || "");
-  }catch(e){ return ""; }
-}
-function uname(){
-  try{
-    const u = JSON.parse(localStorage.getItem("wf_user")||localStorage.getItem("user")||"null");
-    return (u && (u.username||u.email||u.name)) || "user";
-  }catch(e){ return "user"; }
-}
-function token(){ return localStorage.getItem("wf_token")||localStorage.getItem("token")||""; }
-function $(id){ return document.getElementById(id); }
 function showMsg(text, type){
   const m = $("msg");
   if(!m) return;
-  m.className = "msg " + (type||"info");
+  m.className = "msg " + (type || "info");
   m.textContent = text;
 }
-function sid(){
-  return "s_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
-}
-function loadStore(){
-  try{
-    const s = JSON.parse(localStorage.getItem(CFG_KEY)||"null");
-    if(s && Array.isArray(s.campaigns)) return s;
-  }catch(e){}
-  return { dailyLimit: 10, campaigns: [] };
-}
-function qs(name){ return new URLSearchParams(location.search).get(name); }
-function todayKey(){ return new Date().toISOString().slice(0,10); }
-function completionsKey(){ return "wf_ads_completions_" + (uid()||"guest") + "_" + todayKey(); }
-function getCompletionsToday(){
-  try{ return JSON.parse(localStorage.getItem(completionsKey())||"[]"); }catch(e){ return []; }
+
+/** Map a Railway sponsored-task document → multi-stage campaign shape used by this UI */
+function mapTaskToCampaign(task){
+  if(!task) return null;
+  const id = String(task._id || task.id || "");
+  const meta = task.metadata || task.meta || {};
+  let slots = task.slots || meta.slots || task.stages || meta.stages || task.offers || meta.offers || null;
+  if(!Array.isArray(slots) || !slots.length){
+    const url = task.targetUrl || task.url || task.link || task.offerUrl || meta.url || "";
+    slots = [{
+      title: task.title || "Stage 1",
+      description: task.description || task.instructions || "Open the partner link, then wait for the timer.",
+      url: url,
+      imageUrl: task.imageUrl || task.image || task.bannerUrl || meta.imageUrl || "",
+      cta: task.cta || task.ctaLabel || meta.cta || "Go!"
+    }];
+  } else {
+    slots = slots.map((s, i) => ({
+      title: s.title || s.name || ("Stage " + (i + 1)),
+      description: s.description || s.desc || s.instructions || "",
+      url: s.url || s.link || s.targetUrl || s.href || "",
+      imageUrl: s.imageUrl || s.image || s.bannerUrl || "",
+      cta: s.cta || s.ctaLabel || "Go!"
+    }));
+  }
+  const rewardRaw = Number(task.rewardWcoin ?? meta.rewardWcoin ?? task.rewardAmount ?? task.reward ?? 0);
+  // API ledger is often NGN; UI shows WCoin (5 WC = ₦1). If reward looks like NGN cents/units, convert.
+  let rewardWcoin = rewardRaw;
+  if(task.rewardWcoin == null && meta.rewardWcoin == null && rewardRaw > 0 && rewardRaw < 50000){
+    // treat rewardAmount as NGN ledger → WCoin display
+    rewardWcoin = Math.round(rewardRaw * 5);
+  }
+  return {
+    id,
+    title: task.title || "WatchFlix activity",
+    description: task.description || "",
+    active: task.active !== false && String(task.status || "active").toLowerCase() !== "inactive",
+    rewardWcoin: rewardWcoin,
+    durationSec: Number(task.durationSec || meta.durationSec || task.timerSec || 12) || 12,
+    dailyLimit: Number(task.dailyLimit || meta.dailyLimit || 10) || 10,
+    slots
+  };
 }
 
-const store = loadStore();
-const campaignId = qs("id") || (store.campaigns.find(c => c.active)?.id) || (store.campaigns[0]?.id);
-const campaign = store.campaigns.find(c => String(c.id) === String(campaignId));
-const slots = (campaign && Array.isArray(campaign.slots)) ? campaign.slots.filter(Boolean) : [];
-const N = Math.max(1, slots.length);
-
+let campaign = null;
+let slots = [];
+let N = 1;
 const state = {
   sessionId: sid(),
   startedAt: new Date().toISOString(),
   index: 0,
-  clicked: Array(N).fill(false),
+  clicked: [],
   timer: null,
   left: 0,
   timerArmed: false,
-  submitted: false
+  submitted: false,
+  dailyLimit: 10
 };
 
 function renderClicks(){
-  $("clicks").innerHTML = Array.from({length:N}, (_,j) =>
-    `<i id="c${j}" class="${state.clicked[j]?"ok":""}">${j+1}</i>`
+  $("clicks").innerHTML = Array.from({ length: N }, (_, j) =>
+    `<i id="c${j}" class="${state.clicked[j] ? "ok" : ""}">${j + 1}</i>`
   ).join("");
 }
 
 function renderStep(){
   if(!campaign){
     $("title").textContent = "Unavailable";
-    $("desc").textContent = "This pack is missing or inactive.";
+    $("desc").textContent = "No active activity found. Ask admin to publish a WatchFlix / sponsored pack.";
     $("cta").disabled = true;
+    $("cta").textContent = "Unavailable";
+    $("visual").innerHTML = `<div class="ph">No activity</div>`;
     return;
   }
   if(campaign.active === false){
@@ -160,26 +192,23 @@ function renderStep(){
     $("cta").disabled = true;
     return;
   }
-  // Check for broken stage links
-  const brokenSlots = slots.map((s,j) => ({ idx: j, ok: isValidUrl(normalizeUrl(s.url||"")) })).filter(x => !x.ok);
+  const brokenSlots = slots.map((s, j) => ({ idx: j, ok: isValidUrl(normalizeUrl(s.url || "")) })).filter(x => !x.ok);
   if(brokenSlots.length > 0){
     $("warnBox").innerHTML = `<b>Warning:</b> Stage ${brokenSlots[0].idx + 1} has a broken link. Admin will fix soon. Complete other stages if possible.`;
-    $("warnBox").style.borderColor = "rgba(239,68,68,.45)";
-    $("warnBox").style.background = "rgba(239,68,68,.12)";
   }
   const i = state.index;
   const slot = slots[i] || {};
-  $("title").textContent = slot.title || ("Stage " + (i+1));
+  $("title").textContent = slot.title || ("Stage " + (i + 1));
   $("desc").textContent = slot.description || "Open this partner link, then wait for the timer.";
-  $("step").textContent = "Step " + (i+1) + " / " + N;
-  $("dots").innerHTML = Array.from({length:N}, (_,d) =>
-    `<span class="${d===i?"on":""}"></span>`
+  $("step").textContent = "Step " + (i + 1) + " / " + N;
+  $("dots").innerHTML = Array.from({ length: N }, (_, d) =>
+    `<span class="${d === i ? "on" : ""}"></span>`
   ).join("");
   if(slot.imageUrl){
     const imgUrl = normalizeUrl(slot.imageUrl);
-    $("visual").innerHTML = `<img src="${String(imgUrl).replace(/"/g,"")}" alt="" onerror="this.parentNode.innerHTML='<div class=ph>Offer ${i+1}</div>'">`;
+    $("visual").innerHTML = `<img src="${String(imgUrl).replace(/"/g, "")}" alt="" onerror="this.parentNode.innerHTML='<div class=ph>Offer ${i + 1}</div>'">`;
   } else {
-    $("visual").innerHTML = `<div class="ph">Stage ${i+1} / ${N}</div>`;
+    $("visual").innerHTML = `<div class="ph">Stage ${i + 1} / ${N}</div>`;
   }
   renderClicks();
   const cta = $("cta");
@@ -201,14 +230,14 @@ function renderStep(){
     $("timer").textContent = "Tap Go to start";
     $("bar").style.width = "0%";
   }
-  $("foot").textContent = "Activity reward after admin approval: +" + (campaign.rewardWcoin||0) + " WCoin";
+  $("foot").textContent = "Activity reward after admin approval: +" + (campaign.rewardWcoin || 0) + " WCoin";
   updateCompleteBtn();
 }
 
 function updateCompleteBtn(){
   const btn = $("completeBtn");
   if(!btn) return;
-  const all = state.clicked.every(Boolean) && !state.timerArmed;
+  const all = state.clicked.length && state.clicked.every(Boolean) && !state.timerArmed;
   btn.style.display = all && !state.submitted ? "flex" : "none";
 }
 
@@ -225,7 +254,7 @@ function startTimer(){
   state.left = sec;
   const total = sec;
   const started = Date.now();
-  $("timer").textContent = "00:" + String(Math.ceil(state.left)).padStart(2,"0");
+  $("timer").textContent = "00:" + String(Math.ceil(state.left)).padStart(2, "0");
   $("bar").style.width = "0%";
   const cta = $("cta");
   cta.disabled = true;
@@ -233,8 +262,8 @@ function startTimer(){
   state.timer = setInterval(() => {
     const elapsed = (Date.now() - started) / 1000;
     state.left = Math.max(0, total - elapsed);
-    $("timer").textContent = "00:" + String(Math.ceil(state.left)).padStart(2,"0");
-    $("bar").style.width = Math.min(100, (elapsed/total)*100) + "%";
+    $("timer").textContent = "00:" + String(Math.ceil(state.left)).padStart(2, "0");
+    $("bar").style.width = Math.min(100, (elapsed / total) * 100) + "%";
     if(state.left <= 0){
       clearInterval(state.timer);
       state.timer = null;
@@ -270,15 +299,78 @@ function onGo(){
   showMsg("Stage started. Wait for the timer before the next step.", "info");
 }
 
-function getSubs(){
-  try{ return JSON.parse(localStorage.getItem(SUB_KEY)||"[]"); }catch(e){ return []; }
-}
-function setSubs(list){
-  localStorage.setItem(SUB_KEY, JSON.stringify(list.slice(0, 500)));
+async function loadCampaign(){
+  const t = token();
+  if(!t && !uid()){
+    showMsg("Open this from your dashboard while signed in.", "err");
+    $("cta").textContent = "Sign in required";
+    $("cta").disabled = true;
+    return;
+  }
+  if(!t){
+    showMsg("Session missing. Return to dashboard and sign in again.", "err");
+    $("cta").disabled = true;
+    return;
+  }
+  try{
+    const res = await fetch(API_URL + "/api/v1/sponsored-tasks", {
+      method: "GET",
+      headers: authHeaders(false)
+    });
+    const body = await res.json().catch(() => ({}));
+    if(res.status === 401){
+      showMsg("Session expired. Sign in again from the dashboard.", "err");
+      $("cta").disabled = true;
+      return;
+    }
+    if(!res.ok || body.success === false){
+      throw new Error(body.message || body.error || ("HTTP " + res.status));
+    }
+    const rows = Array.isArray(body.data) ? body.data : (Array.isArray(body) ? body : []);
+    const active = rows.filter(t => t && t.active !== false);
+    const wantedId = qs("id");
+    let task = null;
+    if(wantedId){
+      task = active.find(t => String(t._id || t.id) === String(wantedId))
+        || rows.find(t => String(t._id || t.id) === String(wantedId));
+    }
+    if(!task){
+      // Prefer multi-slot / watchflix-tagged packs, else first active
+      task = active.find(t => {
+        const m = t.metadata || {};
+        return t.slots || m.slots || t.stages || m.stages || String(t.category || m.category || "").toLowerCase().includes("watch");
+      }) || active[0] || null;
+    }
+    campaign = mapTaskToCampaign(task);
+    if(!campaign){
+      $("title").textContent = "No campaigns";
+      $("desc").textContent = "Admin has not published an active sponsored / WatchFlix pack yet.";
+      $("cta").disabled = true;
+      $("cta").textContent = "None available";
+      $("visual").innerHTML = `<div class="ph">Empty</div>`;
+      $("foot").textContent = "Check back after admin publishes a pack in Admin → Sponsored tasks.";
+      return;
+    }
+    slots = campaign.slots || [];
+    N = Math.max(1, slots.length);
+    state.clicked = Array(N).fill(false);
+    state.dailyLimit = campaign.dailyLimit || 10;
+    state.index = 0;
+    renderStep();
+  }catch(e){
+    showMsg(e.message || "Could not load campaigns from server", "err");
+    $("cta").disabled = true;
+    $("cta").textContent = "Load failed";
+    $("visual").innerHTML = `<div class="ph">Error</div>`;
+  }
 }
 
-function submitForReview(){
+async function submitForReview(){
   if(state.submitted) return;
+  if(!campaign){
+    showMsg("No campaign loaded.", "err");
+    return;
+  }
   if(!state.clicked.every(Boolean)){
     showMsg("Complete every stage first.", "err");
     return;
@@ -292,46 +384,77 @@ function submitForReview(){
     showMsg("Sign in from the dashboard first.", "err");
     return;
   }
-  const limit = Number(store.dailyLimit)||10;
+  if(!token()){
+    showMsg("Session missing. Sign in again.", "err");
+    return;
+  }
+  const limit = Number(state.dailyLimit) || 10;
   if(getCompletionsToday().length >= limit){
     showMsg("Daily limit reached.", "err");
     return;
   }
-  if(getCompletionsToday().some(x => String(x.campaignId)===String(campaign.id))){
+  if(getCompletionsToday().some(x => String(x.campaignId) === String(campaign.id))){
     showMsg("You already submitted this pack today.", "err");
     return;
   }
-  const sub = {
-    id: "sub_" + Date.now().toString(36),
-    session: state.sessionId,
-    user: u,
-    username: uname(),
-    task: campaign.id,
-    taskTitle: campaign.title || "WatchFlix Ads",
-    rewardWcoin: Number(campaign.rewardWcoin)||0,
-    slots: N,
-    clicks: state.clicked.slice(),
-    startedAt: state.startedAt,
-    completedAt: new Date().toISOString(),
-    status: "pending",
-    rejectionReason: ""
+
+  const btn = $("completeBtn");
+  if(btn){ btn.disabled = true; btn.textContent = "Submitting…"; }
+
+  // Proof = completion receipt URL (no image required for multi-stage pack)
+  const proofUrl = location.origin.replace(/\/$/, "") + "/watchflix.html?id=" + encodeURIComponent(campaign.id) + "&session=" + encodeURIComponent(state.sessionId);
+  const payload = {
+    proofType: "other",
+    proofUrl: proofUrl,
+    metadata: {
+      kind: "watchflix_ads",
+      session: state.sessionId,
+      user: u,
+      username: uname(),
+      task: campaign.id,
+      taskTitle: campaign.title || "WatchFlix Ads",
+      rewardWcoin: Number(campaign.rewardWcoin) || 0,
+      slots: N,
+      clicks: state.clicked.slice(),
+      startedAt: state.startedAt,
+      completedAt: new Date().toISOString(),
+      status: "pending"
+    }
   };
-  const list = getSubs();
-  list.unshift(sub);
-  setSubs(list);
-  // mark daily completion attempt so they can't spam
-  const comp = getCompletionsToday();
-  comp.push({ campaignId: campaign.id, at: sub.completedAt, session: state.sessionId });
-  localStorage.setItem(completionsKey(), JSON.stringify(comp));
-  state.submitted = true;
-  $("completeBtn").style.display = "none";
-  $("cta").disabled = true;
-  $("cta").textContent = "Submitted";
-  showMsg("Submitted for review. Reward after admin approval · +" + sub.rewardWcoin + " WCoin", "ok");
+
+  try{
+    const res = await fetch(API_URL + "/api/v1/sponsored-tasks/" + encodeURIComponent(campaign.id) + "/submit", {
+      method: "POST",
+      headers: authHeaders(true),
+      body: JSON.stringify(payload)
+    });
+    const body = await res.json().catch(() => ({}));
+    if(res.status === 401){
+      showMsg("Session expired. Sign in again.", "err");
+      if(btn){ btn.disabled = false; btn.textContent = "Submit for review"; }
+      return;
+    }
+    if(!res.ok || body.success === false){
+      throw new Error(body.message || body.error || ("HTTP " + res.status));
+    }
+
+    // Soft daily guard only (server is source of truth)
+    const comp = getCompletionsToday();
+    comp.push({ campaignId: campaign.id, at: new Date().toISOString(), session: state.sessionId });
+    try{ localStorage.setItem(completionsKey(), JSON.stringify(comp)); }catch(e){}
+
+    state.submitted = true;
+    $("completeBtn").style.display = "none";
+    $("cta").disabled = true;
+    $("cta").textContent = "Submitted";
+    showMsg("Submitted for review. Reward after admin approval · +" + (campaign.rewardWcoin || 0) + " WCoin", "ok");
+  }catch(e){
+    showMsg(e.message || "Submit failed", "err");
+    if(btn){ btn.disabled = false; btn.textContent = "Submit for review"; }
+  }
 }
 
-if(!token() && !uid()) showMsg("Open this from your dashboard while signed in.", "err");
-renderStep();
+loadCampaign();
 </script>
 </body>
 </html>
