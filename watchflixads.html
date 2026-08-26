@@ -419,36 +419,8 @@ function renderStep(){
     $("timer").textContent = state.clicked[i] ? "Done" : "Tap Go to start";
     if(!state.clicked[i]) $("bar").style.width = "0%";
   }
-  let limTxt = "";
-  const maxPer = Number(campaign.maxPerUser) || 0;
-  let used = 0;
-  if(maxPer > 0 && typeof taskIdOf === "function"){
-    used = (userHistory || []).filter(s => {
-      if(String(taskIdOf(s)) !== String(campaign.id)) return false;
-      const st = String(s.status||"").toLowerCase();
-      return st === "pending" || st === "approved" || st === "completed";
-    }).length;
-    limTxt += " · Progress " + used + "/" + maxPer + " today for this pack";
-  } else if(maxPer > 0){
-    limTxt += " · Up to " + maxPer + "× per user";
-  }
-  if(campaign.maxUsers) limTxt += " · max " + campaign.maxUsers + " users";
-  $("foot").textContent = "Reward after approval: +" + (campaign.rewardWcoin || 0) + " WCoin" + limTxt;
-  // Progress bar badge under title
-  let badge = document.getElementById("attemptBadge");
-  if(!badge){
-    badge = document.createElement("div");
-    badge.id = "attemptBadge";
-    badge.style.cssText = "margin:10px 20px 0;padding:10px 12px;border-radius:12px;background:rgba(56,189,248,.12);color:#7dd3fc;font-size:13px;font-weight:800;text-align:center";
-    const body = document.querySelector(".body");
-    if(body) body.appendChild(badge);
-  }
-  if(maxPer > 0){
-    badge.style.display = "block";
-    badge.textContent = "Your progress on this pack: " + used + " / " + maxPer;
-  } else {
-    badge.style.display = "none";
-  }
+  updateProgressBadge();
+
   updateCompleteBtn();
 }
 
@@ -478,21 +450,48 @@ function finishCurrentStage(){
   $("timer").textContent = "Done";
   if(state.index < N - 1){
     state.index += 1;
-    showMsg("Stage " + (i + 1) + " locked. Continue to the next stage.", "info");
+    showMsg("Stage " + (i + 1) + " complete. Continue to the next stage.", "info");
     renderStep();
-  } else {
-    showMsg("All stages complete. Tap Submit for review.", "info");
-    renderStep();
+    return;
   }
+  // Full pack run (all stages) finished
+  state.localCompleted = (state.localCompleted || 0) + 1;
+  state.attemptLogs = state.attemptLogs || [];
+  state.attemptLogs.push({
+    completedAt: new Date().toISOString(),
+    stages: N,
+    earlyReturns: state.earlyReturns || 0
+  });
+  if(typeof updateProgressBadge === "function") updateProgressBadge();
+
+  const maxPer = Number(campaign.maxPerUser) || 0;
+  let serverUsed = 0;
+  if(maxPer > 0){
+    serverUsed = (userHistory || []).filter(s => {
+      if(String(taskIdOf(s)) !== String(campaign.id)) return false;
+      const st = String(s.status||"").toLowerCase();
+      return st === "pending" || st === "approved" || st === "completed";
+    }).length;
+  }
+  const totalDone = serverUsed + state.localCompleted;
+
+  if(maxPer > 0 && totalDone < maxPer){
+    showMsg("Run " + totalDone + " of " + maxPer + " complete. Next run starting — open the offer again.", "info");
+    setTimeout(function(){ resetStagesForNextAttempt(); }, 700);
+    return;
+  }
+  showMsg("All required runs complete. Submitting for review…", "info");
+  renderStep();
+  setTimeout(function(){ submitForReview(); }, 500);
 }
 
 function startTimer(){
   clearTimer();
-  const sec = Number(campaign.durationSec) || 12;
+  const sec = Math.max(5, Number(campaign.durationSec) || 12);
   state.timerArmed = true;
   state.timerNeed = sec;
-  state.timerAccum = 0;
-  state.timerLastTick = Date.now();
+  // Wall-clock end time — keeps counting while user is on the partner site
+  state.timerEndAt = Date.now() + sec * 1000;
   state.left = sec;
   const i = state.index;
   if(!state.stageStartedAt[i]) state.stageStartedAt[i] = new Date().toISOString();
@@ -500,66 +499,74 @@ function startTimer(){
   $("bar").style.width = "0%";
   const cta = $("cta");
   cta.disabled = true;
-  cta.textContent = "Stay on this page…";
+  cta.textContent = "Timer running…";
   cta.className = "cta done";
-  showMsg("Keep this page open until the timer ends. Leaving early pauses the timer.", "info");
+  showMsg("Open the offer and wait for the timer. You can switch apps — return when the timer finishes.", "info");
   state.timer = setInterval(() => {
-    // Must stay on this tab — leaving restarts the stage (handled on visibilitychange)
-    if(document.visibilityState === "hidden"){
-      return;
-    }
-    if(state._restartingStage) return;
-    const now = Date.now();
-    const delta = (now - state.timerLastTick) / 1000;
-    state.timerLastTick = now;
-    state.timerAccum += Math.min(delta, 0.5);
-    const elapsed = state.timerAccum;
-    state.left = Math.max(0, state.timerNeed - elapsed);
+    const leftMs = state.timerEndAt - Date.now();
+    state.left = Math.max(0, leftMs / 1000);
+    const elapsed = state.timerNeed - state.left;
     $("timer").textContent = "00:" + String(Math.ceil(state.left)).padStart(2, "0");
     $("bar").style.width = Math.min(100, (elapsed / state.timerNeed) * 100) + "%";
     if(state.left <= 0){
       finishCurrentStage();
     }
-  }, 100);
+  }, 200);
 }
 
-function restartCurrentStage(reason){
-  if(!state.timerArmed && !state.clicked[state.index]) return;
-  state.earlyReturns = (state.earlyReturns || 0) + 1;
-  state._restartingStage = true;
+function updateProgressBadge(){
+  const maxPer = Number(campaign && campaign.maxPerUser) || 0;
+  let serverUsed = 0;
+  if(maxPer > 0 && campaign){
+    serverUsed = (userHistory || []).filter(s => {
+      if(String(taskIdOf(s)) !== String(campaign.id)) return false;
+      const st = String(s.status||"").toLowerCase();
+      return st === "pending" || st === "approved" || st === "completed";
+    }).length;
+  }
+  const local = Number(state.localCompleted) || 0;
+  const shown = serverUsed + local;
+  let badge = document.getElementById("attemptBadge");
+  if(!badge){
+    badge = document.createElement("div");
+    badge.id = "attemptBadge";
+    badge.style.cssText = "margin:10px 20px 0;padding:10px 12px;border-radius:12px;background:rgba(56,189,248,.12);color:#7dd3fc;font-size:13px;font-weight:800;text-align:center";
+    const body = document.querySelector(".body");
+    if(body) body.appendChild(badge);
+  }
+  if(maxPer > 0){
+    badge.style.display = "block";
+    badge.textContent = "Your progress on this pack: " + Math.min(shown, maxPer) + " / " + maxPer;
+  } else if(local > 0){
+    badge.style.display = "block";
+    badge.textContent = "Runs completed this session: " + local;
+  } else {
+    badge.style.display = "none";
+  }
+  const foot = $("foot");
+  if(foot && campaign){
+    let limTxt = "";
+    if(maxPer > 0) limTxt += " · Progress " + Math.min(shown, maxPer) + "/" + maxPer;
+    if(campaign.maxUsers) limTxt += " · max " + campaign.maxUsers + " users";
+    foot.textContent = "Reward after approval: +" + (campaign.rewardWcoin || 0) + " WCoin" + limTxt;
+  }
+}
+
+function resetStagesForNextAttempt(){
+  N = Math.max(1, (slots && slots.length) || 1);
+  state.index = 0;
+  state.clicked = Array(N).fill(false);
+  state.stageDone = Array(N).fill(false);
+  state.stageStartedAt = Array(N).fill(null);
+  state.stageFinishedAt = Array(N).fill(null);
+  state.submitted = false;
+  state.packStatus = null;
   clearTimer();
-  const i = state.index;
-  // Undo stage progress — must open link again and wait full timer
-  state.stageDone[i] = false;
-  state.clicked[i] = false;
-  state.stageStartedAt[i] = null;
-  state.stageFinishedAt[i] = null;
-  state.left = 0;
-  state.timerAccum = 0;
-  if(campaign) saveStageProgress(campaign.id, state.clicked, state.index);
-  $("bar").style.width = "0%";
-  $("timer").textContent = "Restart";
-  showMsg(reason || "You left before the timer finished. This stage restarted — open the link again and stay until the timer ends.", "err");
-  state._restartingStage = false;
+  if(campaign) clearStageProgress(campaign.id);
+  setStatusBanner(null);
+  updateProgressBadge();
   renderStep();
 }
-
-document.addEventListener("visibilitychange", () => {
-  if(!state.timerArmed) return;
-  if(document.visibilityState === "hidden"){
-    // Mark left-early; restart when they return (or immediately)
-    state._leftDuringTimer = true;
-    $("timer").textContent = "Left early";
-  } else if(state._leftDuringTimer){
-    state._leftDuringTimer = false;
-    restartCurrentStage("You returned early. Stage restarted — complete the full timer on this page.");
-  }
-});
-
-// Also catch pagehide / blur for mobile
-window.addEventListener("pagehide", () => {
-  if(state.timerArmed) state._leftDuringTimer = true;
-});
 
 function onGo(){
   if(!campaign || packLocked()) return;
@@ -580,7 +587,7 @@ function onGo(){
   renderClicks();
   try{ window.open(url, "_blank", "noopener,noreferrer"); }catch(e){ location.href = url; }
   startTimer();
-  showMsg("Stage started. Stay on this page until the timer ends — leaving restarts the stage. This stage will lock when done.", "info");
+  showMsg("Offer opened. Timer runs in the background — return when it hits 00:00 to continue.", "info");
 }
 
 async function loadHistory(){
@@ -848,6 +855,8 @@ async function submitForReview(){
       stageStartedAt: (state.stageStartedAt || []).slice(),
       stageFinishedAt: (state.stageFinishedAt || []).slice(),
       earlyReturns: state.earlyReturns || 0,
+      localRuns: state.localCompleted || 0,
+      attemptLogs: state.attemptLogs || [],
       startedAt: state.startedAt,
       completedAt: new Date().toISOString(),
       status: "pending"
