@@ -541,7 +541,7 @@ body.theme-dark .wf-warn-red{color:#fecaca;background:rgba(239,68,68,.15)}
         <span class="health-val" id="healthVal">100%</span>
       </div>
       <div class="health-bar" id="healthBar"><i id="healthFill" style="width:100%"></i></div>
-      <div class="health-hint" id="healthHint">Starts at 100%. Each rejected task proof (or abandoned opened task) lowers health by 5%. At 50% or below you get a warning. Keep completing tasks properly to stay healthy.</div>
+      <div class="health-hint" id="healthHint">Starts at 100%. Health drops 5% after 3 rejected proofs, or if you open a task and abandon it without finishing. At 50% or below you get a warning. Complete tasks properly to stay healthy.</div>
     </div>
     <div id="healthWarnToast" class="wf-toast" role="status"></div>
     <div class="card">
@@ -830,11 +830,19 @@ async function syncHealthFromRejections(){
     const rejected = list.filter(s => String(s.status||"").toLowerCase() === "rejected");
     const count = rejected.length;
     const key = "wf_rej_count_" + (userId() || "guest");
+    const appliedKey = "wf_rej_applied_" + (userId() || "guest");
     let prev = 0;
+    let applied = 0;
     try{ prev = Number(localStorage.getItem(key) || 0) || 0; }catch(e){}
-    if(count > prev){
-      const delta = count - prev;
-      setHealth(getHealth() - (5 * delta), { warn: true });
+    try{ applied = Number(localStorage.getItem(appliedKey) || 0) || 0; }catch(e){}
+    // Every 3 rejections → −5% once (not per rejection)
+    const batches = Math.floor(count / 3);
+    const already = Math.floor(applied / 3);
+    if(batches > already){
+      const hits = batches - already;
+      setHealth(getHealth() - (5 * hits), { warn: true });
+      applied = batches * 3;
+      try{ localStorage.setItem(appliedKey, String(applied)); }catch(e){}
     }
     try{ localStorage.setItem(key, String(count)); }catch(e){}
   }catch(e){}
