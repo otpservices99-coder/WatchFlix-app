@@ -168,10 +168,27 @@ body.theme-light .ad-card{box-shadow:0 10px 28px rgba(15,23,42,.08)}
 .dock-theme{
   width:52px;height:52px;border-radius:50%;margin:0 auto 2px;
   background:linear-gradient(145deg,#10b981,#059669);color:#fff!important;
-  box-shadow:0 10px 28px rgba(16,185,129,.35);border:3px solid var(--bg);
-  display:grid!important;place-items:center;padding:0!important;min-height:52px;
+  box-shadow:0 10px 28px rgba(16,185,129,.45);border:3px solid var(--bg);
+  display:grid!important;place-items:center;justify-items:center;align-items:center;
+  padding:0!important;min-height:52px;position:relative;z-index:2;
 }
-.dock-theme svg{width:24px;height:24px;stroke-width:2.5}
+.dock-theme svg{width:24px;height:24px;stroke-width:2.5;display:block;margin:auto}
+body.theme-light .dock-theme{
+  background:linear-gradient(145deg,#059669,#10b981);color:#fff!important;
+  box-shadow:0 10px 28px rgba(5,150,105,.4);border-color:#e2e8f0;
+}
+.wf-toast{
+  position:fixed;left:50%;transform:translateX(-50%);top:18px;z-index:200;
+  background:#0f172a;color:#fff;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;
+  max-width:min(360px,92vw);box-shadow:0 12px 40px rgba(0,0,0,.25);display:none;text-align:center;
+}
+body.theme-light .wf-toast{background:#065f46}
+.wa-float{
+  position:fixed;right:16px;bottom:88px;z-index:60;width:52px;height:52px;border-radius:50%;
+  background:#25D366;color:#fff;display:grid;place-items:center;box-shadow:0 10px 28px rgba(37,211,102,.45);
+  text-decoration:none;border:0;
+}
+.wa-float svg{width:26px;height:26px}
 
 .notif-btn{position:relative}
 .notif-badge{position:absolute;top:2px;right:2px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:#ef4444;color:#fff;font-size:9px;font-weight:800;display:grid;place-items:center;border:2px solid var(--bg)}
@@ -425,6 +442,7 @@ body.theme-dark .wf-warn-red{color:#fecaca;background:rgba(239,68,68,.15)}
           </div>
         </div>
         <p id="wfAdsGateHint" style="font-size:11px;color:var(--muted);margin:0 0 12px;line-height:1.4"></p>
+        <div id="wfAdsPackList" style="display:grid;gap:8px;margin:10px 0"></div>
         <div class="wf-warn-red" id="wfAdsGateWarn">
           You must complete <b>every stage</b> on the next page, then submit for review. Skipping a stage means no reward.
         </div>
@@ -523,8 +541,9 @@ body.theme-dark .wf-warn-red{color:#fecaca;background:rgba(239,68,68,.15)}
         <span class="health-val" id="healthVal">100%</span>
       </div>
       <div class="health-bar" id="healthBar"><i id="healthFill" style="width:100%"></i></div>
-      <div class="health-hint" id="healthHint">Open a task, finish it, then upload proof. Skipping after you open reduces health.</div>
+      <div class="health-hint" id="healthHint">Starts at 100%. Each rejected task proof (or abandoned opened task) lowers health by 5%. At 50% or below you get a warning. Keep completing tasks properly to stay healthy.</div>
     </div>
+    <div id="healthWarnToast" class="wf-toast" role="status"></div>
     <div class="card">
       <div class="profile-head">
         <div class="avatar" id="avatarLetter">W<span class="ok"></span></div>
@@ -541,6 +560,7 @@ body.theme-dark .wf-warn-red{color:#fecaca;background:rgba(239,68,68,.15)}
     </div>
     <div class="section"><h2>Account</h2>
       <div class="card" style="padding:8px 16px">
+        <div class="menu-row" onclick="goTab('ads')"><div class="menu-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></div><div style="flex:1"><div style="font-weight:700;font-size:13px">Advertise / promote</div><div style="font-size:11px;color:var(--muted)">Request a placement</div></div></div>
         <div class="menu-row" onclick="goTab('withdraw')"><div class="menu-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/></svg></div><div style="flex:1"><div style="font-weight:700">Payouts</div><div style="font-size:12px;color:var(--muted)">Bank &amp; future crypto</div></div><span style="color:var(--muted)">›</span></div>
         <div class="menu-row" onclick="goTab('activity')"><div class="menu-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div style="flex:1"><div style="font-weight:700">History</div><div style="font-size:12px;color:var(--muted)">Earnings &amp; withdrawals</div></div><span style="color:var(--muted)">›</span></div>
         <div class="menu-row" onclick="toggleTheme()"><div class="menu-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2"/></svg></div><div style="flex:1"><div style="font-weight:700">Appearance</div><div style="font-size:12px;color:var(--muted)">Light / dark</div></div><span style="color:var(--muted)">›</span></div>
@@ -565,6 +585,7 @@ body.theme-dark .wf-warn-red{color:#fecaca;background:rgba(239,68,68,.15)}
 <script>
 const API_URL="https://global-api-platform-production.up.railway.app";
 const API_KEY="ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c";
+const WA_SUPPORT="https://wa.me/2348012345678"; // TODO: replace with your WhatsApp number
 const LS={token:"wf_token",user:"wf_user",theme:"wf_theme",payout:"wf_payout",health:"wf_health",opened:"wf_opened_tasks"};
 const WCOIN_PER_NAIRA=5;
 const NIGERIAN_BANKS=["Access Bank","Citibank Nigeria","Ecobank Nigeria","Fidelity Bank","First Bank of Nigeria","First City Monument Bank (FCMB)","Globus Bank","Guaranty Trust Bank (GTBank)","Heritage Bank","Keystone Bank","Optimus Bank","Parallex Bank","Polaris Bank","Premium Trust Bank","Providus Bank","Stanbic IBTC Bank","Standard Chartered Bank","Sterling Bank","SunTrust Bank","Titan Trust Bank","Union Bank of Nigeria","United Bank for Africa (UBA)","Unity Bank","Wema Bank","Zenith Bank","Jaiz Bank","Lotus Bank","TAJBank","OPay","PalmPay","Kuda Bank","Moniepoint","VBank","Sparkle","Rubies Bank (Carbon)","ALAT by Wema","FairMoney","9 Payment Service Bank","Hope Payment Service Bank","MoMo PSB","Other / Not listed"];
@@ -603,8 +624,9 @@ function applyTheme(theme){
   const sun = document.getElementById("dockSun");
   const moon = document.getElementById("dockMoon");
   // Light mode: show moon (switch to dark). Dark mode: show sun (switch to light).
-  if(sun) sun.style.display = light ? "none" : "block";
-  if(moon) moon.style.display = light ? "block" : "none";
+  if(sun){ sun.style.display = light ? "none" : "block"; sun.style.margin = "auto"; }
+  if(moon){ moon.style.display = light ? "block" : "none"; moon.style.margin = "auto"; }
+  try{ localStorage.setItem(LS.theme, light ? "light" : "dark"); }catch(e){}
   try { localStorage.setItem(LS.theme, light ? "light" : "dark"); } catch(e) {}
 }
 function toggleTheme(ev){
@@ -631,6 +653,7 @@ function goTab(name){
   document.querySelectorAll(".dock button[data-tab]").forEach(b=>b.classList.toggle("active",b.getAttribute("data-tab")===name));
   if(name==="activity") loadTransactions();
   if(name==="earn"){ initWfAds(); loadSponsoredTasks(); }
+  if(name==="ads"){ /* advertise form */ }
   if(name==="home") window.scrollTo({top:0,behavior:"smooth"});
 }
 function scrollReferral(){goTab("home");setTimeout(()=>document.getElementById("referralSection")?.scrollIntoView({behavior:"smooth"}),60)}
@@ -780,12 +803,41 @@ function getHealth(){
   }catch(e){}
   return 100;
 }
-function setHealth(v){
+function showHealthWarning(msg){
+  const el = document.getElementById("healthWarnToast");
+  if(!el){ try{ alert(msg); }catch(e){} return; }
+  el.textContent = msg;
+  el.style.display = "block";
+  clearTimeout(window._healthWarnT);
+  window._healthWarnT = setTimeout(()=>{ el.style.display = "none"; }, 10000);
+}
+function setHealth(v, opts){
+  const prev = getHealth();
   v = Math.max(0, Math.min(100, Math.round(v)));
   try{ localStorage.setItem(healthKey(), String(v)); }catch(e){}
   renderHealth();
+  if(opts && opts.warn && v < prev){
+    showHealthWarning("Account health decreased to " + v + "%. Complete tasks properly to protect your account.");
+  }
   if(v <= 50) maybeWarnHealth(v);
   return v;
+}
+
+async function syncHealthFromRejections(){
+  try{
+    const data = await api("/api/v1/sponsored-tasks/history");
+    const list = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+    const rejected = list.filter(s => String(s.status||"").toLowerCase() === "rejected");
+    const count = rejected.length;
+    const key = "wf_rej_count_" + (userId() || "guest");
+    let prev = 0;
+    try{ prev = Number(localStorage.getItem(key) || 0) || 0; }catch(e){}
+    if(count > prev){
+      const delta = count - prev;
+      setHealth(getHealth() - (5 * delta), { warn: true });
+    }
+    try{ localStorage.setItem(key, String(count)); }catch(e){}
+  }catch(e){}
 }
 function renderHealth(){
   const v = getHealth();
@@ -841,7 +893,7 @@ function penalizeIncompleteTask(taskId, reason){
   row.penalized = true;
   opened[taskId] = row;
   saveOpenedMap(opened);
-  const next = setHealth(getHealth() - 5);
+  const next = setHealth(getHealth() - 5, { warn: true });
   console.warn("Health -5%", reason, taskId, "now", next);
 }
 function getOpenedMap(){
@@ -1053,7 +1105,7 @@ function stripWfPackConfig(text){
 function isWatchFlixTask(t){
   if(!t) return false;
   const m = t.metadata || t.meta || {};
-  const emb = decodeWfPackConfig(t.description);
+  const emb = typeof decodeWfPackConfig === "function" ? decodeWfPackConfig(t.description) : null;
   if(emb && (String(emb.kind||"").toLowerCase().includes("watchflix") || (Array.isArray(emb.slots) && emb.slots.length))) return true;
   if(String(m.kind || "").toLowerCase() === "watchflix_ads") return true;
   if(String(m.kind || "").toLowerCase().includes("watchflix")) return true;
@@ -1062,6 +1114,7 @@ function isWatchFlixTask(t){
   if(String(t.description || "").toLowerCase().includes("watchflix multi-stage")) return true;
   if(String(t.description || "").includes("<!--WFJSON:")) return true;
   if(String(t.title || "").toLowerCase().includes("watchflix")) return true;
+  if(t.needsProof === false && t.active !== false && (t.imageUrl || t.targetUrl) && String(t.platform||"").toLowerCase() !== "social") return true;
   return false;
 }
 function wfRewardWcoin(t){
@@ -1085,11 +1138,15 @@ function latestWfSub(history, taskId){
   return rows[0];
 }
 /** User can run pack unless latest sub is pending, or approved without reopenAt after submission */
+function countUserAttempts(history, taskId){
+  return (history || []).filter(s => {
+    if(String(wfTaskIdOfSub(s)) !== String(taskId)) return false;
+    const st = String(s.status || "").toLowerCase();
+    return st === "pending" || st === "approved" || st === "completed";
+  }).length;
+}
 function wfPackUserStatus(task, history){
   const id = task._id || task.id;
-  const sub = latestWfSub(history, id);
-  if(!sub) return { locked: false, reason: "" };
-  const st = String(sub.status || "").toLowerCase();
   const meta = Object.assign({}, task.metadata || task.meta || {});
   const emb = decodeWfPackConfig(task.description);
   if(emb) Object.assign(meta, emb);
@@ -1099,14 +1156,33 @@ function wfPackUserStatus(task, history){
     if(m) reopenRaw = m[1];
   }
   const reopenAt = reopenRaw ? new Date(reopenRaw).getTime() : 0;
-  const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime();
-  if(st === "pending") return { locked: true, reason: "pending", label: "Under review" };
-  if(st === "approved"){
-    if(reopenAt && reopenAt > subAt) return { locked: false, reason: "reopened", label: "" };
-    return { locked: true, reason: "approved", label: "Completed" };
+  const maxPer = Number(meta.maxPerUser) || 0;
+  const used = countUserAttempts(history, id);
+  const sub = latestWfSub(history, id);
+  if(!sub){
+    const prog = maxPer > 0 ? (used + "/" + maxPer) : "";
+    return { locked: false, reason: "", label: prog, used, maxPer };
   }
-  // rejected → allow again
-  return { locked: false, reason: "rejected", label: "" };
+  const st = String(sub.status || "").toLowerCase();
+  const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime();
+  // Admin reopen always unlocks a new cycle
+  if(reopenAt && reopenAt > subAt){
+    return { locked: false, reason: "reopened", label: maxPer ? (used + "/" + maxPer) : "Reopened", used, maxPer };
+  }
+  if(st === "pending") return { locked: true, reason: "pending", label: "Under review", used, maxPer };
+  if(st === "approved" || st === "completed"){
+    // Still allowed if under times-per-user limit
+    if(maxPer > 0 && used < maxPer){
+      return { locked: false, reason: "", label: used + "/" + maxPer, used, maxPer };
+    }
+    if(maxPer <= 0){
+      // unlimited times — only lock current pending; approved means they can run again
+      return { locked: false, reason: "", label: "Available", used, maxPer };
+    }
+    return { locked: true, reason: "approved", label: "Completed " + (maxPer ? used + "/" + maxPer : ""), used, maxPer };
+  }
+  // rejected → allow again (rejected does not consume permanent lock)
+  return { locked: false, reason: "rejected", label: maxPer ? (used + "/" + maxPer) : "", used, maxPer };
 }
 
 async function initWfAds(){
@@ -1143,9 +1219,15 @@ async function initWfAds(){
       section.style.display = "block";
       if(liveCount) liveCount.textContent = "0";
       if(liveReward) liveReward.textContent = "—";
-      if(hint) hint.textContent = "No live WatchFlix packs right now. Check back later.";
-      if(btn){ btn.disabled = true; btn.textContent = "None available"; }
+      if(hint) hint.textContent = "No live packs right now. You can still open the activity page to view past results.";
       if(rew) rew.style.display = "none";
+      if(btn){
+        btn.disabled = false;
+        btn.textContent = "View activity history";
+        btn.onclick = function(){ openWfAdsViewOnly(); };
+      }
+      const packList = document.getElementById("wfAdsPackList");
+      if(packList) packList.innerHTML = "";
       return;
     }
 
@@ -1156,6 +1238,51 @@ async function initWfAds(){
     const maxReward = Math.max(...active.map(wfRewardWcoin));
     if(liveCount) liveCount.textContent = String(active.length);
     if(liveReward) liveReward.textContent = "+" + maxReward + " WC";
+    const packList = document.getElementById("wfAdsPackList");
+    if(packList){
+      packList.innerHTML = active.map(t => {
+        const id = t._id || t.id;
+        const rw = wfRewardWcoin(t);
+        const st = wfPackUserStatus(t, history);
+        const label = st.locked ? (st.label || "Locked") : ("Open · +" + rw + " WC");
+        const disabled = st.locked && st.reason === "pending";
+        return `<button type="button" class="btn-ghost" style="width:100%;text-align:left;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card2);cursor:pointer"
+          onclick="window._wfAdsGatewayId='${String(id).replace(/'/g,"")}';window._wfAdsGatewayLocked=${st.locked && st.reason!=="rejected"};window._wfAdsViewOnly=${st.locked};goToWatchFlixAds();">
+          <b>${(t.title||"Pack").replace(/</g,"")}</b>
+          <span style="float:right;font-size:12px;color:var(--muted)">${label}</span>
+        </button>`;
+      }).join("") || "";
+    }
+
+    // List every live pack so users can open each (not only the first)
+    let listEl = document.getElementById("wfAdsPackList");
+    if(!listEl){
+      listEl = document.createElement("div");
+      listEl.id = "wfAdsPackList";
+      listEl.style.cssText = "display:grid;gap:8px;margin:10px 0 12px";
+      const host = document.getElementById("wfAdsGateStats") || document.getElementById("wfAdsSection");
+      if(host && host.parentNode){
+        if(host.nextSibling) host.parentNode.insertBefore(listEl, host.nextSibling);
+        else host.parentNode.appendChild(listEl);
+      }
+    }
+    listEl.innerHTML = active.map(t => {
+      const id = t._id || t.id;
+      const st2 = wfPackUserStatus(t, history);
+      const reward = wfRewardWcoin(t);
+      const label = st2.locked ? (st2.label || "Locked") : "Open";
+      const disabled = false; // always allow open to view; player enforces run lock
+      return `<button type="button" onclick="window._wfAdsGatewayId='${String(id).replace(/'/g,"")}';window._wfAdsGatewayLocked=${st2.locked?'true':'false'};window._wfAdsViewOnly=${st2.locked?'true':'false'};goToWatchFlixAds();"
+        style="width:100%;text-align:left;border:1px solid var(--line);background:var(--card2);border-radius:14px;padding:12px 14px;cursor:pointer;color:var(--text)">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+          <div style="min-width:0">
+            <div style="font-weight:800;font-size:14px">${escapeHtml(t.title||"Pack")}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">+${reward} WCoin · ${st2.locked ? escapeHtml(st2.reason||"locked") : "available"}</div>
+          </div>
+          <span style="font-weight:800;font-size:12px;color:#10b981">${label}</span>
+        </div>
+      </button>`;
+    }).join("");
 
     const st = wfPackUserStatus(camp, history);
     window._wfAdsGatewayLocked = !!st.locked;
@@ -1518,7 +1645,14 @@ async function loadReferral(){
   }catch(e){document.getElementById("bannerRefText").textContent="Share your link when referral is available."}
 }
 async function copyReferral(){if(!state.referralLink)return;try{await navigator.clipboard.writeText(state.referralLink);document.getElementById("refStatus").textContent="Link copied"}catch{prompt("Copy link:",state.referralLink)}}
-async function shareReferral(){if(!state.referralLink)return;if(navigator.share){try{await navigator.share({title:"WatchFlix",text:"Join WatchFlix",url:state.referralLink})}catch{}}else await copyReferral()}
+async function shareReferral(){
+  if(!state.referralLink){ alert("Referral link not ready yet"); return; }
+  const data = { title: "WatchFlix", text: "Join me on WatchFlix and earn WCoin", url: state.referralLink };
+  if(navigator.share){
+    try{ await navigator.share(data); return; }catch(e){ if(e && e.name === "AbortError") return; }
+  }
+  await copyReferral();
+}
 
 async function requestWithdraw(){
   const wcoinAmt=Number(document.getElementById("wdAmount").value);
@@ -1611,20 +1745,28 @@ function fillAccount(){
 }
 async function refreshAll(){
   if(!requireAuth()) return;
-  fillAccount();
-  renderHealth();
-  loadSavedPayout();
-  bindPayoutAutosave();
-  await loadSettings();
-  await loadReferral();
-  await loadSponsoredTasks();
-  await initWfAds();
-  try{ await loadWallet(); }catch(e){ console.warn(e); alert(e.message); }
-  await loadEarningsBreakdown();
-  await loadTransactions();
-  await loadNotifications();
+  try{
+    fillAccount();
+    renderHealth();
+    loadSavedPayout();
+    bindPayoutAutosave();
+    await loadSettings();
+    await loadReferral();
+    await loadSponsoredTasks();
+    await initWfAds();
+    try{ await loadWallet(); }catch(e){ console.warn(e); }
+    await loadEarningsBreakdown();
+    await loadTransactions();
+    await loadNotifications();
+    await syncHealthFromRejections();
+    renderHealth();
+  }catch(e){
+    console.warn(e);
+    try{ showHealthWarning(e.message || "Refresh failed"); }catch(err){}
+  }
 }
 initTheme();
+(function(){ const a=document.getElementById("waFloatLink"); if(a && typeof WA_SUPPORT==="string") a.href=WA_SUPPORT; })();
 if(requireAuth()) refreshAll();
 window.addEventListener("beforeunload", ()=>{
   const map=getOpenedMap();
@@ -1637,6 +1779,11 @@ window.addEventListener("beforeunload", ()=>{
 </script>
 
 <script src="https://guyprior.com/d5/31/00/d53100897c448dc3ffb3cfde0e31918f.js"></script>
+
+
+<a class="wa-float" href="#" id="waFloatLink" target="_blank" rel="noopener" title="Chat admin on WhatsApp" aria-label="WhatsApp support">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11 11 0 004.1 17.7L3 21l3.4-1A11 11 0 1020.5 3.5zM12 20a9 9 0 01-4.6-1.3l-.3-.2-2.7.7.7-2.6-.2-.3A9 9 0 1112 20zm5-6.6c-.3-.1-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.9 1-.3.2-.6.1a7.3 7.3 0 01-2.1-1.3 8 8 0 01-1.5-1.8c-.2-.3 0-.4.1-.6l.4-.5.1-.3c0-.1 0-.3-.1-.4s-.6-1.4-.8-1.9-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3s-.8.8-.8 1.9.8 2.2.9 2.3 1.6 2.5 3.9 3.5c.5.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.6-.7 1.8-1.3s.2-1.2.2-1.3-.2-.2-.5-.3z"/></svg>
+</a>
 
 </body>
 </html>
