@@ -144,6 +144,26 @@ function authHeaders(json){
 function encodeWfPackConfig(cfg){
   try{ return "<!--WFJSON:" + JSON.stringify(cfg) + "-->"; }catch(e){ return ""; }
 }
+
+function parseReopenAt(task){
+  if(!task) return 0;
+  const meta = task.metadata || task.meta || {};
+  let raw = meta.reopenAt || meta.reopenedAt || task.reopenAt || null;
+  const emb = typeof decodeWfPackConfig === "function" ? decodeWfPackConfig(task.description) : null;
+  if(!raw && emb && emb.reopenAt) raw = emb.reopenAt;
+  const desc = String(task.description || "");
+  if(!raw){
+    let m = desc.match(/\[WF_REOPEN:([^\]]+)\]/);
+    if(m) raw = m[1].trim();
+  }
+  if(!raw){
+    let m = desc.match(/reopen:([0-9T:\-\.Z]+)/);
+    if(m) raw = m[1];
+  }
+  const ts = raw ? new Date(raw).getTime() : 0;
+  return Number.isFinite(ts) ? ts : 0;
+}
+
 function decodeWfPackConfig(text){
   if(!text) return null;
   const m = String(text).match(/<!--WFJSON:([\s\S]*?)-->/);
@@ -726,29 +746,21 @@ async function loadCampaign(){
     state.packStatus = null;
 
     // Admin review status for this user + pack
-    // Resolve reopen timestamp from campaign / embedded WFJSON / task
-    let reopenRaw = campaign.reopenAt || (task.metadata || task.meta || {}).reopenAt || null;
-    if(!reopenRaw){
-      try{
-        const emb = decodeWfPackConfig(task.description || campaign.description || "");
-        if(emb && emb.reopenAt) reopenRaw = emb.reopenAt;
-      }catch(e){}
-    }
-    if(!reopenRaw && (task.description || "")){
-      const rm = String(task.description).match(/reopen:([0-9T:\-\.Z]+)/);
-      if(rm) reopenRaw = rm[1];
-    }
-    const reopenTs = reopenRaw ? new Date(reopenRaw).getTime() : 0;
-    campaign.reopenAt = reopenRaw || campaign.reopenAt || null;
+    // Resolve reopen timestamp (WFJSON, plain markers, metadata, updatedAt)
+    let reopenTs = typeof parseReopenAt === "function" ? parseReopenAt(task) : 0;
+    if(!reopenTs && campaign) reopenTs = typeof parseReopenAt === "function" ? parseReopenAt(campaign) : 0;
+    const taskUpdated = new Date(task.updatedAt || 0).getTime() || 0;
+    if(reopenTs) campaign.reopenAt = new Date(reopenTs).toISOString();
 
     const maxPer = Number(campaign.maxPerUser) || 0;
+    const cutTs = reopenTs || 0;
     const usedAfterReopen = (userHistory || []).filter(s => {
       if(String(taskIdOf(s)) !== String(campaign.id)) return false;
       const ss = String(s.status||"").toLowerCase();
       if(!(ss === "pending" || ss === "approved" || ss === "completed")) return false;
-      if(reopenTs > 0){
+      if(cutTs > 0){
         const t = new Date(s.createdAt || s.updatedAt || 0).getTime();
-        if(t && t < reopenTs) return false;
+        if(t && t < cutTs) return false;
       }
       return true;
     }).length;
@@ -756,8 +768,9 @@ async function loadCampaign(){
     const sub = latestSubForTask(userHistory, campaign.id);
     if(sub){
       const st = String(sub.status || "").toLowerCase();
-      const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime();
-      const isReopened = reopenTs > 0 && (!subAt || reopenTs > subAt);
+      const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime() || 0;
+      const updatedAfterSub = taskUpdated && subAt && taskUpdated > (subAt + 2000);
+      const isReopened = (reopenTs > 0 && reopenTs > subAt) || updatedAfterSub;
 
       if(isReopened){
         state.packStatus = null;
@@ -766,7 +779,7 @@ async function loadCampaign(){
         state.attemptLogs = [];
         clearStageProgress(campaign.id);
         setStatusBanner(null);
-        showMsg("Pack reopened — complete stages again. Progress resets after reopen.", "info");
+        showMsg("Pack reopened — complete stages again.", "info");
       } else if(st === "pending"){
         state.packStatus = "pending";
         state.submitted = true;
@@ -891,8 +904,10 @@ async function submitForReview(){
       earlyReturns: state.earlyReturns || 0,
       localRuns: state.localCompleted || 0,
       attemptLogs: state.attemptLogs || [],
-      startedAt: state.startedAt,
+      startedAt: state.runStartedAt || state.startedAt,
       completedAt: new Date().toISOString(),
+      durationSec: Number(campaign.durationSec) || 12,
+      timerNeed: Number(campaign.durationSec) || 12,
       status: "pending"
   };
   const payload = {
