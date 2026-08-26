@@ -1040,8 +1040,11 @@ function isWatchFlixTask(t){
   if(!t) return false;
   const m = t.metadata || t.meta || {};
   if(String(m.kind || "").toLowerCase() === "watchflix_ads") return true;
+  if(String(m.kind || "").toLowerCase().includes("watchflix")) return true;
   if(String(t.platform || "").toLowerCase() === "watchflix") return true;
   if(Array.isArray(t.slots) || Array.isArray(m.slots)) return true;
+  if(String(t.description || "").toLowerCase().includes("watchflix multi-stage")) return true;
+  if(String(t.title || "").toLowerCase().includes("watchflix")) return true;
   return false;
 }
 function wfRewardWcoin(t){
@@ -1071,7 +1074,12 @@ function wfPackUserStatus(task, history){
   if(!sub) return { locked: false, reason: "" };
   const st = String(sub.status || "").toLowerCase();
   const meta = task.metadata || task.meta || {};
-  const reopenAt = meta.reopenAt ? new Date(meta.reopenAt).getTime() : 0;
+  let reopenRaw = meta.reopenAt;
+  if(!reopenRaw && task.description){
+    const m = String(task.description).match(/reopen:([0-9T:\-\.Z]+)/);
+    if(m) reopenRaw = m[1];
+  }
+  const reopenAt = reopenRaw ? new Date(reopenRaw).getTime() : 0;
   const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime();
   if(st === "pending") return { locked: true, reason: "pending", label: "Under review" };
   if(st === "approved"){
@@ -1136,16 +1144,21 @@ async function initWfAds(){
     if(st.locked){
       if(hint){
         hint.textContent = st.reason === "pending"
-          ? "Your submission is under review. Gateway locked until admin approves or rejects."
-          : "You completed this pack. Gateway stays locked until admin reopens it or assigns a new pack.";
+          ? "Under review — you can open the activity page to check status. New runs unlock after approve/reject or admin reopen."
+          : "Completed — open activity to view your result. Admin can reopen the pack so you can run it again.";
       }
       if(rew){ rew.style.display = "inline"; rew.textContent = st.label || "Locked"; }
       if(btn){
-        btn.disabled = true;
-        btn.textContent = st.reason === "pending" ? "Under review" : "Completed";
+        btn.disabled = false;
+        btn.textContent = "View activity status";
+        btn.onclick = function(){ openWfAdsViewOnly(); };
       }
       if(warn){ warn.classList.remove("show"); warn.style.display = "none"; }
+      window._wfAdsGatewayLocked = true;
+      window._wfAdsViewOnly = true;
     } else {
+      window._wfAdsViewOnly = false;
+      window._wfAdsGatewayLocked = false;
       if(hint){
         hint.textContent = active.length + " live pack" + (active.length > 1 ? "s" : "") +
           " · open activity page to complete stages · reward after admin review";
@@ -1166,7 +1179,17 @@ async function initWfAds(){
   }
 }
 
+function openWfAdsViewOnly(){
+  const id = window._wfAdsGatewayId || "";
+  const q = id ? ("?id=" + encodeURIComponent(id) + "&view=1") : "?view=1";
+  window.location.href = "https://watchflix-app.pages.dev/watchflixads/" + q;
+}
 function goToWatchFlixAds(){
+  // Re-check lock from latest status (handles reopen after refresh)
+  if(window._wfAdsViewOnly){
+    openWfAdsViewOnly();
+    return;
+  }
   if(window._wfAdsGatewayLocked){
     alert("This activity is locked until admin reviews it or reopens the pack.");
     return;
