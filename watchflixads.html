@@ -140,6 +140,20 @@ function authHeaders(json){
   if(json) h["Content-Type"] = "application/json";
   return h;
 }
+
+function encodeWfPackConfig(cfg){
+  try{ return "<!--WFJSON:" + JSON.stringify(cfg) + "-->"; }catch(e){ return ""; }
+}
+function decodeWfPackConfig(text){
+  if(!text) return null;
+  const m = String(text).match(/<!--WFJSON:([\s\S]*?)-->/);
+  if(!m) return null;
+  try{ return JSON.parse(m[1]); }catch(e){ return null; }
+}
+function stripWfPackConfig(text){
+  return String(text || "").replace(/<!--WFJSON:[\s\S]*?-->/g, "").trim();
+}
+
 function normalizeUrl(url){
   if(!url) return "";
   url = String(url).trim().replace(/\s+/g, "");
@@ -160,13 +174,16 @@ function mapTaskToCampaign(task){
   if(!task || typeof task !== "object") return null;
   const id = String(task._id || task.id || "");
   if(!id) return null;
-  const meta = task.metadata || task.meta || {};
+  const meta = Object.assign({}, task.metadata || task.meta || {});
+  const embedded = decodeWfPackConfig(task.description);
+  if(embedded && typeof embedded === "object") Object.assign(meta, embedded);
+
   let slots = task.slots || meta.slots || task.stages || meta.stages || task.offers || meta.offers || null;
   if(!Array.isArray(slots) || !slots.length){
     const url = task.targetUrl || task.url || task.link || task.offerUrl || meta.url || "";
     slots = [{
       title: task.title || "Stage 1",
-      description: task.description || task.instructions || "Open the partner link, then wait for the timer.",
+      description: stripWfPackConfig(task.description || task.instructions || "Open the partner link, then wait for the timer."),
       url: url,
       imageUrl: task.imageUrl || task.image || task.bannerUrl || meta.imageUrl || "",
       cta: task.cta || task.ctaLabel || meta.cta || "Go!"
@@ -180,24 +197,30 @@ function mapTaskToCampaign(task){
       cta: s.cta || s.ctaLabel || "Go!"
     }));
   }
-  const rewardRaw = Number(task.rewardWcoin ?? meta.rewardWcoin ?? task.rewardAmount ?? task.reward ?? 0);
+  const rewardRaw = Number(meta.rewardWcoin ?? task.rewardWcoin ?? task.rewardAmount ?? task.reward ?? 0);
   let rewardWcoin = rewardRaw;
-  if(task.rewardWcoin == null && meta.rewardWcoin == null && rewardRaw > 0 && rewardRaw < 50000){
+  if(meta.rewardWcoin == null && task.rewardWcoin == null && rewardRaw > 0 && rewardRaw < 50000){
     rewardWcoin = Math.round(rewardRaw * 5);
   }
   const maxUsers = meta.maxUsers != null ? Number(meta.maxUsers) : (task.maxCompletions != null ? Number(task.maxCompletions) : null);
   const maxPerUser = meta.maxPerUser != null ? Number(meta.maxPerUser) : null;
+  let reopenAt = meta.reopenAt || null;
+  if(!reopenAt && task.description){
+    const rm = String(task.description).match(/reopen:([0-9T:\-\.Z]+)/);
+    if(rm) reopenAt = rm[1];
+  }
   return {
     id,
     title: task.title || "WatchFlix activity",
-    description: task.description || "",
+    description: stripWfPackConfig(task.description || ""),
     active: task.active !== false && String(task.status || "active").toLowerCase() !== "inactive",
     rewardWcoin: rewardWcoin,
-    durationSec: Number(task.durationSec || meta.durationSec || task.timerSec || 12) || 12,
-    dailyLimit: Number(task.dailyLimit || meta.dailyLimit || 10) || 10,
+    durationSec: Number(meta.durationSec || task.durationSec || task.timerSec || 12) || 12,
+    dailyLimit: Number(meta.dailyLimit || task.dailyLimit || 10) || 10,
     maxUsers: (maxUsers && maxUsers > 0) ? maxUsers : null,
     maxPerUser: (maxPerUser && maxPerUser > 0) ? maxPerUser : null,
     completionCount: Number(task.completionCount || 0),
+    reopenAt,
     slots
   };
 }
@@ -205,9 +228,15 @@ function mapTaskToCampaign(task){
 function isWatchFlixTask(t){
   if(!t) return false;
   const m = t.metadata || t.meta || {};
+  const emb = decodeWfPackConfig(t.description);
+  if(emb && String(emb.kind || "").toLowerCase().includes("watchflix")) return true;
+  if(emb && Array.isArray(emb.slots) && emb.slots.length) return true;
   if(String(m.kind || "").toLowerCase() === "watchflix_ads") return true;
+  if(String(m.kind || "").toLowerCase().includes("watchflix")) return true;
   if(String(t.platform || "").toLowerCase() === "watchflix") return true;
   if(Array.isArray(t.slots) || Array.isArray(m.slots)) return true;
+  if(String(t.description || "").toLowerCase().includes("watchflix multi-stage")) return true;
+  if(String(t.description || "").includes("<!--WFJSON:")) return true;
   return false;
 }
 
@@ -540,15 +569,18 @@ async function loadCampaign(){
     }
     const rows = Array.isArray(body.data) ? body.data : (Array.isArray(body) ? body : []);
     const active = rows.filter(t => t && t.active !== false);
+    const wfRows = active.filter(t => isWatchFlixTask(t));
     const wantedId = qs("id");
     let task = null;
     if(wantedId){
-      task = active.find(t => t && String(t._id || t.id || "") === String(wantedId))
+      task = wfRows.find(t => t && String(t._id || t.id || "") === String(wantedId))
+        || active.find(t => t && String(t._id || t.id || "") === String(wantedId))
         || rows.find(t => t && String(t._id || t.id || "") === String(wantedId))
         || null;
     }
     if(!task){
-      task = active.find(t => t && isWatchFlixTask(t)) || active.find(Boolean) || null;
+      // Only WatchFlix packs — never a random Sponsored task
+      task = wfRows[0] || null;
     }
     // Fetch full task (metadata/slots/reopenAt often missing on list endpoint)
     if(task && (task._id || task.id)){
@@ -589,11 +621,7 @@ async function loadCampaign(){
     if(sub){
       const st = String(sub.status || "").toLowerCase();
       if(st === "approved"){
-        let reopenAt = (task.metadata || task.meta || {}).reopenAt;
-        if(!reopenAt && task.description){
-          const m = String(task.description).match(/reopen:([0-9T:\-\.Z]+)/);
-          if(m) reopenAt = m[1];
-        }
+        const reopenAt = campaign.reopenAt || (task.metadata || task.meta || {}).reopenAt;
         const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime();
         const reopenTs = reopenAt ? new Date(reopenAt).getTime() : 0;
         if(reopenTs && reopenTs > subAt){
