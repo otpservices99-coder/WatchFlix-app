@@ -536,8 +536,18 @@ async function loadCampaign(){
     if(sub){
       const st = String(sub.status || "").toLowerCase();
       if(st === "approved"){
-        state.packStatus = "approved";
-        setStatusBanner("approved");
+        const reopenAt = (task.metadata || task.meta || {}).reopenAt;
+        const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime();
+        const reopenTs = reopenAt ? new Date(reopenAt).getTime() : 0;
+        if(reopenTs && reopenTs > subAt){
+          state.packStatus = null;
+          clearStageProgress(campaign.id);
+          setStatusBanner(null);
+          showMsg("Pack reopened by admin — complete stages again.", "info");
+        } else {
+          state.packStatus = "approved";
+          setStatusBanner("approved");
+        }
       } else if(st === "pending"){
         state.packStatus = "pending";
         state.submitted = true;
