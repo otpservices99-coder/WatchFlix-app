@@ -8,6 +8,7 @@
 
 
 <!-- Adcash AutoTag -->
+</script>
 
 <title>WatchFlix Ads</title>
 
@@ -128,6 +129,79 @@ function saveStageProgress(taskId, clicked, index){
 function clearStageProgress(taskId){
   try{ localStorage.removeItem(stageProgressKey(taskId)); }catch(e){}
 }
+
+/* —— Persist pack run progress (2/5 etc) across refresh —— */
+function runProgressKey(taskId){
+  return "wf_ads_run_prog_v2_" + (uid() || "guest") + "_" + String(taskId || "");
+}
+function loadRunProgress(taskId){
+  try{
+    const keys = [];
+    const u = uid();
+    if(u) keys.push("wf_ads_run_prog_v2_" + u + "_" + String(taskId));
+    keys.push(runProgressKey(taskId));
+    keys.push("wf_ads_run_prog_v2_guest_" + String(taskId));
+    for(const k of keys){
+      const raw = localStorage.getItem(k);
+      if(!raw) continue;
+      const p = JSON.parse(raw);
+      if(p && typeof p === "object") return p;
+    }
+  }catch(e){}
+  return null;
+}
+function saveRunProgress(taskId, data){
+  if(!taskId) return;
+  const payload = JSON.stringify(Object.assign({
+    updatedAt: new Date().toISOString()
+  }, data || {}));
+  try{
+    const u = uid();
+    if(u) localStorage.setItem("wf_ads_run_prog_v2_" + u + "_" + String(taskId), payload);
+    localStorage.setItem(runProgressKey(taskId), payload);
+    localStorage.setItem("wf_ads_run_prog_v2_guest_" + String(taskId), payload);
+  }catch(e){}
+}
+function clearRunProgress(taskId){
+  try{
+    const u = uid();
+    if(u) localStorage.removeItem("wf_ads_run_prog_v2_" + u + "_" + String(taskId));
+    localStorage.removeItem(runProgressKey(taskId));
+    localStorage.removeItem("wf_ads_run_prog_v2_guest_" + String(taskId));
+  }catch(e){}
+}
+function restoreRunProgress(taskId, reopenTs){
+  const p = loadRunProgress(taskId);
+  if(!p) return { localCompleted: 0, attemptLogs: [] };
+  const savedReopen = p.reopenAt ? new Date(p.reopenAt).getTime() : 0;
+  const cut = Number(reopenTs) || 0;
+  // Wipe ONLY when admin set a newer explicit reopen than the one we saved with
+  if(cut > 0 && savedReopen > 0 && cut > savedReopen + 2000){
+    return { localCompleted: 0, attemptLogs: [] };
+  }
+  // Keep progress even if reopenAt was missing on older saves
+  return {
+    localCompleted: Math.max(0, Number(p.localCompleted) || 0),
+    attemptLogs: Array.isArray(p.attemptLogs) ? p.attemptLogs : []
+  };
+}
+function persistCurrentRuns(taskId){
+  if(!taskId) return;
+  let reopenAt = null;
+  try{
+    if(campaign && campaign.reopenAt) reopenAt = campaign.reopenAt;
+    else if(campaign && typeof parseReopenAt === "function"){
+      const ts = parseReopenAt(campaign);
+      if(ts) reopenAt = new Date(ts).toISOString();
+    }
+  }catch(e){}
+  saveRunProgress(taskId, {
+    localCompleted: Number(state.localCompleted) || 0,
+    attemptLogs: state.attemptLogs || [],
+    reopenAt: reopenAt || null
+  });
+}
+
 function authHeaders(json){
   const h = { "X-API-Key": API_KEY };
   const t = token();
@@ -477,6 +551,7 @@ function finishCurrentStage(){
     stages: N,
     earlyReturns: state.earlyReturns || 0
   });
+  try{ persistCurrentRuns(campaign.id); }catch(e){}
   if(typeof updateProgressBadge === "function") updateProgressBadge();
 
   const maxPer = Number(campaign.maxPerUser) || 0;
@@ -723,6 +798,14 @@ async function loadCampaign(){
     }catch(e){}
     campaign = mapTaskToCampaign(task);
     try{ renderPackSwitcher(); }catch(e){}
+    if(campaign){
+      let reopenTs = 0;
+      try{ reopenTs = typeof parseReopenAt === "function" ? parseReopenAt(task) : 0; }catch(e){}
+      const restored = restoreRunProgress(campaign.id, reopenTs);
+      state.localCompleted = Number(restored.localCompleted) || 0;
+      state.attemptLogs = restored.attemptLogs || [];
+      try{ updateProgressBadge(); }catch(e){}
+    }
     if(!campaign){
       $("title").textContent = "No campaigns";
       $("desc").textContent = "Admin has not published an active WatchFlix pack yet.";
@@ -775,12 +858,17 @@ async function loadCampaign(){
       if(isReopened){
         state.packStatus = null;
         state.submitted = false;
-        state.localCompleted = 0;
-        state.attemptLogs = [];
-        clearStageProgress(campaign.id);
-        clearRunProgress(campaign.id);
+        const explicitReopen = reopenTs > 0 && reopenTs > subAt;
+        if(explicitReopen){
+          state.localCompleted = 0;
+          state.attemptLogs = [];
+          clearStageProgress(campaign.id);
+          clearRunProgress(campaign.id);
+          showMsg("Pack reopened — complete stages again.", "info");
+        } else {
+          showMsg("Pack available — your run progress is kept.", "info");
+        }
         setStatusBanner(null);
-        showMsg("Pack reopened — complete stages again.", "info");
       } else if(st === "pending"){
         state.packStatus = "pending";
         state.submitted = true;
@@ -826,6 +914,20 @@ async function loadCampaign(){
         state.index = idx;
       }
     }
+
+    // Always re-apply saved run count (2/5 etc) after status handling
+    // (explicit reopen already cleared storage above)
+    try{
+      const restored = restoreRunProgress(campaign.id, reopenTs || 0);
+      const n = Number(restored.localCompleted) || 0;
+      if(n > 0){
+        state.localCompleted = n;
+        state.attemptLogs = restored.attemptLogs || state.attemptLogs || [];
+      } else if(!state.localCompleted){
+        state.localCompleted = 0;
+      }
+    }catch(e){}
+    try{ updateProgressBadge(); }catch(e){}
 
     renderStep();
   }catch(e){
