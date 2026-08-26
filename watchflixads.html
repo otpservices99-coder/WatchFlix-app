@@ -692,6 +692,15 @@ async function loadCampaign(){
         if(full && (full._id || full.id)) task = Object.assign({}, task, full);
       }catch(e){}
     }
+    // Prefer full task document (description / metadata with reopenAt)
+    try{
+      const detailRes = await fetch(API_URL + "/api/v1/sponsored-tasks/" + encodeURIComponent(task._id || task.id), { headers: authHeaders() });
+      if(detailRes.ok){
+        const detailBody = await detailRes.json().catch(()=>({}));
+        const full = detailBody.data || detailBody.task || detailBody;
+        if(full && (full._id || full.id)) task = full;
+      }
+    }catch(e){}
     campaign = mapTaskToCampaign(task);
     try{ renderPackSwitcher(); }catch(e){}
     if(!campaign){
@@ -717,47 +726,72 @@ async function loadCampaign(){
     state.packStatus = null;
 
     // Admin review status for this user + pack
+    // Resolve reopen timestamp from campaign / embedded WFJSON / task
+    let reopenRaw = campaign.reopenAt || (task.metadata || task.meta || {}).reopenAt || null;
+    if(!reopenRaw){
+      try{
+        const emb = decodeWfPackConfig(task.description || campaign.description || "");
+        if(emb && emb.reopenAt) reopenRaw = emb.reopenAt;
+      }catch(e){}
+    }
+    if(!reopenRaw && (task.description || "")){
+      const rm = String(task.description).match(/reopen:([0-9T:\-\.Z]+)/);
+      if(rm) reopenRaw = rm[1];
+    }
+    const reopenTs = reopenRaw ? new Date(reopenRaw).getTime() : 0;
+    campaign.reopenAt = reopenRaw || campaign.reopenAt || null;
+
+    const maxPer = Number(campaign.maxPerUser) || 0;
+    const usedAfterReopen = (userHistory || []).filter(s => {
+      if(String(taskIdOf(s)) !== String(campaign.id)) return false;
+      const ss = String(s.status||"").toLowerCase();
+      if(!(ss === "pending" || ss === "approved" || ss === "completed")) return false;
+      if(reopenTs > 0){
+        const t = new Date(s.createdAt || s.updatedAt || 0).getTime();
+        if(t && t < reopenTs) return false;
+      }
+      return true;
+    }).length;
+
     const sub = latestSubForTask(userHistory, campaign.id);
     if(sub){
       const st = String(sub.status || "").toLowerCase();
-      if(st === "approved"){
-        const reopenAt = campaign.reopenAt || (task.metadata || task.meta || {}).reopenAt;
-        const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime();
-        const reopenTs = reopenAt ? new Date(reopenAt).getTime() : 0;
-        const maxPer = Number(campaign.maxPerUser) || 0;
-        const used = (userHistory || []).filter(s => {
-          if(String(taskIdOf(s)) !== String(campaign.id)) return false;
-          const ss = String(s.status||"").toLowerCase();
-          return ss === "pending" || ss === "approved" || ss === "completed";
-        }).length;
-        if(reopenTs && reopenTs > subAt){
+      const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime();
+      const isReopened = reopenTs > 0 && (!subAt || reopenTs > subAt);
+
+      if(isReopened){
+        state.packStatus = null;
+        state.submitted = false;
+        state.localCompleted = 0;
+        state.attemptLogs = [];
+        clearStageProgress(campaign.id);
+        setStatusBanner(null);
+        showMsg("Pack reopened — complete stages again. Progress resets after reopen.", "info");
+      } else if(st === "pending"){
+        state.packStatus = "pending";
+        state.submitted = true;
+        setStatusBanner("pending");
+      } else if(st === "approved" || st === "completed"){
+        if(maxPer > 0 && usedAfterReopen < maxPer){
           state.packStatus = null;
+          state.submitted = false;
           clearStageProgress(campaign.id);
           setStatusBanner(null);
-          showMsg("Pack reopened by admin — complete stages again.", "info");
-        } else if(maxPer > 0 && used < maxPer){
-          state.packStatus = null;
-          clearStageProgress(campaign.id);
-          setStatusBanner(null);
-          showMsg("Progress " + used + "/" + maxPer + " — you can complete this pack again.", "info");
+          showMsg("Progress " + usedAfterReopen + "/" + maxPer + " — continue.", "info");
         } else if(maxPer <= 0){
-          // unlimited — allow another run after prior approval
           state.packStatus = null;
+          state.submitted = false;
           clearStageProgress(campaign.id);
           setStatusBanner(null);
         } else {
           state.packStatus = "approved";
           setStatusBanner("approved");
         }
-      } else if(st === "pending"){
-        state.packStatus = "pending";
-        state.submitted = true;
-        setStatusBanner("pending");
       } else if(st === "rejected"){
-        // Rejected → allow full retry; clear local stage progress
         state.packStatus = null;
+        state.submitted = false;
         clearStageProgress(campaign.id);
-        setStatusBanner("rejected", (sub && (sub.rejectionReason || sub.reason)) || "");
+        setStatusBanner("rejected", (sub.rejectionReason || sub.reason) || "");
         showMsg("Previous attempt was rejected. Complete all stages again.", "err");
       }
     } else {
