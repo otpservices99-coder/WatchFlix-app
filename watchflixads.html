@@ -228,7 +228,7 @@ function mapTaskToCampaign(task){
 function isWatchFlixTask(t){
   if(!t) return false;
   const m = t.metadata || t.meta || {};
-  const emb = decodeWfPackConfig(t.description);
+  const emb = typeof decodeWfPackConfig === "function" ? decodeWfPackConfig(t.description) : null;
   if(emb && String(emb.kind || "").toLowerCase().includes("watchflix")) return true;
   if(emb && Array.isArray(emb.slots) && emb.slots.length) return true;
   if(String(m.kind || "").toLowerCase() === "watchflix_ads") return true;
@@ -237,6 +237,12 @@ function isWatchFlixTask(t){
   if(Array.isArray(t.slots) || Array.isArray(m.slots)) return true;
   if(String(t.description || "").toLowerCase().includes("watchflix multi-stage")) return true;
   if(String(t.description || "").includes("<!--WFJSON:")) return true;
+  if(String(t.title || "").toLowerCase().includes("watchflix")) return true;
+  // Multi-offer packs often only expose targetUrl + image on list
+  if(t.needsProof === false && t.active !== false && (t.imageUrl || t.targetUrl)){
+    // likely WF if not classic social proof task
+    if(String(t.platform || "").toLowerCase() !== "social") return true;
+  }
   return false;
 }
 
@@ -414,9 +420,35 @@ function renderStep(){
     if(!state.clicked[i]) $("bar").style.width = "0%";
   }
   let limTxt = "";
-  if(campaign.maxPerUser) limTxt += " · " + campaign.maxPerUser + "× per user";
+  const maxPer = Number(campaign.maxPerUser) || 0;
+  let used = 0;
+  if(maxPer > 0 && typeof taskIdOf === "function"){
+    used = (userHistory || []).filter(s => {
+      if(String(taskIdOf(s)) !== String(campaign.id)) return false;
+      const st = String(s.status||"").toLowerCase();
+      return st === "pending" || st === "approved" || st === "completed";
+    }).length;
+    limTxt += " · Progress " + used + "/" + maxPer + " today for this pack";
+  } else if(maxPer > 0){
+    limTxt += " · Up to " + maxPer + "× per user";
+  }
   if(campaign.maxUsers) limTxt += " · max " + campaign.maxUsers + " users";
   $("foot").textContent = "Reward after approval: +" + (campaign.rewardWcoin || 0) + " WCoin" + limTxt;
+  // Progress bar badge under title
+  let badge = document.getElementById("attemptBadge");
+  if(!badge){
+    badge = document.createElement("div");
+    badge.id = "attemptBadge";
+    badge.style.cssText = "margin:10px 20px 0;padding:10px 12px;border-radius:12px;background:rgba(56,189,248,.12);color:#7dd3fc;font-size:13px;font-weight:800;text-align:center";
+    const body = document.querySelector(".body");
+    if(body) body.appendChild(badge);
+  }
+  if(maxPer > 0){
+    badge.style.display = "block";
+    badge.textContent = "Your progress on this pack: " + used + " / " + maxPer;
+  } else {
+    badge.style.display = "none";
+  }
   updateCompleteBtn();
 }
 
@@ -542,6 +574,27 @@ async function loadHistory(){
   }catch(e){ return []; }
 }
 
+
+function renderPackSwitcher(){
+  const packs = window._wfLivePacks || [];
+  let el = document.getElementById("packSwitch");
+  if(!el){
+    el = document.createElement("div");
+    el.id = "packSwitch";
+    el.style.cssText = "padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center";
+    const foot = $("foot");
+    if(foot && foot.parentNode) foot.parentNode.insertBefore(el, foot);
+  }
+  if(packs.length <= 1){ el.innerHTML = ""; return; }
+  const cur = campaign ? campaign.id : "";
+  el.innerHTML = packs.map(p => {
+    const on = String(p.id) === String(cur);
+    return `<button type="button" onclick="location.href='https://watchflix-app.pages.dev/watchflixads/?id='+encodeURIComponent(p.id)"
+      style="border:1px solid ${on?'#38bdf8':'#334155'};background:${on?'rgba(56,189,248,.2)':'#1e293b'};color:#e2e8f0;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer">
+      ${String(p.title||'Pack').replace(/</g,'')} · +${p.reward||0} WC
+    </button>`;
+  }).join("");
+}
 async function loadCampaign(){
   const t = token();
   if(!t && !uid()){
@@ -585,6 +638,18 @@ async function loadCampaign(){
       // Only WatchFlix packs — never a random Sponsored task
       task = wfRows[0] || null;
     }
+    // Expose all live packs for in-page switcher
+    window._wfLivePacks = wfRows.map(t => ({
+      id: String(t._id || t.id),
+      title: t.title || "Pack",
+      reward: (function(){
+        try{
+          const emb = decodeWfPackConfig(t.description) || {};
+          const m = t.metadata || {};
+          return emb.rewardWcoin || m.rewardWcoin || Math.round(Number(t.rewardAmount||0)*5) || 0;
+        }catch(e){ return 0; }
+      })()
+    }));
     // Fetch full task (metadata/slots/reopenAt often missing on list endpoint)
     if(task && (task._id || task.id)){
       try{
@@ -597,6 +662,7 @@ async function loadCampaign(){
       }catch(e){}
     }
     campaign = mapTaskToCampaign(task);
+    try{ renderPackSwitcher(); }catch(e){}
     if(!campaign){
       $("title").textContent = "No campaigns";
       $("desc").textContent = "Admin has not published an active WatchFlix pack yet.";
@@ -627,11 +693,27 @@ async function loadCampaign(){
         const reopenAt = campaign.reopenAt || (task.metadata || task.meta || {}).reopenAt;
         const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime();
         const reopenTs = reopenAt ? new Date(reopenAt).getTime() : 0;
+        const maxPer = Number(campaign.maxPerUser) || 0;
+        const used = (userHistory || []).filter(s => {
+          if(String(taskIdOf(s)) !== String(campaign.id)) return false;
+          const ss = String(s.status||"").toLowerCase();
+          return ss === "pending" || ss === "approved" || ss === "completed";
+        }).length;
         if(reopenTs && reopenTs > subAt){
           state.packStatus = null;
           clearStageProgress(campaign.id);
           setStatusBanner(null);
           showMsg("Pack reopened by admin — complete stages again.", "info");
+        } else if(maxPer > 0 && used < maxPer){
+          state.packStatus = null;
+          clearStageProgress(campaign.id);
+          setStatusBanner(null);
+          showMsg("Progress " + used + "/" + maxPer + " — you can complete this pack again.", "info");
+        } else if(maxPer <= 0){
+          // unlimited — allow another run after prior approval
+          state.packStatus = null;
+          clearStageProgress(campaign.id);
+          setStatusBanner(null);
         } else {
           state.packStatus = "approved";
           setStatusBanner("approved");
