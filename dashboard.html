@@ -798,8 +798,20 @@ function latestSubForTask(taskId){
 function healthKey(){ return LS.health + "_" + (userId() || "guest"); }
 function getHealth(){
   try{
-    const v = Number(localStorage.getItem(healthKey()));
-    if(Number.isFinite(v) && v >= 0 && v <= 100) return v;
+    const raw = localStorage.getItem(healthKey());
+    if(raw == null || raw === "") return 100;
+    const v = Number(raw);
+    if(!Number.isFinite(v) || v < 0 || v > 100) return 100;
+    // Migrate bad default: 0% with no penalty history → 100%
+    if(v === 0){
+      let applied = 0;
+      try{ applied = Number(localStorage.getItem("wf_rej_applied_" + (userId() || "guest")) || 0) || 0; }catch(e){}
+      if(applied <= 0){
+        try{ localStorage.setItem(healthKey(), "100"); }catch(e){}
+        return 100;
+      }
+    }
+    return v;
   }catch(e){}
   return 100;
 }
@@ -1146,11 +1158,16 @@ function latestWfSub(history, taskId){
   return rows[0];
 }
 /** User can run pack unless latest sub is pending, or approved without reopenAt after submission */
-function countUserAttempts(history, taskId){
+function countUserAttempts(history, taskId, afterTs){
   return (history || []).filter(s => {
     if(String(wfTaskIdOfSub(s)) !== String(taskId)) return false;
     const st = String(s.status || "").toLowerCase();
-    return st === "pending" || st === "approved" || st === "completed";
+    if(!(st === "pending" || st === "approved" || st === "completed")) return false;
+    if(afterTs && afterTs > 0){
+      const t = new Date(s.createdAt || s.updatedAt || 0).getTime();
+      if(t && t < afterTs) return false; // pre-reopen attempts do not count
+    }
+    return true;
   }).length;
 }
 function wfPackUserStatus(task, history){
@@ -1158,39 +1175,44 @@ function wfPackUserStatus(task, history){
   const meta = Object.assign({}, task.metadata || task.meta || {});
   const emb = decodeWfPackConfig(task.description);
   if(emb) Object.assign(meta, emb);
-  let reopenRaw = meta.reopenAt;
+  let reopenRaw = meta.reopenAt || meta.reopenedAt || null;
   if(!reopenRaw && task.description){
     const m = String(task.description).match(/reopen:([0-9T:\-\.Z]+)/);
     if(m) reopenRaw = m[1];
   }
+  if(!reopenRaw && emb && emb.reopenAt) reopenRaw = emb.reopenAt;
   const reopenAt = reopenRaw ? new Date(reopenRaw).getTime() : 0;
   const maxPer = Number(meta.maxPerUser) || 0;
-  const used = countUserAttempts(history, id);
+  // Attempts only count after last admin reopen
+  const used = countUserAttempts(history, id, reopenAt || 0);
   const sub = latestWfSub(history, id);
   if(!sub){
     const prog = maxPer > 0 ? (used + "/" + maxPer) : "";
-    return { locked: false, reason: "", label: prog, used, maxPer };
+    return { locked: false, reason: "", label: prog, used, maxPer, reopenAt };
   }
   const st = String(sub.status || "").toLowerCase();
   const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime();
-  // Admin reopen always unlocks a new cycle
-  if(reopenAt && reopenAt > subAt){
-    return { locked: false, reason: "reopened", label: maxPer ? (used + "/" + maxPer) : "Reopened", used, maxPer };
+  // Admin reopen after this submission → fully available again
+  if(reopenAt && (!subAt || reopenAt > subAt)){
+    return { locked: false, reason: "reopened", label: maxPer ? (used + "/" + maxPer) : "Reopened", used, maxPer, reopenAt };
   }
-  if(st === "pending") return { locked: true, reason: "pending", label: "Under review", used, maxPer };
+  if(st === "pending"){
+    // Pending only locks if it is AFTER reopen
+    if(reopenAt && subAt && subAt < reopenAt){
+      return { locked: false, reason: "reopened", label: maxPer ? (used + "/" + maxPer) : "Reopened", used, maxPer, reopenAt };
+    }
+    return { locked: true, reason: "pending", label: "Under review", used, maxPer, reopenAt };
+  }
   if(st === "approved" || st === "completed"){
-    // Still allowed if under times-per-user limit
     if(maxPer > 0 && used < maxPer){
-      return { locked: false, reason: "", label: used + "/" + maxPer, used, maxPer };
+      return { locked: false, reason: "", label: used + "/" + maxPer, used, maxPer, reopenAt };
     }
     if(maxPer <= 0){
-      // unlimited times — only lock current pending; approved means they can run again
-      return { locked: false, reason: "", label: "Available", used, maxPer };
+      return { locked: false, reason: "", label: "Available", used, maxPer, reopenAt };
     }
-    return { locked: true, reason: "approved", label: "Completed " + (maxPer ? used + "/" + maxPer : ""), used, maxPer };
+    return { locked: true, reason: "approved", label: "Completed " + used + "/" + maxPer, used, maxPer, reopenAt };
   }
-  // rejected → allow again (rejected does not consume permanent lock)
-  return { locked: false, reason: "rejected", label: maxPer ? (used + "/" + maxPer) : "", used, maxPer };
+  return { locked: false, reason: "rejected", label: maxPer ? (used + "/" + maxPer) : "", used, maxPer, reopenAt };
 }
 
 async function initWfAds(){
@@ -1755,6 +1777,7 @@ async function refreshAll(){
   if(!requireAuth()) return;
   try{
     fillAccount();
+    try{ if(getHealth() === 0) setHealth(100); }catch(e){}
     renderHealth();
     loadSavedPayout();
     bindPayoutAutosave();
