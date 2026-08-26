@@ -185,6 +185,8 @@ function mapTaskToCampaign(task){
   if(task.rewardWcoin == null && meta.rewardWcoin == null && rewardRaw > 0 && rewardRaw < 50000){
     rewardWcoin = Math.round(rewardRaw * 5);
   }
+  const maxUsers = meta.maxUsers != null ? Number(meta.maxUsers) : (task.maxCompletions != null ? Number(task.maxCompletions) : null);
+  const maxPerUser = meta.maxPerUser != null ? Number(meta.maxPerUser) : null;
   return {
     id,
     title: task.title || "WatchFlix activity",
@@ -193,6 +195,9 @@ function mapTaskToCampaign(task){
     rewardWcoin: rewardWcoin,
     durationSec: Number(task.durationSec || meta.durationSec || task.timerSec || 12) || 12,
     dailyLimit: Number(task.dailyLimit || meta.dailyLimit || 10) || 10,
+    maxUsers: (maxUsers && maxUsers > 0) ? maxUsers : null,
+    maxPerUser: (maxPerUser && maxPerUser > 0) ? maxPerUser : null,
+    completionCount: Number(task.completionCount || 0),
     slots
   };
 }
@@ -233,12 +238,18 @@ const state = {
   startedAt: new Date().toISOString(),
   index: 0,
   clicked: [],
-  stageDone: [], // timer finished for stage — permanently locked for this attempt
+  stageDone: [],
+  stageStartedAt: [],
+  stageFinishedAt: [],
+  earlyReturns: 0,
   timer: null,
   left: 0,
   timerArmed: false,
+  timerAccum: 0,
+  timerNeed: 0,
+  timerLastTick: 0,
   submitted: false,
-  packStatus: null, // null | pending | approved | rejected
+  packStatus: null,
   dailyLimit: 10
 };
 
@@ -396,6 +407,7 @@ function finishCurrentStage(){
   const i = state.index;
   state.stageDone[i] = true;
   state.clicked[i] = true;
+  state.stageFinishedAt[i] = new Date().toISOString();
   if(campaign) saveStageProgress(campaign.id, state.clicked, state.index);
   clearTimer();
   $("bar").style.width = "100%";
@@ -414,25 +426,52 @@ function startTimer(){
   clearTimer();
   const sec = Number(campaign.durationSec) || 12;
   state.timerArmed = true;
+  state.timerNeed = sec;
+  state.timerAccum = 0;
+  state.timerLastTick = Date.now();
   state.left = sec;
-  const total = sec;
-  const started = Date.now();
+  const i = state.index;
+  if(!state.stageStartedAt[i]) state.stageStartedAt[i] = new Date().toISOString();
   $("timer").textContent = "00:" + String(Math.ceil(state.left)).padStart(2, "0");
   $("bar").style.width = "0%";
   const cta = $("cta");
   cta.disabled = true;
-  cta.textContent = "Timer running…";
+  cta.textContent = "Stay on this page…";
   cta.className = "cta done";
+  showMsg("Keep this page open until the timer ends. Leaving early pauses the timer.", "info");
   state.timer = setInterval(() => {
-    const elapsed = (Date.now() - started) / 1000;
-    state.left = Math.max(0, total - elapsed);
+    // Only count time while this tab is visible
+    if(document.visibilityState === "hidden"){
+      state.timerLastTick = Date.now();
+      $("timer").textContent = "Paused — return here";
+      return;
+    }
+    const now = Date.now();
+    const delta = (now - state.timerLastTick) / 1000;
+    state.timerLastTick = now;
+    // Cap single tick so background throttling does not jump
+    state.timerAccum += Math.min(delta, 0.5);
+    const elapsed = state.timerAccum;
+    state.left = Math.max(0, state.timerNeed - elapsed);
     $("timer").textContent = "00:" + String(Math.ceil(state.left)).padStart(2, "0");
-    $("bar").style.width = Math.min(100, (elapsed / total) * 100) + "%";
+    $("bar").style.width = Math.min(100, (elapsed / state.timerNeed) * 100) + "%";
     if(state.left <= 0){
       finishCurrentStage();
     }
   }, 100);
 }
+
+document.addEventListener("visibilitychange", () => {
+  if(!state.timerArmed) return;
+  if(document.visibilityState === "hidden"){
+    state.earlyReturns = (state.earlyReturns || 0) + 1;
+    $("timer").textContent = "Paused — return here";
+    showMsg("You left early. Timer paused — stay on this page to finish the stage.", "err");
+  } else {
+    state.timerLastTick = Date.now();
+    showMsg("Welcome back. Timer continues — stay until it ends.", "info");
+  }
+});
 
 function onGo(){
   if(!campaign || packLocked()) return;
@@ -511,6 +550,17 @@ async function loadCampaign(){
     if(!task){
       task = active.find(t => t && isWatchFlixTask(t)) || active.find(Boolean) || null;
     }
+    // Fetch full task (metadata/slots/reopenAt often missing on list endpoint)
+    if(task && (task._id || task.id)){
+      try{
+        const det = await fetch(API_URL + "/api/v1/sponsored-tasks/" + encodeURIComponent(task._id || task.id), {
+          method: "GET", headers: authHeaders(false)
+        });
+        const detBody = await det.json().catch(() => ({}));
+        const full = detBody.data || detBody.task || detBody;
+        if(full && (full._id || full.id)) task = Object.assign({}, task, full);
+      }catch(e){}
+    }
     campaign = mapTaskToCampaign(task);
     if(!campaign){
       $("title").textContent = "No campaigns";
@@ -526,6 +576,9 @@ async function loadCampaign(){
     N = Math.max(1, slots.length);
     state.clicked = Array(N).fill(false);
     state.stageDone = Array(N).fill(false);
+    state.stageStartedAt = Array(N).fill(null);
+    state.stageFinishedAt = Array(N).fill(null);
+    state.earlyReturns = 0;
     state.dailyLimit = campaign.dailyLimit || 10;
     state.index = 0;
     state.submitted = false;
@@ -536,7 +589,11 @@ async function loadCampaign(){
     if(sub){
       const st = String(sub.status || "").toLowerCase();
       if(st === "approved"){
-        const reopenAt = (task.metadata || task.meta || {}).reopenAt;
+        let reopenAt = (task.metadata || task.meta || {}).reopenAt;
+        if(!reopenAt && task.description){
+          const m = String(task.description).match(/reopen:([0-9T:\-\.Z]+)/);
+          if(m) reopenAt = m[1];
+        }
         const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime();
         const reopenTs = reopenAt ? new Date(reopenAt).getTime() : 0;
         if(reopenTs && reopenTs > subAt){
@@ -612,18 +669,36 @@ async function submitForReview(){
   }
   const limit = Number(state.dailyLimit) || 10;
   if(getCompletionsToday().length >= limit){
-    showMsg("Daily limit reached.", "err");
+    showMsg("Daily limit reached for today.", "err");
+    return;
+  }
+  // Times per user
+  const maxPer = campaign.maxPerUser;
+  if(maxPer && maxPer > 0){
+    const mine = (userHistory || []).filter(s => {
+      const tid = taskIdOf(s);
+      return String(tid) === String(campaign.id);
+    }).length;
+    if(mine >= maxPer){
+      showMsg("You already used this pack the maximum times (" + maxPer + ").", "err");
+      return;
+    }
+  }
+  // Max users total
+  if(campaign.maxUsers && campaign.completionCount >= campaign.maxUsers){
+    showMsg("This pack is full (max users reached).", "err");
+    return;
+  }
+  if(state.timerArmed || state.left > 0){
+    showMsg("Wait for the timer to finish on this page before submitting.", "err");
     return;
   }
 
   const btn = $("completeBtn");
   if(btn){ btn.disabled = true; btn.textContent = "Submitting…"; }
 
-  const proofUrl = location.origin.replace(/\/$/, "") + "/watchflixads/?id=" + encodeURIComponent(campaign.id) + "&session=" + encodeURIComponent(state.sessionId);
-  const payload = {
-    proofType: "other",
-    proofUrl: proofUrl,
-    metadata: {
+  const proofUrl = "https://watchflix-app.pages.dev/watchflixads/?id=" + encodeURIComponent(campaign.id) + "&session=" + encodeURIComponent(state.sessionId);
+  const meta = {
       kind: "watchflix_ads",
       session: state.sessionId,
       user: u,
@@ -634,19 +709,40 @@ async function submitForReview(){
       slots: N,
       clicks: state.clicked.slice(),
       stagesDone: state.stageDone.slice(),
+      stageStartedAt: (state.stageStartedAt || []).slice(),
+      stageFinishedAt: (state.stageFinishedAt || []).slice(),
+      earlyReturns: state.earlyReturns || 0,
       startedAt: state.startedAt,
       completedAt: new Date().toISOString(),
       status: "pending"
-    }
+  };
+  const payload = {
+    proofType: "url",
+    proofUrl: proofUrl,
+    proofImageUrl: proofUrl,
+    metadata: meta
   };
 
   try{
-    const res = await fetch(API_URL + "/api/v1/sponsored-tasks/" + encodeURIComponent(campaign.id) + "/submit", {
+    let res = await fetch(API_URL + "/api/v1/sponsored-tasks/" + encodeURIComponent(campaign.id) + "/submit", {
       method: "POST",
       headers: authHeaders(true),
       body: JSON.stringify(payload)
     });
-    const body = await res.json().catch(() => ({}));
+    let body = await res.json().catch(() => ({}));
+    // Fallback: multipart text fields if JSON rejected
+    if(!res.ok || body.success === false){
+      const form = new FormData();
+      form.append("proofType", "url");
+      form.append("proofUrl", proofUrl);
+      form.append("metadata", JSON.stringify(meta));
+      res = await fetch(API_URL + "/api/v1/sponsored-tasks/" + encodeURIComponent(campaign.id) + "/submit", {
+        method: "POST",
+        headers: { "X-API-Key": API_KEY, "Authorization": "Bearer " + token() },
+        body: form
+      });
+      body = await res.json().catch(() => ({}));
+    }
     if(res.status === 401){
       showMsg("Session expired. Sign in again.", "err");
       if(btn){ btn.disabled = false; btn.textContent = "Submit for review"; }
