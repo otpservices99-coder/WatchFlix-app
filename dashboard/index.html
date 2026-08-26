@@ -1049,6 +1049,38 @@ function wfRewardWcoin(t){
   if(m.rewardWcoin != null) return Number(m.rewardWcoin) || 0;
   return Math.round(Number(t.rewardAmount || t.reward || 0) * 5);
 }
+function wfTaskIdOfSub(sub){
+  if(!sub) return "";
+  const t = sub.task;
+  if(t == null) return String(sub.taskId || (sub.metadata && sub.metadata.task) || "");
+  if(typeof t === "string") return t;
+  if(typeof t === "object") return String(t._id || t.id || "");
+  return String(t);
+}
+function latestWfSub(history, taskId){
+  if(!taskId) return null;
+  const rows = (history || []).filter(s => s && String(wfTaskIdOfSub(s)) === String(taskId));
+  if(!rows.length) return null;
+  rows.sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
+  return rows[0];
+}
+/** User can run pack unless latest sub is pending, or approved without reopenAt after submission */
+function wfPackUserStatus(task, history){
+  const id = task._id || task.id;
+  const sub = latestWfSub(history, id);
+  if(!sub) return { locked: false, reason: "" };
+  const st = String(sub.status || "").toLowerCase();
+  const meta = task.metadata || task.meta || {};
+  const reopenAt = meta.reopenAt ? new Date(meta.reopenAt).getTime() : 0;
+  const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime();
+  if(st === "pending") return { locked: true, reason: "pending", label: "Under review" };
+  if(st === "approved"){
+    if(reopenAt && reopenAt > subAt) return { locked: false, reason: "reopened", label: "" };
+    return { locked: true, reason: "approved", label: "Completed" };
+  }
+  // rejected → allow again
+  return { locked: false, reason: "rejected", label: "" };
+}
 
 async function initWfAds(){
   const section = document.getElementById("wfAdsSection");
@@ -1060,7 +1092,6 @@ async function initWfAds(){
   const liveReward = document.getElementById("wfAdsLiveReward");
   if(!section) return;
 
-  // Gateway only — never render stage UI on dashboard
   if(!state.token){
     section.style.display = "block";
     if(liveCount) liveCount.textContent = "—";
@@ -1071,13 +1102,17 @@ async function initWfAds(){
   }
 
   try{
-    const tasksRes = await api("/api/v1/sponsored-tasks");
+    const [tasksRes, histRes] = await Promise.all([
+      api("/api/v1/sponsored-tasks"),
+      api("/api/v1/sponsored-tasks/history").catch(() => ({ data: [] }))
+    ]);
     const rows = Array.isArray(tasksRes.data) ? tasksRes.data : (tasksRes.tasks || []);
+    const history = Array.isArray(histRes.data) ? histRes.data : [];
+    state.wfAdsHistory = history;
     const active = rows.filter(t => t && t.active !== false && isWatchFlixTask(t));
     state.wfAdsPacks = active;
 
     if(!active.length){
-      // Still show gateway card so users know the section exists
       section.style.display = "block";
       if(liveCount) liveCount.textContent = "0";
       if(liveReward) liveReward.textContent = "—";
@@ -1088,24 +1123,40 @@ async function initWfAds(){
     }
 
     section.style.display = "block";
-    const camp = active[0];
+    // Prefer a pack the user can still run
+    let camp = active.find(t => !wfPackUserStatus(t, history).locked) || active[0];
     window._wfAdsGatewayId = camp._id || camp.id;
     const maxReward = Math.max(...active.map(wfRewardWcoin));
     if(liveCount) liveCount.textContent = String(active.length);
     if(liveReward) liveReward.textContent = "+" + maxReward + " WC";
-    if(hint){
-      hint.textContent = active.length + " live pack" + (active.length>1?"s":"") +
-        " · open activity page to complete stages · reward after admin review";
-    }
-    if(rew){
-      rew.style.display = "inline";
-      rew.textContent = "Up to +" + maxReward + " WCoin";
-    }
-    if(warn) warn.classList.remove("show");
-    if(btn){
-      btn.disabled = false;
-      btn.textContent = "Continue to activity";
-      btn.onclick = goToWatchFlixAds;
+
+    const st = wfPackUserStatus(camp, history);
+    window._wfAdsGatewayLocked = !!st.locked;
+
+    if(st.locked){
+      if(hint){
+        hint.textContent = st.reason === "pending"
+          ? "Your submission is under review. Gateway locked until admin approves or rejects."
+          : "You completed this pack. Gateway stays locked until admin reopens it or assigns a new pack.";
+      }
+      if(rew){ rew.style.display = "inline"; rew.textContent = st.label || "Locked"; }
+      if(btn){
+        btn.disabled = true;
+        btn.textContent = st.reason === "pending" ? "Under review" : "Completed";
+      }
+      if(warn){ warn.classList.remove("show"); warn.style.display = "none"; }
+    } else {
+      if(hint){
+        hint.textContent = active.length + " live pack" + (active.length > 1 ? "s" : "") +
+          " · open activity page to complete stages · reward after admin review";
+      }
+      if(rew){ rew.style.display = "inline"; rew.textContent = "Up to +" + maxReward + " WCoin"; }
+      if(btn){
+        btn.disabled = false;
+        btn.textContent = "Continue to activity";
+        btn.onclick = goToWatchFlixAds;
+      }
+      if(warn){ warn.classList.remove("show"); warn.style.display = "none"; }
     }
   }catch(e){
     console.warn(e);
@@ -1116,6 +1167,10 @@ async function initWfAds(){
 }
 
 function goToWatchFlixAds(){
+  if(window._wfAdsGatewayLocked){
+    alert("This activity is locked until admin reviews it or reopens the pack.");
+    return;
+  }
   const warn = document.getElementById("wfAdsGateWarn");
   const btn = document.getElementById("wfAdsGateBtn");
   if(warn && !warn.classList.contains("show")){
@@ -1131,10 +1186,8 @@ function goToWatchFlixAds(){
     return;
   }
   const q = id ? ("?id=" + encodeURIComponent(id)) : "";
-  // Always open the live WatchFlix Ads player (absolute site path)
   window.location.href = "https://watchflix-app.pages.dev/watchflixads/" + q;
 }
-
 
 
 async function loadSponsoredTasks(){
