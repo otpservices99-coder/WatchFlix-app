@@ -1112,6 +1112,26 @@ function wfAdsCompletionsToday(){
 function encodeWfPackConfig(cfg){
   try{ return "<!--WFJSON:" + JSON.stringify(cfg) + "-->"; }catch(e){ return ""; }
 }
+
+function parseReopenAt(task){
+  if(!task) return 0;
+  const meta = task.metadata || task.meta || {};
+  let raw = meta.reopenAt || meta.reopenedAt || task.reopenAt || null;
+  const emb = typeof decodeWfPackConfig === "function" ? decodeWfPackConfig(task.description) : null;
+  if(!raw && emb && emb.reopenAt) raw = emb.reopenAt;
+  const desc = String(task.description || "");
+  if(!raw){
+    let m = desc.match(/\[WF_REOPEN:([^\]]+)\]/);
+    if(m) raw = m[1].trim();
+  }
+  if(!raw){
+    let m = desc.match(/reopen:([0-9T:\-\.Z]+)/);
+    if(m) raw = m[1];
+  }
+  const ts = raw ? new Date(raw).getTime() : 0;
+  return Number.isFinite(ts) ? ts : 0;
+}
+
 function decodeWfPackConfig(text){
   if(!text) return null;
   const m = String(text).match(/<!--WFJSON:([\s\S]*?)-->/);
@@ -1122,6 +1142,22 @@ function stripWfPackConfig(text){
   return String(text || "").replace(/<!--WFJSON:[\s\S]*?-->/g, "").trim();
 }
 
+
+async function enrichWfTasks(list){
+  const out = [];
+  for(const t of (list || [])){
+    let row = t;
+    try{
+      const id = t._id || t.id;
+      if(!id){ out.push(t); continue; }
+      const res = await api("/api/v1/sponsored-tasks/" + encodeURIComponent(id));
+      const full = res.data || res.task || res;
+      if(full && (full._id || full.id)) row = Object.assign({}, t, full);
+    }catch(e){}
+    out.push(row);
+  }
+  return out;
+}
 function isWatchFlixTask(t){
   if(!t) return false;
   const m = t.metadata || t.meta || {};
@@ -1175,15 +1211,10 @@ function wfPackUserStatus(task, history){
   const meta = Object.assign({}, task.metadata || task.meta || {});
   const emb = decodeWfPackConfig(task.description);
   if(emb) Object.assign(meta, emb);
-  let reopenRaw = meta.reopenAt || meta.reopenedAt || null;
-  if(!reopenRaw && task.description){
-    const m = String(task.description).match(/reopen:([0-9T:\-\.Z]+)/);
-    if(m) reopenRaw = m[1];
-  }
-  if(!reopenRaw && emb && emb.reopenAt) reopenRaw = emb.reopenAt;
-  const reopenAt = reopenRaw ? new Date(reopenRaw).getTime() : 0;
-  const maxPer = Number(meta.maxPerUser) || 0;
-  // Attempts only count after last admin reopen
+  let reopenAt = typeof parseReopenAt === "function" ? parseReopenAt(task) : 0;
+  // Fallback: task updated after user's last submission ⇒ treat as reopened
+  const taskUpdated = new Date(task.updatedAt || 0).getTime() || 0;
+  const maxPer = Number(meta.maxPerUser) || (emb && emb.maxPerUser) || 0;
   const used = countUserAttempts(history, id, reopenAt || 0);
   const sub = latestWfSub(history, id);
   if(!sub){
@@ -1191,18 +1222,16 @@ function wfPackUserStatus(task, history){
     return { locked: false, reason: "", label: prog, used, maxPer, reopenAt };
   }
   const st = String(sub.status || "").toLowerCase();
-  const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime();
-  // Admin reopen after this submission → fully available again
-  if(reopenAt && (!subAt || reopenAt > subAt)){
-    return { locked: false, reason: "reopened", label: maxPer ? (used + "/" + maxPer) : "Reopened", used, maxPer, reopenAt };
+  const subAt = new Date(sub.updatedAt || sub.createdAt || 0).getTime() || 0;
+  const updatedAfterSub = taskUpdated && subAt && taskUpdated > (subAt + 2000); // 2s slack
+  const isReopened = (reopenAt && reopenAt > subAt) || (updatedAfterSub && (st === "approved" || st === "completed" || st === "pending" || st === "rejected"));
+  if(isReopened){
+    // Only count attempts after reopen; if reopenAt missing use taskUpdated as cutover
+    const cut = reopenAt || taskUpdated;
+    const used2 = countUserAttempts(history, id, cut);
+    return { locked: false, reason: "reopened", label: maxPer ? (used2 + "/" + maxPer) : "Reopened", used: used2, maxPer, reopenAt: cut };
   }
-  if(st === "pending"){
-    // Pending only locks if it is AFTER reopen
-    if(reopenAt && subAt && subAt < reopenAt){
-      return { locked: false, reason: "reopened", label: maxPer ? (used + "/" + maxPer) : "Reopened", used, maxPer, reopenAt };
-    }
-    return { locked: true, reason: "pending", label: "Under review", used, maxPer, reopenAt };
-  }
+  if(st === "pending") return { locked: true, reason: "pending", label: "Under review", used, maxPer, reopenAt };
   if(st === "approved" || st === "completed"){
     if(maxPer > 0 && used < maxPer){
       return { locked: false, reason: "", label: used + "/" + maxPer, used, maxPer, reopenAt };
