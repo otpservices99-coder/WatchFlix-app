@@ -101,7 +101,7 @@ async function doLogin(e){
     localStorage.setItem(LS.token,token);
     if(user)localStorage.setItem(LS.user,JSON.stringify(user));
     showMsg("Signed in successfully. Opening dashboard…",true);
-    setTimeout(function(){location.href="dashboard.html"},900);
+    setTimeout(function(){location.href="dashboard/"},900);
   }catch(err){
     showMsg(err.message||"Could not sign in",false);
     btn.disabled=false;btn.textContent="Sign in";
