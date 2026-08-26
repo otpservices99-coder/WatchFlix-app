@@ -5,14 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <!-- Adcash Library -->
-<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+
 
 <!-- Adcash AutoTag -->
-<script type="text/javascript">
-    aclib.runAutoTag({
-        zoneId: '00fphrmeqr',
-    });
-</script>
 
 <title>WatchFlix Ads</title>
 
@@ -485,14 +480,19 @@ function finishCurrentStage(){
   if(typeof updateProgressBadge === "function") updateProgressBadge();
 
   const maxPer = Number(campaign.maxPerUser) || 0;
+  let reopenTs = 0;
+  try{ reopenTs = typeof parseReopenAt === "function" ? parseReopenAt(campaign) : 0; }catch(e){}
   let serverUsed = 0;
-  if(maxPer > 0){
-    serverUsed = (userHistory || []).filter(s => {
-      if(String(taskIdOf(s)) !== String(campaign.id)) return false;
-      const st = String(s.status||"").toLowerCase();
-      return st === "pending" || st === "approved" || st === "completed";
-    }).length;
-  }
+  serverUsed = (userHistory || []).filter(s => {
+    if(String(taskIdOf(s)) !== String(campaign.id)) return false;
+    const st = String(s.status||"").toLowerCase();
+    if(!(st === "pending" || st === "approved" || st === "completed")) return false;
+    if(reopenTs > 0){
+      const t = new Date(s.createdAt || s.updatedAt || 0).getTime();
+      if(t && t < reopenTs) return false;
+    }
+    return true;
+  }).length;
   const totalDone = serverUsed + state.localCompleted;
 
   if(maxPer > 0 && totalDone < maxPer){
@@ -778,6 +778,7 @@ async function loadCampaign(){
         state.localCompleted = 0;
         state.attemptLogs = [];
         clearStageProgress(campaign.id);
+        clearRunProgress(campaign.id);
         setStatusBanner(null);
         showMsg("Pack reopened — complete stages again.", "info");
       } else if(st === "pending"){
@@ -950,6 +951,9 @@ async function submitForReview(){
     comp.push({ campaignId: campaign.id, at: new Date().toISOString(), session: state.sessionId });
     try{ localStorage.setItem(completionsKey(), JSON.stringify(comp)); }catch(e){}
     clearStageProgress(campaign.id);
+    clearRunProgress(campaign.id);
+    state.localCompleted = 0;
+    state.attemptLogs = [];
 
     state.submitted = true;
     state.packStatus = "pending";
