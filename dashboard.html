@@ -1036,14 +1036,31 @@ function wfAdsCompletionsToday(){
 }
 
 
+
+function encodeWfPackConfig(cfg){
+  try{ return "<!--WFJSON:" + JSON.stringify(cfg) + "-->"; }catch(e){ return ""; }
+}
+function decodeWfPackConfig(text){
+  if(!text) return null;
+  const m = String(text).match(/<!--WFJSON:([\s\S]*?)-->/);
+  if(!m) return null;
+  try{ return JSON.parse(m[1]); }catch(e){ return null; }
+}
+function stripWfPackConfig(text){
+  return String(text || "").replace(/<!--WFJSON:[\s\S]*?-->/g, "").trim();
+}
+
 function isWatchFlixTask(t){
   if(!t) return false;
   const m = t.metadata || t.meta || {};
+  const emb = decodeWfPackConfig(t.description);
+  if(emb && (String(emb.kind||"").toLowerCase().includes("watchflix") || (Array.isArray(emb.slots) && emb.slots.length))) return true;
   if(String(m.kind || "").toLowerCase() === "watchflix_ads") return true;
   if(String(m.kind || "").toLowerCase().includes("watchflix")) return true;
   if(String(t.platform || "").toLowerCase() === "watchflix") return true;
   if(Array.isArray(t.slots) || Array.isArray(m.slots)) return true;
   if(String(t.description || "").toLowerCase().includes("watchflix multi-stage")) return true;
+  if(String(t.description || "").includes("<!--WFJSON:")) return true;
   if(String(t.title || "").toLowerCase().includes("watchflix")) return true;
   return false;
 }
@@ -1073,7 +1090,9 @@ function wfPackUserStatus(task, history){
   const sub = latestWfSub(history, id);
   if(!sub) return { locked: false, reason: "" };
   const st = String(sub.status || "").toLowerCase();
-  const meta = task.metadata || task.meta || {};
+  const meta = Object.assign({}, task.metadata || task.meta || {});
+  const emb = decodeWfPackConfig(task.description);
+  if(emb) Object.assign(meta, emb);
   let reopenRaw = meta.reopenAt;
   if(!reopenRaw && task.description){
     const m = String(task.description).match(/reopen:([0-9T:\-\.Z]+)/);
