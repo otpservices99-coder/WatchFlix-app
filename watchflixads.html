@@ -504,16 +504,14 @@ function startTimer(){
   cta.className = "cta done";
   showMsg("Keep this page open until the timer ends. Leaving early pauses the timer.", "info");
   state.timer = setInterval(() => {
-    // Only count time while this tab is visible
+    // Must stay on this tab — leaving restarts the stage (handled on visibilitychange)
     if(document.visibilityState === "hidden"){
-      state.timerLastTick = Date.now();
-      $("timer").textContent = "Paused — return here";
       return;
     }
+    if(state._restartingStage) return;
     const now = Date.now();
     const delta = (now - state.timerLastTick) / 1000;
     state.timerLastTick = now;
-    // Cap single tick so background throttling does not jump
     state.timerAccum += Math.min(delta, 0.5);
     const elapsed = state.timerAccum;
     state.left = Math.max(0, state.timerNeed - elapsed);
@@ -525,16 +523,42 @@ function startTimer(){
   }, 100);
 }
 
+function restartCurrentStage(reason){
+  if(!state.timerArmed && !state.clicked[state.index]) return;
+  state.earlyReturns = (state.earlyReturns || 0) + 1;
+  state._restartingStage = true;
+  clearTimer();
+  const i = state.index;
+  // Undo stage progress — must open link again and wait full timer
+  state.stageDone[i] = false;
+  state.clicked[i] = false;
+  state.stageStartedAt[i] = null;
+  state.stageFinishedAt[i] = null;
+  state.left = 0;
+  state.timerAccum = 0;
+  if(campaign) saveStageProgress(campaign.id, state.clicked, state.index);
+  $("bar").style.width = "0%";
+  $("timer").textContent = "Restart";
+  showMsg(reason || "You left before the timer finished. This stage restarted — open the link again and stay until the timer ends.", "err");
+  state._restartingStage = false;
+  renderStep();
+}
+
 document.addEventListener("visibilitychange", () => {
   if(!state.timerArmed) return;
   if(document.visibilityState === "hidden"){
-    state.earlyReturns = (state.earlyReturns || 0) + 1;
-    $("timer").textContent = "Paused — return here";
-    showMsg("You left early. Timer paused — stay on this page to finish the stage.", "err");
-  } else {
-    state.timerLastTick = Date.now();
-    showMsg("Welcome back. Timer continues — stay until it ends.", "info");
+    // Mark left-early; restart when they return (or immediately)
+    state._leftDuringTimer = true;
+    $("timer").textContent = "Left early";
+  } else if(state._leftDuringTimer){
+    state._leftDuringTimer = false;
+    restartCurrentStage("You returned early. Stage restarted — complete the full timer on this page.");
   }
+});
+
+// Also catch pagehide / blur for mobile
+window.addEventListener("pagehide", () => {
+  if(state.timerArmed) state._leftDuringTimer = true;
 });
 
 function onGo(){
@@ -556,7 +580,7 @@ function onGo(){
   renderClicks();
   try{ window.open(url, "_blank", "noopener,noreferrer"); }catch(e){ location.href = url; }
   startTimer();
-  showMsg("Stage started. Wait for the timer — this stage will lock when done.", "info");
+  showMsg("Stage started. Stay on this page until the timer ends — leaving restarts the stage. This stage will lock when done.", "info");
 }
 
 async function loadHistory(){
