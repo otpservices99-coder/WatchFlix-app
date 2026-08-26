@@ -1131,8 +1131,8 @@ function goToWatchFlixAds(){
     return;
   }
   const q = id ? ("?id=" + encodeURIComponent(id)) : "";
-  // Prefer folder deploy path used on Cloudflare
-  window.location.href = "watchflixads/" + q;
+  // Always open the live WatchFlix Ads player (absolute site path)
+  window.location.href = "https://watchflix-app.pages.dev/watchflixads/" + q;
 }
 
 
@@ -1407,7 +1407,7 @@ async function loadReferral(){
     const data=await api("/api/v1/referrals/me");
     state.referral=data;
     const code=data.referralCode||"";
-    const link=location.origin.replace(/\/$/,"")+"/register?ref="+encodeURIComponent(code);
+    const link=location.origin.replace(/\/$/,"")+"/register.html?ref="+encodeURIComponent(code);
     state.referralLink=link;
     const count=Number(data.referralCount??0);
     document.getElementById("refCode").textContent=code||"—";
@@ -1540,8 +1540,8 @@ window.addEventListener("beforeunload", ()=>{
   });
 });
 </script>
-<!-- Adsterra Social Bar -->
+
 <script src="https://guyprior.com/d5/31/00/d53100897c448dc3ffb3cfde0e31918f.js"></script>
-  
+
 </body>
 </html>
