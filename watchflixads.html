@@ -413,7 +413,10 @@ function renderStep(){
     $("timer").textContent = state.clicked[i] ? "Done" : "Tap Go to start";
     if(!state.clicked[i]) $("bar").style.width = "0%";
   }
-  $("foot").textContent = "Activity reward after admin approval: +" + (campaign.rewardWcoin || 0) + " WCoin";
+  let limTxt = "";
+  if(campaign.maxPerUser) limTxt += " · " + campaign.maxPerUser + "× per user";
+  if(campaign.maxUsers) limTxt += " · max " + campaign.maxUsers + " users";
+  $("foot").textContent = "Reward after approval: +" + (campaign.rewardWcoin || 0) + " WCoin" + limTxt;
   updateCompleteBtn();
 }
 
@@ -611,7 +614,7 @@ async function loadCampaign(){
     state.stageStartedAt = Array(N).fill(null);
     state.stageFinishedAt = Array(N).fill(null);
     state.earlyReturns = 0;
-    state.dailyLimit = campaign.dailyLimit || 10;
+    state.dailyLimit = 99;
     state.index = 0;
     state.submitted = false;
     state.packStatus = null;
@@ -695,29 +698,28 @@ async function submitForReview(){
     showMsg("Session missing. Sign in again.", "err");
     return;
   }
-  const limit = Number(state.dailyLimit) || 10;
-  if(getCompletionsToday().length >= limit){
-    showMsg("Daily limit reached for today.", "err");
-    return;
-  }
-  // Times per user
-  const maxPer = campaign.maxPerUser;
-  if(maxPer && maxPer > 0){
+  // Times per user (from pack config — empty/null = unlimited)
+  const maxPer = Number(campaign.maxPerUser) || 0;
+  if(maxPer > 0){
     const mine = (userHistory || []).filter(s => {
       const tid = taskIdOf(s);
-      return String(tid) === String(campaign.id);
+      if(String(tid) !== String(campaign.id)) return false;
+      const st = String(s.status || "").toLowerCase();
+      // count pending + approved (rejected does not consume a slot if you want retry — count all attempts)
+      return st === "pending" || st === "approved" || st === "completed" || !st;
     }).length;
     if(mine >= maxPer){
-      showMsg("You already used this pack the maximum times (" + maxPer + ").", "err");
+      showMsg("Limit reached: you can complete this pack " + maxPer + " time(s). You have used " + mine + ".", "err");
       return;
     }
   }
-  // Max users total
-  if(campaign.maxUsers && campaign.completionCount >= campaign.maxUsers){
-    showMsg("This pack is full (max users reached).", "err");
+  // Max users total (empty = unlimited)
+  const maxUsers = Number(campaign.maxUsers) || 0;
+  if(maxUsers > 0 && Number(campaign.completionCount || 0) >= maxUsers){
+    showMsg("This pack is full (max " + maxUsers + " users).", "err");
     return;
   }
-  if(state.timerArmed || state.left > 0){
+  if(state.timerArmed || (state.left > 0 && state.timerArmed)){
     showMsg("Wait for the timer to finish on this page before submitting.", "err");
     return;
   }
