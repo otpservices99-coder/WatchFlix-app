@@ -240,6 +240,28 @@ body.theme-dark .health-bar{background:rgba(255,255,255,.08)}
 }
 .ad-timer{margin-top:10px;font-size:12px;font-weight:700;color:#f59e0b;text-align:center}
 
+.account-lock{display:none;position:fixed;inset:0;z-index:300;background:var(--bg);padding:24px 18px;overflow:auto}
+.account-lock.show{display:flex;align-items:center;justify-content:center}
+.account-lock .box{width:min(400px,100%);background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px 22px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.2)}
+.account-lock .icon{width:64px;height:64px;border-radius:50%;margin:0 auto 16px;background:rgba(239,68,68,.12);color:#ef4444;display:grid;place-items:center;font-size:28px;font-weight:900}
+.account-lock h2{margin:0 0 8px;font-size:22px;font-weight:800}
+.account-lock p{margin:0 0 12px;font-size:14px;color:var(--muted);line-height:1.55}
+.account-lock .actions{display:grid;gap:10px;margin-top:18px}
+.community-modal{display:none;position:fixed;inset:0;z-index:250;background:rgba(15,23,42,.55);align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(6px)}
+.community-modal.show{display:flex}
+.community-modal .box{width:min(380px,100%);background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px 20px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.28)}
+.community-modal h2{margin:0 0 8px;font-size:20px;font-weight:800}
+.community-modal p{margin:0 0 16px;font-size:13px;color:var(--muted);line-height:1.5}
+.community-links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.community-links a{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 10px;border-radius:16px;border:1px solid var(--line);text-decoration:none;color:var(--text);font-size:12px;font-weight:800;background:var(--card2)}
+.community-links a.tg{border-color:rgba(34,158,217,.35)}
+.community-links a.wa{border-color:rgba(37,211,102,.35)}
+.community-links a svg{width:28px;height:28px}
+.community-links a.tg svg{color:#229ED9}
+.community-links a.wa svg{color:#25D366}
+.community-modal .later{border:0;background:transparent;color:var(--muted);font-weight:700;font-size:13px;cursor:pointer;padding:8px}
+
+
 
 /* WatchFlix Ads — offers */
 .wfads-wrap{margin-bottom:20px}
@@ -586,6 +608,8 @@ body.theme-dark .wf-warn-red{color:#fecaca;background:rgba(239,68,68,.15)}
 const API_URL="https://global-api-platform-production.up.railway.app";
 const API_KEY="ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c";
 const WA_SUPPORT="https://wa.me/2348012345678"; // TODO: replace with your WhatsApp number
+const TELEGRAM_CHANNEL="https://t.me/your_channel"; // TODO: replace with your Telegram link
+const WHATSAPP_CHANNEL="https://chat.whatsapp.com/your_invite"; // TODO: replace with WhatsApp community link
 const LS={token:"wf_token",user:"wf_user",theme:"wf_theme",payout:"wf_payout",health:"wf_health",opened:"wf_opened_tasks"};
 const WCOIN_PER_NAIRA=5;
 const NIGERIAN_BANKS=["Access Bank","Citibank Nigeria","Ecobank Nigeria","Fidelity Bank","First Bank of Nigeria","First City Monument Bank (FCMB)","Globus Bank","Guaranty Trust Bank (GTBank)","Heritage Bank","Keystone Bank","Optimus Bank","Parallex Bank","Polaris Bank","Premium Trust Bank","Providus Bank","Stanbic IBTC Bank","Standard Chartered Bank","Sterling Bank","SunTrust Bank","Titan Trust Bank","Union Bank of Nigeria","United Bank for Africa (UBA)","Unity Bank","Wema Bank","Zenith Bank","Jaiz Bank","Lotus Bank","TAJBank","OPay","PalmPay","Kuda Bank","Moniepoint","VBank","Sparkle","Rubies Bank (Carbon)","ALAT by Wema","FairMoney","9 Payment Service Bank","Hope Payment Service Bank","MoMo PSB","Other / Not listed"];
@@ -610,6 +634,12 @@ function requireAuth(){
     document.getElementById("authGate").style.display="block";
     document.getElementById("app").style.display="none";
     document.getElementById("dock").style.display="none";
+    const lock=document.getElementById("accountLock");
+    if(lock) lock.classList.remove("show");
+    return false;
+  }
+  if(state.accountLocked){
+    showAccountLock(state.lockReason || "suspended");
     return false;
   }
   document.getElementById("authGate").style.display="none";
@@ -617,6 +647,58 @@ function requireAuth(){
   document.getElementById("dock").style.display="grid";
   return true;
 }
+function isAccountRestrictionError(resStatus, data){
+  const code = String((data && (data.code || data.errorCode)) || "").toUpperCase();
+  const msg = String((data && (data.message || data.error)) || "").toLowerCase();
+  if(resStatus === 403 && (code === "ACCOUNT_SUSPENDED" || code === "ACCOUNT_BLOCKED")) return code === "ACCOUNT_BLOCKED" ? "blocked" : "suspended";
+  if(code === "ACCOUNT_SUSPENDED" || code === "ACCOUNT_BLOCKED") return code === "ACCOUNT_BLOCKED" ? "blocked" : "suspended";
+  if(msg.includes("account is suspended") || msg.includes("account suspended")) return "suspended";
+  if(msg.includes("account is blocked") || msg.includes("account blocked")) return "blocked";
+  return null;
+}
+function showAccountLock(kind){
+  state.accountLocked = true;
+  state.lockReason = kind || "suspended";
+  const lock = document.getElementById("accountLock");
+  const app = document.getElementById("app");
+  const dock = document.getElementById("dock");
+  const gate = document.getElementById("authGate");
+  if(app) app.style.display = "none";
+  if(dock) dock.style.display = "none";
+  if(gate) gate.style.display = "none";
+  if(lock){
+    const blocked = state.lockReason === "blocked";
+    const title = document.getElementById("lockTitle");
+    const msg = document.getElementById("lockMsg");
+    if(title) title.textContent = blocked ? "Account blocked" : "Account suspended";
+    if(msg) msg.textContent = blocked
+      ? "Your account has been blocked. All WatchFlix activities are closed. Contact support for help."
+      : "Your account has been suspended. Tasks, withdrawals, and rewards are disabled until an admin restores access.";
+    const support = document.getElementById("lockSupportBtn");
+    if(support) support.href = (typeof WA_SUPPORT === "string" && WA_SUPPORT) ? WA_SUPPORT : "#";
+    lock.classList.add("show");
+  }
+  const wa = document.getElementById("waFloatLink");
+  if(wa) wa.style.display = "none";
+}
+function communitySessionKey(){ return "wf_community_shown_" + (userId() || "guest"); }
+function maybeShowCommunityModal(){
+  if(state.accountLocked) return;
+  try{ if(sessionStorage.getItem(communitySessionKey()) === "1") return; }catch(e){}
+  const modal = document.getElementById("communityModal");
+  if(!modal) return;
+  const tg = document.getElementById("communityTg");
+  const wa = document.getElementById("communityWa");
+  if(tg) tg.href = (typeof TELEGRAM_CHANNEL === "string" && TELEGRAM_CHANNEL) ? TELEGRAM_CHANNEL : "#";
+  if(wa) wa.href = (typeof WHATSAPP_CHANNEL === "string" && WHATSAPP_CHANNEL) ? WHATSAPP_CHANNEL : (typeof WA_SUPPORT === "string" ? WA_SUPPORT : "#");
+  modal.classList.add("show");
+}
+function dismissCommunityModal(){
+  const modal = document.getElementById("communityModal");
+  if(modal) modal.classList.remove("show");
+  try{ sessionStorage.setItem(communitySessionKey(), "1"); }catch(e){}
+}
+
 function applyTheme(theme){
   const light = theme === "light";
   document.body.classList.remove("theme-light", "theme-dark");
@@ -762,6 +844,8 @@ async function api(path,options={}){
   const res=await fetch(API_URL+path,{...options,headers});
   const data=await res.json().catch(()=>({}));
   if(res.status===401){logout();throw new Error("Session expired")}
+  const restriction = isAccountRestrictionError(res.status, data);
+  if(restriction){ showAccountLock(restriction); throw new Error(data.message||"Account restricted"); }
   if(!res.ok||data.success===false) throw new Error(data.message||data.error||("HTTP "+res.status));
   return data;
 }
@@ -769,6 +853,8 @@ async function engine(action,data){
   const res=await fetch(API_URL+"/api/v1/engine",{method:"POST",headers:{"Content-Type":"application/json","X-API-Key":API_KEY,Authorization:"Bearer "+state.token},body:JSON.stringify({action,data})});
   const body=await res.json().catch(()=>({}));
   if(res.status===401){logout();throw new Error("Session expired")}
+  const restriction = isAccountRestrictionError(res.status, body);
+  if(restriction){ showAccountLock(restriction); throw new Error(body.message||"Account restricted"); }
   const stepFail=Array.isArray(body.result)&&body.result.some(r=>r&&r.success===false);
   if(!res.ok||body.success===false||stepFail) throw new Error((body.result&&body.result[0]&&body.result[0].error)||body.message||"Request failed");
   return body;
@@ -1607,6 +1693,8 @@ async function submitProof(taskId, input){
     });
     const data=await res.json().catch(()=>({}));
     if(res.status===401){logout();throw new Error("Session expired")}
+    const restriction = isAccountRestrictionError(res.status, data);
+    if(restriction){ showAccountLock(restriction); throw new Error(data.message||"Account restricted"); }
     if(!res.ok||data.success===false) throw new Error(data.message||data.error||"Upload failed");
     if(msg){msg.className="msg ok";msg.textContent=data.message||"Proof submitted — waiting for review"}
     markTaskCompleted(taskId);
@@ -1805,7 +1893,15 @@ function fillAccount(){
 async function refreshAll(){
   if(!requireAuth()) return;
   try{
+    // Proactive account status check (sponsored-tasks is enforced for suspended users)
+    try{
+      await api("/api/v1/sponsored-tasks");
+    }catch(e){
+      if(state.accountLocked) return;
+    }
+    if(state.accountLocked) return;
     fillAccount();
+    maybeShowCommunityModal();
     try{ if(getHealth() === 0) setHealth(100); }catch(e){}
     renderHealth();
     loadSavedPayout();
@@ -1844,6 +1940,38 @@ window.addEventListener("beforeunload", ()=>{
 <a class="wa-float" href="#" id="waFloatLink" target="_blank" rel="noopener" title="Chat admin on WhatsApp" aria-label="WhatsApp support">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11 11 0 004.1 17.7L3 21l3.4-1A11 11 0 1020.5 3.5zM12 20a9 9 0 01-4.6-1.3l-.3-.2-2.7.7.7-2.6-.2-.3A9 9 0 1112 20zm5-6.6c-.3-.1-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.9 1-.3.2-.6.1a7.3 7.3 0 01-2.1-1.3 8 8 0 01-1.5-1.8c-.2-.3 0-.4.1-.6l.4-.5.1-.3c0-.1 0-.3-.1-.4s-.6-1.4-.8-1.9-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3s-.8.8-.8 1.9.8 2.2.9 2.3 1.6 2.5 3.9 3.5c.5.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.6-.7 1.8-1.3s.2-1.2.2-1.3-.2-.2-.5-.3z"/></svg>
 </a>
+
+
+<div id="accountLock" class="account-lock" aria-live="polite">
+  <div class="box">
+    <div class="icon">!</div>
+    <h2 id="lockTitle">Account suspended</h2>
+    <p id="lockMsg">Your account has been suspended. All activities are disabled until an admin restores access.</p>
+    <p style="font-size:12px;color:var(--muted)">Please contact support if you think this is a mistake.</p>
+    <div class="actions">
+      <a class="btn-primary" id="lockSupportBtn" href="#" target="_blank" rel="noopener" style="text-decoration:none;display:block">Contact support</a>
+      <button type="button" class="btn-ghost" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+</div>
+<div id="communityModal" class="community-modal" role="dialog" aria-modal="true">
+  <div class="box">
+    <h2>Stay updated</h2>
+    <p>Join our official channels for payout updates, new tasks, and announcements.</p>
+    <div class="community-links">
+      <a class="tg" id="communityTg" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12a.43.43 0 01.14.27c.0.09.0.21 0 .24z"/></svg>
+        Telegram
+      </a>
+      <a class="wa" id="communityWa" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11 11 0 004.1 17.7L3 21l3.4-1A11 11 0 1020.5 3.5zM12 20a9 9 0 01-4.6-1.3l-.3-.2-2.7.7.7-2.6-.2-.3A9 9 0 1112 20zm5-6.6c-.3-.1-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.9 1-.3.2-.6.1a7.3 7.3 0 01-2.1-1.3 8 8 0 01-1.5-1.8c-.2-.3 0-.4.1-.6l.4-.5.1-.3c0-.1 0-.3-.1-.4s-.6-1.4-.8-1.9-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3s-.8.8-.8 1.9.8 2.2.9 2.3 1.6 2.5 3.9 3.5c.5.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.6-.7 1.8-1.3s.2-1.2.2-1.3-.2-.2-.5-.3z"/></svg>
+        WhatsApp
+      </a>
+    </div>
+    <button type="button" class="btn-primary" onclick="dismissCommunityModal()">Continue to dashboard</button>
+    <button type="button" class="later" onclick="dismissCommunityModal()">Maybe later</button>
+  </div>
+</div>
 
 </body>
 </html>
