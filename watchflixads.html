@@ -6,9 +6,7 @@
 
 <!-- Adcash Library -->
 
-
 <!-- Adcash AutoTag -->
-</script>
 
 <title>WatchFlix Ads</title>
 
@@ -441,12 +439,20 @@ function renderStep(){
     return;
   }
 
+  // All required runs finished → always Under review (never "Opened")
+  const _maxPer = Number(campaign.maxPerUser) || 0;
+  const _runs = Number(state.localCompleted) || 0;
+  if(_maxPer > 0 && _runs >= _maxPer && state.packStatus !== "approved"){
+    state.packStatus = "pending";
+    state.submitted = true;
+  }
+
   if(state.packStatus === "pending" || state.submitted){
     $("title").textContent = "Under review";
-    $("desc").textContent = "You already submitted this pack. Stages stay locked until admin approves or rejects.";
+    $("desc").textContent = "All required runs are done. Waiting for admin review — this pack stays locked until a decision.";
     $("cta").disabled = true;
     $("cta").className = "cta locked";
-    $("cta").textContent = "Submitted";
+    $("cta").textContent = "Under review";
     $("completeBtn").style.display = "none";
     $("timer").textContent = "Pending";
     $("foot").textContent = "Waiting for admin · +" + (campaign.rewardWcoin || 0) + " WCoin if approved";
@@ -490,8 +496,13 @@ function renderStep(){
     cta.textContent = "Timer running…";
     cta.className = "cta done";
     cta.disabled = true;
+  } else if(state.stageDone[i]){
+    cta.textContent = (i < N - 1) ? "Stage done — continue" : "Run complete";
+    cta.className = "cta done";
+    cta.disabled = true;
   } else if(state.clicked[i]){
-    cta.textContent = "Opened ✓";
+    // Offer opened but timer not finished yet
+    cta.textContent = "Wait for timer…";
     cta.className = "cta done";
     cta.disabled = true;
   } else if(!stageUrlValid){
@@ -939,7 +950,10 @@ async function loadCampaign(){
 }
 
 async function submitForReview(){
-  if(state.submitted || state.packStatus === "approved" || state.packStatus === "pending") return;
+  if(state._submitInFlight) return;
+  if(state.packStatus === "approved") return;
+  // Allow submit when we just locked UI as pending for auto-submit after all runs
+  if(state.packStatus === "pending" && state._autoSubmitted) return;
   if(!campaign){
     showMsg("No campaign loaded.", "err");
     return;
