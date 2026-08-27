@@ -1624,7 +1624,14 @@ function renderSponsored(){
     if(!hasValidLink && !full) statusHtml=`<div class="ad-status rejected">Task link unavailable — admin will fix soon</div>`;
     else if(full) statusHtml=`<div class="ad-status rejected">Slots full (${escapeHtml(slots)}) — no more entries for this task</div>`;
     else if(pending) statusHtml=`<div class="ad-status pending">Proof under review — you can’t submit again until it’s decided</div>`;
-    else if(rejected) statusHtml=`<div class="ad-status rejected">Previous proof rejected${sub.rejectionReason?": "+escapeHtml(sub.rejectionReason):""}. You can try again.</div>`;
+    else if(rejected){
+      statusHtml=`<div class="ad-status rejected">Previous proof rejected${sub.rejectionReason?": "+escapeHtml(sub.rejectionReason):""}. You can try again.</div>`;
+      // Clear local "completed" lock so Open task + proof work again
+      try{
+        const map = getOpenedMap();
+        if(map[id]){ delete map[id].completed; delete map[id].penalized; saveOpenedMap(map); }
+      }catch(e){}
+    }
     const proofDisabled=pending || full;
     return `<div class="ad-card">
       <div class="ad-cover">
