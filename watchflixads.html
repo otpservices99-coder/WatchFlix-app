@@ -696,6 +696,46 @@ function onGo(){
   showMsg("Offer opened. Timer runs in the background — return when it hits 00:00 to continue.", "info");
 }
 
+
+function adsPageUrl(packId){
+  const base = "https://watchflix-app.pages.dev/watchflixads/";
+  if(!packId) return base;
+  return base + "?id=" + encodeURIComponent(String(packId));
+}
+function findNextAvailablePackId(currentId){
+  const packs = window._wfLivePacks || [];
+  if(!packs.length) return null;
+  const cur = String(currentId || "");
+  const ordered = packs.slice();
+  // Prefer packs listed after current, then wrap
+  const idx = ordered.findIndex(p => String(p.id) === cur);
+  const rotated = idx >= 0
+    ? ordered.slice(idx + 1).concat(ordered.slice(0, idx))
+    : ordered;
+  for(const p of rotated){
+    const id = String(p.id || "");
+    if(!id || id === cur) continue;
+    const sub = latestSubForTask(userHistory || [], id);
+    if(sub){
+      const st = String(sub.status || "").toLowerCase();
+      // Skip packs already waiting on admin for this user
+      if(st === "pending") continue;
+    }
+    return id;
+  }
+  return null;
+}
+function advanceToNextPackIfAny(){
+  if(!campaign) return false;
+  const nextId = findNextAvailablePackId(campaign.id);
+  if(!nextId) return false;
+  showMsg("This pack is under review. Moving to the next available pack…", "info");
+  setTimeout(function(){
+    location.href = adsPageUrl(nextId);
+  }, 1100);
+  return true;
+}
+
 async function loadHistory(){
   try{
     const res = await fetch(API_URL + "/api/v1/sponsored-tasks/history", {
@@ -884,6 +924,8 @@ async function loadCampaign(){
         state.packStatus = "pending";
         state.submitted = true;
         setStatusBanner("pending");
+        // Don't stay stuck if another pack can still be done
+        setTimeout(function(){ try{ advanceToNextPackIfAny(); }catch(e){} }, 800);
       } else if(st === "approved" || st === "completed"){
         if(maxPer > 0 && usedAfterReopen < maxPer){
           state.packStatus = null;
@@ -1073,10 +1115,17 @@ async function submitForReview(){
 
     state.submitted = true;
     state.packStatus = "pending";
+    state._autoSubmitted = true;
     setStatusBanner("pending");
     $("completeBtn").style.display = "none";
     showMsg("Submitted for review. Pack locked until admin decides · +" + (campaign.rewardWcoin || 0) + " WCoin", "ok");
     renderStep();
+    // If another pack is available, open it automatically
+    try{
+      if(!advanceToNextPackIfAny()){
+        showMsg("Submitted for review. No other packs available right now.", "ok");
+      }
+    }catch(e){}
   }catch(e){
     showMsg(e.message || "Submit failed", "err");
     if(btn){ btn.disabled = false; btn.textContent = "Submit for review"; }
