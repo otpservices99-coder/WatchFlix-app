@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#020617">
+<title>Offers</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Adcash AutoTag -->
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+<script type="text/javascript">
+    aclib.runAutoTag({
+        zoneId: 'bkgdpudgtk',
+    });
+</script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:#020617;color:#f1f5f9}
+/* Keep chrome light so network ads are not covered */
+.shell{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:calc(20px + env(safe-area-inset-bottom,0))}
+.top{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 14px;padding-top:max(10px,env(safe-area-inset-top,0));
+  background:transparent;border:0
+}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:13px;color:#94a3b8}
+.top a{color:#64748b;text-decoration:none;font-size:12px;font-weight:700}
+.timer-bar{
+  margin:0 14px 10px;padding:10px 12px;border-radius:12px;
+  background:rgba(15,23,42,.85);border:1px solid #1e293b
+}
+.timer-bar .label{font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px}
+.timer-bar .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.timer-bar .clock{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;color:#fbbf24}
+.timer-bar .hint{font-size:11px;color:#64748b;font-weight:600}
+.timer-track{height:5px;border-radius:99px;background:#1e293b;overflow:hidden;margin-top:8px}
+.timer-track i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#f59e0b,#10b981);transition:width .15s linear}
+.note{margin:0 14px 12px;font-size:12px;color:#64748b;line-height:1.45;font-weight:600}
+.list{padding:4px 14px 16px;display:flex;flex-direction:column;gap:16px}
+.card{border-radius:18px;overflow:hidden;background:#0b1220;border:1px solid #1e293b}
+.card .cover{width:100%;aspect-ratio:9/16;max-height:65vh;min-height:260px;background:#020617;position:relative}
+.card .cover img{width:100%;height:100%;object-fit:cover;display:block}
+.card .body{padding:12px 14px 14px}
+.card .body h2{margin:0 0 6px;font-size:15px;font-weight:800}
+.card .body p{margin:0 0 10px;font-size:12px;color:#94a3b8;line-height:1.45}
+.card .cta{
+  display:inline-flex;justify-content:center;width:100%;text-decoration:none;
+  border-radius:11px;padding:11px;font-weight:800;font-size:13px;
+  background:#1e293b;color:#e2e8f0;border:1px solid #334155
+}
+.empty{margin:12px 14px;padding:16px;text-align:center;color:#64748b;font-size:12px;font-weight:600;line-height:1.45}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top">
+    <div class="brand">Offers</div>
+    <a href="https://watchflix-app.pages.dev/watchflixads/">Back</a>
+  </div>
+
+  <div class="timer-bar" id="timerBar">
+    <div class="label">Please stay on this page</div>
+    <div class="row">
+      <div class="clock" id="clock">—</div>
+      <div class="hint" id="timerHint">Loading timer…</div>
+    </div>
+    <div class="timer-track"><i id="timerFill"></i></div>
+  </div>
+
+  <p class="note">Ads may appear on this page. Opening any offer is optional. When the timer ends you return to WatchFlix Ads automatically.</p>
+
+  <div class="list" id="list"></div>
+</div>
+
+<script>
+const API_URL = "https://global-api-platform-production.up.railway.app";
+const API_KEY = "ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c";
+const DA = "display_ads";
+const RETURN_URL = "https://watchflix-app.pages.dev/watchflixads/";
+
+function token(){ return localStorage.getItem("wf_token") || localStorage.getItem("token") || ""; }
+function authHeaders(){
+  const h = { "X-API-Key": API_KEY };
+  const t = token();
+  if(t) h.Authorization = "Bearer " + t;
+  return h;
+}
+function $(id){ return document.getElementById(id); }
+function escapeHtml(s){
+  return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function normalizeUrl(url){
+  if(!url) return "";
+  url = String(url).trim().replace(/\s+/g,"");
+  if(!/^https?:\/\//i.test(url)) url = "https://" + url;
+  return url;
+}
+function isValidUrl(url){ try{ new URL(url); return true; }catch(e){ return false; } }
+function isDisplayAd(t){
+  if(!t) return false;
+  const p = String(t.platform||"").toLowerCase();
+  const m = t.metadata || t.meta || {};
+  const k = String(m.kind||"").toLowerCase();
+  return p === DA || p === "display" || k === DA || m.displayAd === true;
+}
+
+let timerNeed = 30;
+let timerEnd = 0;
+let timerId = null;
+
+function resolveTimerSec(list){
+  let maxT = 0;
+  (list || []).forEach(function(t){
+    const m = t.metadata || t.meta || {};
+    const n = Number(m.timerSec || m.durationSec || 0);
+    if(n > maxT) maxT = n;
+  });
+  if(maxT >= 5) return maxT;
+  try{
+    const g = Number(localStorage.getItem("wf_da_global_timer") || 0);
+    if(g >= 5) return g;
+  }catch(e){}
+  // URL override: ?t=45
+  try{
+    const q = Number(new URLSearchParams(location.search).get("t") || 0);
+    if(q >= 5) return q;
+  }catch(e){}
+  return 30;
+}
+
+function goBack(){
+  try{
+    const q = new URLSearchParams(location.search);
+    const id = q.get("id");
+    if(id) location.href = RETURN_URL + "?id=" + encodeURIComponent(id);
+    else location.href = RETURN_URL;
+  }catch(e){
+    location.href = RETURN_URL;
+  }
+}
+
+function startTimer(sec){
+  timerNeed = Math.max(5, Number(sec) || 30);
+  timerEnd = Date.now() + timerNeed * 1000;
+  if(timerId) clearInterval(timerId);
+  tickTimer();
+  timerId = setInterval(tickTimer, 200);
+}
+
+function tickTimer(){
+  const left = Math.max(0, (timerEnd - Date.now()) / 1000);
+  const clock = $("clock");
+  const fill = $("timerFill");
+  const hint = $("timerHint");
+  const m = Math.floor(left / 60);
+  const s = Math.ceil(left % 60);
+  if(clock) clock.textContent = String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+  if(fill) fill.style.width = Math.min(100, ((timerNeed - left) / timerNeed) * 100) + "%";
+  if(hint) hint.textContent = left > 0 ? "Returning when timer ends" : "Returning…";
+  if(left <= 0){
+    clearInterval(timerId);
+    timerId = null;
+    setTimeout(goBack, 400);
+  }
+}
+
+async function loadOffers(){
+  const box = $("list");
+  if(!box) return;
+  let offers = [];
+  try{
+    if(token()){
+      const res = await fetch(API_URL + "/api/v1/sponsored-tasks", { headers: authHeaders() });
+      const body = await res.json().catch(function(){ return {}; });
+      if(res.ok && body.success !== false){
+        const rows = Array.isArray(body.data) ? body.data : [];
+        offers = rows.filter(function(t){ return t && t.active !== false && isDisplayAd(t); });
+      }
+    }
+  }catch(e){}
+
+  const sec = resolveTimerSec(offers);
+  startTimer(sec);
+
+  if(!offers.length){
+    // Empty list is fine — network ads still load via AutoTag; no fake "Ad space" boxes
+    box.innerHTML = "";
+    return;
+  }
+
+  box.innerHTML = offers.map(function(t){
+    const title = t.title || "Offer";
+    let desc = String(t.description || "").replace(/<!--WFJSON:[\s\S]*?-->/g,"").trim();
+    const img = normalizeUrl(t.imageUrl || t.image || "");
+    const url = normalizeUrl(t.targetUrl || t.url || "");
+    const ok = isValidUrl(url);
+    return '<article class="card"><div class="cover">' +
+      (img ? '<img src="'+escapeHtml(img)+'" alt="" loading="lazy">' : '') +
+      '</div><div class="body"><h2>'+escapeHtml(title)+'</h2>' +
+      (desc ? '<p>'+escapeHtml(desc.slice(0,220))+'</p>' : '') +
+      (ok ? '<a class="cta" href="'+escapeHtml(url)+'" target="_blank" rel="noopener noreferrer">Open if interested</a>' : '') +
+      '</div></article>';
+  }).join("");
+}
+
+loadOffers();
+</script>
+</body>
+</html>
