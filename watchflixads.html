@@ -2,85 +2,47 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- Adcash Library -->
+
+<!-- Adcash AutoTag -->
+
 <title>WatchFlix Ads</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;min-height:100%;font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:#070b16;color:#f1f5f9}
-body{padding-bottom:env(safe-area-inset-bottom,0)}
-.shell{max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top,0px));
-  border-bottom:1px solid #1e293b;background:#0b1220;position:sticky;top:0;z-index:30
-}
+body{margin:0;min-height:100vh;font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:#070b16;color:#f1f5f9}
+.shell{max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:28px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #1e293b;background:#0b1220;position:sticky;top:0;z-index:20}
 .topbar a{color:#94a3b8;text-decoration:none;font-size:13px;font-weight:700}
-.topbar a:focus-visible,.cta:focus-visible,button:focus-visible{
-  outline:2px solid #38bdf8;outline-offset:2px
-}
-.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px}
-.brand-mark{
-  width:28px;height:28px;border-radius:9px;display:grid;place-items:center;
-  background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-size:11px;font-weight:900;
-  box-shadow:0 4px 12px rgba(16,185,129,.35)
-}
-.sticky-prog{
-  position:sticky;top:52px;z-index:25;background:rgba(11,18,32,.96);backdrop-filter:blur(10px);
-  border-bottom:1px solid #1e293b;padding:10px 16px 12px
-}
-.sticky-prog .row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
-.sticky-prog .label{font-size:12px;font-weight:800;color:#e2e8f0}
-.sticky-prog .sub{font-size:11px;font-weight:600;color:#94a3b8}
-.sticky-prog .track{height:6px;border-radius:999px;background:#1e293b;overflow:hidden}
-.sticky-prog .track i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#34d399,#10b981);transition:width .25s ease}
-.progress{height:3px;background:#1e293b;width:100%}
+.topbar .t{font-weight:800;font-size:14px}
+.progress{height:4px;background:#1e293b;width:100%}
 .progress i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#3b82f6);transition:width .1s linear}
 .warn{margin:12px 16px;padding:12px 14px;border-radius:14px;border:1px solid rgba(239,68,68,.45);background:rgba(239,68,68,.12);color:#fecaca;font-size:12px;font-weight:600;line-height:1.5}
 .warn b{color:#fff}
-.timer-rule{
-  margin:0 16px 10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(56,189,248,.35);
-  background:rgba(56,189,248,.08);color:#bae6fd;font-size:12px;font-weight:600;line-height:1.45
-}
-.fair{
-  margin:0 16px 12px;padding:10px 12px;border-radius:12px;border:1px solid #1e293b;
-  background:#0b1220;color:#94a3b8;font-size:11px;font-weight:600;line-height:1.45
-}
 .visual{height:min(42vh,260px);background:radial-gradient(circle at 50% 40%,#0f766e,#020617 70%);display:flex;align-items:center;justify-content:center;overflow:hidden}
 .visual img{width:100%;height:100%;object-fit:cover}
 .visual .ph{text-align:center;padding:24px;color:#94a3b8;font-weight:700;font-size:14px}
 .dots{display:flex;gap:8px;justify-content:center;padding:14px 0 6px;flex-wrap:wrap}
-.dots span{
-  min-width:22px;height:22px;padding:0 5px;border-radius:999px;background:#334155;
-  display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#94a3b8
-}
-.dots span.on{background:#3b82f6;color:#fff;box-shadow:0 0 0 3px rgba(59,130,246,.3)}
-.dots span.done{background:#10b981;color:#fff}
-.dots span.done::after{content:" ✓";font-size:9px}
+.dots span{width:8px;height:8px;border-radius:50%;background:#334155}
+.dots span.on{background:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.3)}
+.dots span.done{background:#10b981}
 .body{padding:8px 20px 0}
 .body h1{margin:0 0 8px;font-size:20px;font-weight:800}
 .body p{margin:0;font-size:14px;color:#94a3b8;line-height:1.55}
 .meta{display:flex;justify-content:space-between;margin-top:12px;font-size:12px;font-weight:700;color:#64748b}
 .clicks{display:flex;gap:8px;justify-content:center;padding:16px;flex-wrap:wrap}
-.clicks i{
-  width:32px;height:32px;border-radius:50%;border:2px solid #334155;display:grid;place-items:center;
-  font-style:normal;font-size:11px;font-weight:800;color:#64748b
-}
+.clicks i{width:30px;height:30px;border-radius:50%;border:2px solid #334155;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#64748b}
 .clicks i.ok{border-color:#10b981;background:rgba(16,185,129,.2);color:#34d399}
-.clicks i.ok::after{content:"✓";font-size:10px}
 .clicks i.lock{border-color:#475569;opacity:.55}
-.cta-wrap{padding:0 16px;padding-bottom:env(safe-area-inset-bottom,8px)}
-.cta{
-  margin:0;width:100%;min-height:56px;border:0;border-radius:16px;padding:16px 18px;
-  font-weight:800;font-size:16px;cursor:pointer;background:#38bdf8;color:#0f172a;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  box-shadow:0 12px 32px rgba(56,189,248,.35)
-}
-.cta:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.cta{margin:0 20px;width:calc(100% - 40px);border:0;border-radius:16px;padding:16px;font-weight:800;font-size:16px;cursor:pointer;background:#38bdf8;color:#0f172a;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 12px 32px rgba(56,189,248,.35)}
+.cta:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
 .cta.done{background:#10b981;color:#fff}
 .cta.complete{background:linear-gradient(135deg,#059669,#10b981);color:#fff;margin-top:10px}
 .cta.locked{background:#334155;color:#94a3b8}
-.cta.secondary{background:#1e293b;color:#e2e8f0;box-shadow:none;border:1px solid #334155;margin-top:10px}
 .foot{padding:14px 20px;font-size:12px;color:#64748b;text-align:center;line-height:1.45}
 .msg{margin:8px 20px;padding:10px 12px;border-radius:12px;font-size:13px;font-weight:700;text-align:center;display:none}
 .msg.ok{display:block;background:rgba(16,185,129,.12);color:#34d399}
@@ -90,67 +52,94 @@ body{padding-bottom:env(safe-area-inset-bottom,0)}
 .status-banner.pending{display:block;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.4);color:#fbbf24}
 .status-banner.approved{display:block;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.4);color:#34d399}
 .status-banner.rejected{display:block;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.4);color:#f87171}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
-#liveRegion{position:absolute;left:-9999px;height:1px;width:1px;overflow:hidden}
+
+.brand{display:flex;align-items:center;gap:8px}
+.brand-logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#10b981,#059669);display:grid;place-items:center;font-weight:900;font-size:12px;color:#fff;box-shadow:0 4px 12px rgba(16,185,129,.35)}
+.brand-name{font-weight:800;font-size:14px;letter-spacing:-.02em}
+.prog-strip{position:sticky;top:49px;z-index:19;background:#0b1220ee;backdrop-filter:blur(8px);border-bottom:1px solid #1e293b;padding:10px 16px;display:flex;flex-direction:column;gap:6px}
+.prog-strip .row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;font-weight:700}
+.prog-strip .pack{color:#e2e8f0}
+.prog-strip .stage{color:#94a3b8}
+.prog-strip .runs{color:#38bdf8}
+.prog-strip .daily{color:#a7f3d0;font-size:11px}
+.timer-rule{margin:8px 16px 0;padding:10px 12px;border-radius:12px;border:1px solid rgba(56,189,248,.35);background:rgba(56,189,248,.08);color:#bae6fd;font-size:12px;font-weight:600;line-height:1.45}
+.fair-note{margin:8px 16px;padding:10px 12px;border-radius:12px;border:1px solid #1e293b;background:#0f172a;color:#94a3b8;font-size:11px;line-height:1.5}
+.err-panel{margin:16px;padding:16px;border-radius:16px;border:1px solid rgba(248,113,113,.35);background:rgba(248,113,113,.08);text-align:center}
+.err-panel h3{margin:0 0 8px;font-size:15px;color:#fecaca}
+.err-panel p{margin:0 0 12px;font-size:13px;color:#94a3b8;line-height:1.45}
+.err-panel .actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.err-panel button,.err-panel a.btn{
+  border:0;border-radius:12px;padding:12px 16px;font-weight:800;font-size:13px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center
+}
+.err-panel .retry{background:#38bdf8;color:#0f172a}
+.err-panel .login{background:#1e293b;color:#e2e8f0;border:1px solid #334155}
+.cta:focus-visible,.err-panel button:focus-visible,.topbar a:focus-visible{
+  outline:2px solid #38bdf8;outline-offset:3px
+}
+.clicks i.ok::after{content:"✓";font-size:10px}
+.shell{padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
+.topbar{padding-top:max(12px,env(safe-area-inset-top,0px))}
+.cta{min-height:52px;padding:16px 18px;font-size:16px}
+.live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+
 </style>
 </head>
 <body>
 <div class="shell">
   <div class="topbar">
-    <a href="https://watchflix-app.pages.dev/dashboard/">← Dashboard</a>
-    <div class="brand" aria-label="WatchFlix Ads">
-      <span class="brand-mark" aria-hidden="true">WF</span>
-      <span>WatchFlix Ads</span>
+    <a href="https://watchflix-app.pages.dev/dashboard/" id="dashLink">← Dashboard</a>
+    <div class="brand" aria-label="WatchFlix">
+      <div class="brand-logo" aria-hidden="true">W</div>
+      <div class="brand-name">WatchFlix</div>
     </div>
     <span style="width:64px"></span>
   </div>
-
-  <div class="sticky-prog" id="stickyProg" aria-live="polite">
+  <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressWrap"><i id="bar"></i></div>
+  <div class="prog-strip" id="progStrip" aria-live="polite">
     <div class="row">
-      <span class="label" id="stickyLabel">Pack progress</span>
-      <span class="sub" id="stickySub">—</span>
+      <span class="pack" id="progPack">Pack —</span>
+      <span class="runs" id="progRuns">Runs —</span>
     </div>
-    <div class="track"><i id="stickyBar"></i></div>
-  </div>
-
-  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
-
-  <div class="warn" id="warnBox">
-    <b>Required:</b> Complete <b>every stage</b>. Finished stages stay locked. Reward is paid <b>only after admin approval</b> — not for clicking ads.
+    <div class="row">
+      <span class="stage" id="progStage">Stage —</span>
+      <span class="daily" id="progDaily"></span>
+    </div>
   </div>
   <div class="timer-rule" id="timerRule">
-    Stay on the offer until the timer ends. Coming back early restarts this stage.
+    Stay on the partner page until the timer ends. Coming back early restarts this stage. Completing stages qualifies you for a reward after admin review — not for clicking ads.
   </div>
-  <div class="fair" id="fairNote">
-    Limits protect the rewards pool. Completing stages does not guarantee approval.
+  <div class="fair-note" id="fairNote">
+    Limits protect the rewards pool. Completing stages does not guarantee approval. Reward is credited only if approved.
   </div>
-
+  <div class="warn" id="warnBox" style="display:none">
+    <b>Required:</b> Complete <b>every stage</b>. Finished stages stay locked. Reward is for completing the activity — not for clicking ads.
+  </div>
   <div class="status-banner" id="statusBanner" role="status"></div>
-  <div id="liveRegion" aria-live="polite" aria-atomic="true"></div>
-
+  <div id="errPanel" class="err-panel" style="display:none" role="alert">
+    <h3 id="errTitle">Something went wrong</h3>
+    <p id="errBody">Please try again.</p>
+    <div class="actions">
+      <button type="button" class="retry" id="errRetry" onclick="retryLoad()">Retry</button>
+      <a class="btn login" id="errLogin" href="https://watchflix-app.pages.dev/login/">Sign in</a>
+    </div>
+  </div>
   <div class="visual" id="visual"><div class="ph">Loading…</div></div>
-  <div class="dots" id="dots" role="list" aria-label="Stages"></div>
+  <div class="live" id="liveRegion" aria-live="polite"></div>
+  <div class="dots" id="dots"></div>
   <div class="body">
     <h1 id="title">—</h1>
     <p id="desc">—</p>
     <div class="meta"><span id="step">Step 1</span><span id="timer">Ready</span></div>
   </div>
-  <div class="clicks" id="clicks" aria-label="Stage checklist"></div>
-  <div class="cta-wrap">
-    <button type="button" class="cta" id="cta" onclick="onGo()" disabled>Loading…</button>
-    <button type="button" class="cta complete" id="completeBtn" style="display:none" onclick="submitForReview()">Submit for review</button>
-    <button type="button" class="cta secondary" id="retryBtn" style="display:none" onclick="retryLoad()">Retry load</button>
-    <button type="button" class="cta secondary" id="signinBtn" style="display:none" onclick="goSignIn()">Sign in again</button>
-  </div>
-  <div class="foot" id="foot">Loading activity from server…</div>
-  <div class="msg" id="msg" role="status"></div>
+  <div class="clicks" id="clicks"></div>
+  <button type="button" class="cta" id="cta" onclick="onGo()" disabled aria-describedby="timerRule">Loading…</button>
+  <button type="button" class="cta complete" id="completeBtn" style="display:none" onclick="submitForReview()">Submit for review</button>
+  <div class="foot" id="foot">Reward after approval only · loading activity…</div>
+  <div class="msg" id="msg"></div>
 </div>
-
 <script>
 const API_URL = "https://global-api-platform-production.up.railway.app";
 const API_KEY = "ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c";
-const DASH_URL = "https://watchflix-app.pages.dev/dashboard/";
-const LOGIN_URL = "https://watchflix-app.pages.dev/login/";
 
 function token(){ return localStorage.getItem("wf_token") || localStorage.getItem("token") || ""; }
 function uid(){
@@ -196,6 +185,7 @@ function clearStageProgress(taskId){
   try{ localStorage.removeItem(stageProgressKey(taskId)); }catch(e){}
 }
 
+/* —— Persist pack run progress (2/5 etc) across refresh —— */
 function runProgressKey(taskId){
   return "wf_ads_run_prog_v2_" + (uid() || "guest") + "_" + String(taskId || "");
 }
@@ -217,7 +207,9 @@ function loadRunProgress(taskId){
 }
 function saveRunProgress(taskId, data){
   if(!taskId) return;
-  const payload = JSON.stringify(Object.assign({ updatedAt: new Date().toISOString() }, data || {}));
+  const payload = JSON.stringify(Object.assign({
+    updatedAt: new Date().toISOString()
+  }, data || {}));
   try{
     const u = uid();
     if(u) localStorage.setItem("wf_ads_run_prog_v2_" + u + "_" + String(taskId), payload);
@@ -238,9 +230,11 @@ function restoreRunProgress(taskId, reopenTs){
   if(!p) return { localCompleted: 0, attemptLogs: [] };
   const savedReopen = p.reopenAt ? new Date(p.reopenAt).getTime() : 0;
   const cut = Number(reopenTs) || 0;
+  // Wipe ONLY when admin set a newer explicit reopen than the one we saved with
   if(cut > 0 && savedReopen > 0 && cut > savedReopen + 2000){
     return { localCompleted: 0, attemptLogs: [] };
   }
+  // Keep progress even if reopenAt was missing on older saves
   return {
     localCompleted: Math.max(0, Number(p.localCompleted) || 0),
     attemptLogs: Array.isArray(p.attemptLogs) ? p.attemptLogs : []
@@ -269,6 +263,10 @@ function authHeaders(json){
   if(t) h["Authorization"] = "Bearer " + t;
   if(json) h["Content-Type"] = "application/json";
   return h;
+}
+
+function encodeWfPackConfig(cfg){
+  try{ return "<!--WFJSON:" + JSON.stringify(cfg) + "-->"; }catch(e){ return ""; }
 }
 
 function parseReopenAt(task){
@@ -309,42 +307,11 @@ function normalizeUrl(url){
 function isValidUrl(url){
   try{ new URL(url); return true; }catch{ return false; }
 }
-function announce(text){
-  const lr = $("liveRegion");
-  if(lr) lr.textContent = text || "";
-}
 function showMsg(text, type){
   const m = $("msg");
   if(!m) return;
   m.className = "msg " + (type || "info");
   m.textContent = text;
-  announce(text);
-}
-function goSignIn(){
-  location.href = LOGIN_URL;
-}
-function goDash(){
-  location.href = DASH_URL;
-}
-function retryLoad(){
-  $("retryBtn").style.display = "none";
-  $("signinBtn").style.display = "none";
-  showMsg("Retrying…", "info");
-  loadCampaign();
-}
-function setSessionUi(expired){
-  const sign = $("signinBtn");
-  const retry = $("retryBtn");
-  if(expired){
-    if(sign) sign.style.display = "flex";
-    if(retry) retry.style.display = "none";
-    $("cta").disabled = true;
-    $("cta").textContent = "Sign in required";
-  }
-}
-function setOfflineUi(show){
-  const retry = $("retryBtn");
-  if(retry) retry.style.display = show ? "flex" : "none";
 }
 
 function mapTaskToCampaign(task){
@@ -383,12 +350,8 @@ function mapTaskToCampaign(task){
   const maxPerUser = meta.maxPerUser != null ? Number(meta.maxPerUser) : null;
   let reopenAt = meta.reopenAt || null;
   if(!reopenAt && task.description){
-    const rm = String(task.description).match(/\[WF_REOPEN:([^\]]+)\]/);
+    const rm = String(task.description).match(/reopen:([0-9T:\-\.Z]+)/);
     if(rm) reopenAt = rm[1];
-    else {
-      const rm2 = String(task.description).match(/reopen:([0-9T:\-\.Z]+)/);
-      if(rm2) reopenAt = rm2[1];
-    }
   }
   return {
     id,
@@ -402,8 +365,7 @@ function mapTaskToCampaign(task){
     maxPerUser: (maxPerUser && maxPerUser > 0) ? maxPerUser : null,
     completionCount: Number(task.completionCount || 0),
     reopenAt,
-    slots,
-    updatedAt: task.updatedAt || null
+    slots
   };
 }
 
@@ -420,16 +382,19 @@ function isWatchFlixTask(t){
   if(String(t.description || "").toLowerCase().includes("watchflix multi-stage")) return true;
   if(String(t.description || "").includes("<!--WFJSON:")) return true;
   if(String(t.title || "").toLowerCase().includes("watchflix")) return true;
+  // Multi-offer packs often only expose targetUrl + image on list
   if(t.needsProof === false && t.active !== false && (t.imageUrl || t.targetUrl)){
+    // likely WF if not classic social proof task
     if(String(t.platform || "").toLowerCase() !== "social") return true;
   }
   return false;
 }
 
+/** Latest submission for this user + task from history API */
 function taskIdOf(sub){
   if(!sub) return "";
   const t = sub.task;
-  if(t == null) return String(sub.taskId || (sub.metadata && sub.metadata.task) || "");
+  if(t == null) return String(sub.taskId || sub.metadata?.task || "");
   if(typeof t === "string") return t;
   if(typeof t === "object") return String(t._id || t.id || "");
   return String(t);
@@ -450,7 +415,6 @@ let userHistory = [];
 const state = {
   sessionId: sid(),
   startedAt: new Date().toISOString(),
-  runStartedAt: null,
   index: 0,
   clicked: [],
   stageDone: [],
@@ -464,40 +428,117 @@ const state = {
   timerNeed: 0,
   timerLastTick: 0,
   submitted: false,
-  packStatus: null, // server-driven preferred
-  serverStatus: null,
-  dailyLimit: 10,
-  localCompleted: 0,
-  attemptLogs: [],
-  _autoSubmitted: false,
-  _submitInFlight: false
+  packStatus: null,
+  dailyLimit: 10
 };
 
-function updateStickyProg(){
-  const maxPer = campaign ? (Number(campaign.maxPerUser) || 0) : 0;
-  const runs = Number(state.localCompleted) || 0;
-  const stageDone = (state.stageDone || []).filter(Boolean).length;
-  const stages = Math.max(1, N);
-  let label = "Pack progress";
-  let sub = "Stage " + (Math.min(state.index + 1, stages)) + " of " + stages;
-  let pct = (stageDone / stages) * 100;
-  if(maxPer > 0){
-    label = "Your runs: " + Math.min(runs, maxPer) + " / " + maxPer;
-    sub = "Stage " + (Math.min(state.index + 1, stages)) + " of " + stages;
-    pct = Math.min(100, (runs / maxPer) * 100);
-    if(state.packStatus === "pending") { label = "Under review"; sub = runs + " / " + maxPer + " runs submitted"; pct = 100; }
-    if(state.packStatus === "approved") { label = "Completed"; sub = "Approved by admin"; pct = 100; }
-  } else {
-    if(state.packStatus === "pending") { label = "Under review"; sub = "Waiting for admin"; pct = 100; }
-    if(state.packStatus === "approved") { label = "Completed"; sub = "Approved by admin"; pct = 100; }
-  }
-  const elL = $("stickyLabel");
-  const elS = $("stickySub");
-  const elB = $("stickyBar");
-  if(elL) elL.textContent = label;
-  if(elS) elS.textContent = sub;
-  if(elB) elB.style.width = Math.max(0, Math.min(100, pct)) + "%";
+
+function announce(text){
+  const el = $("liveRegion");
+  if(el) el.textContent = text || "";
 }
+function showErrorPanel(title, body, opts){
+  opts = opts || {};
+  const panel = $("errPanel");
+  if(!panel) return;
+  panel.style.display = "block";
+  if($("errTitle")) $("errTitle").textContent = title || "Something went wrong";
+  if($("errBody")) $("errBody").textContent = body || "";
+  if($("errRetry")) $("errRetry").style.display = opts.hideRetry ? "none" : "";
+  if($("errLogin")) $("errLogin").style.display = opts.hideLogin ? "none" : "";
+  const cta = $("cta");
+  if(cta){ cta.disabled = true; }
+}
+function hideErrorPanel(){
+  const panel = $("errPanel");
+  if(panel) panel.style.display = "none";
+}
+function retryLoad(){
+  hideErrorPanel();
+  showMsg("Retrying…", "info");
+  const cta = $("cta");
+  if(cta){ cta.disabled = true; cta.textContent = "Loading…"; }
+  
+document.addEventListener("visibilitychange", function(){
+  if(document.visibilityState === "visible" && state.timerArmed && state.left > 0.5){
+    // User returned while timer still running — warning only (timer is wall-clock, continues)
+    showMsg("Timer still running (" + Math.ceil(state.left) + "s left). Wait until 00:00 — leaving early does not count.", "info");
+  }
+});
+
+loadCampaign();
+
+}
+function updateProgressStrip(){
+  if(!campaign){
+    if($("progPack")) $("progPack").textContent = "No pack";
+    if($("progStage")) $("progStage").textContent = "—";
+    if($("progRuns")) $("progRuns").textContent = "—";
+    if($("progDaily")) $("progDaily").textContent = "";
+    return;
+  }
+  const maxPer = Number(campaign.maxPerUser) || 0;
+  const local = Number(state.localCompleted) || 0;
+  let serverUsed = 0;
+  try{
+    let reopenTs = 0;
+    try{ reopenTs = parseReopenAt(campaign) || 0; }catch(e){}
+    serverUsed = (userHistory || []).filter(s => {
+      if(String(taskIdOf(s)) !== String(campaign.id)) return false;
+      const st = String(s.status||"").toLowerCase();
+      if(!(st === "pending" || st === "approved" || st === "completed")) return false;
+      if(reopenTs > 0){
+        const tt = new Date(s.createdAt || s.updatedAt || 0).getTime();
+        if(tt && tt < reopenTs) return false;
+      }
+      return true;
+    }).length;
+  }catch(e){}
+  const runsDone = serverUsed + local;
+  if($("progPack")) $("progPack").textContent = (campaign.title || "Pack").slice(0, 28);
+  if($("progStage")) $("progStage").textContent = "Stage " + Math.min(state.index + 1, N) + " of " + N;
+  if($("progRuns")){
+    $("progRuns").textContent = maxPer > 0
+      ? ("Runs " + Math.min(runsDone, maxPer) + " / " + maxPer)
+      : ("Runs " + runsDone + " · unlimited");
+  }
+  if($("progDaily")){
+    const daily = Number(campaign.dailyLimit) || 0;
+    if(daily > 0){
+      const today = getCompletionsToday().filter(c => String(c.campaignId) === String(campaign.id)).length;
+      const left = Math.max(0, daily - today);
+      $("progDaily").textContent = left + " of " + daily + " left today";
+    } else {
+      $("progDaily").textContent = "Reward if approved · +" + (campaign.rewardWcoin || 0) + " WC";
+    }
+  }
+}
+function preloadStageImage(idx){
+  try{
+    const slot = slots[idx];
+    if(!slot) return;
+    const src = slot.imageUrl || "";
+    if(!src) return;
+    const im = new Image();
+    im.src = src;
+  }catch(e){}
+}
+function loadDeferredAds(){
+  // Load partner scripts only after core UI is ready
+  try{
+    const s1 = document.createElement("script");
+    s1.src = "//guyprior.com/j66fp1kk2?key=cd5aa3d6e8ee19ad69a9fc4547ee0442";
+    s1.async = true;
+    document.body.appendChild(s1);
+  }catch(e){}
+  try{
+    const s2 = document.createElement("script");
+    s2.src = "https://guyprior.com/d5/31/00/d53100897c448dc3ffb3cfde0e31918f.js";
+    s2.async = true;
+    document.body.appendChild(s2);
+  }catch(e){}
+}
+
 
 function setStatusBanner(status, extra){
   const el = $("statusBanner");
@@ -508,9 +549,9 @@ function setStatusBanner(status, extra){
   if(status === "pending"){
     el.textContent = "Submitted — waiting for admin review. This pack is locked until a decision.";
   } else if(status === "approved"){
-    el.textContent = "Completed — admin approved your reward. Stays completed until admin reopens the pack.";
+    el.textContent = "Completed — admin approved your reward. This pack stays completed until the admin reactivates it.";
   } else if(status === "rejected"){
-    el.textContent = "Rejected" + (extra ? ": " + extra : "") + ". Complete the stages again and resubmit.";
+    el.textContent = "Rejected" + (extra ? ": " + extra : "") + ". You can complete the stages again and resubmit.";
   }
 }
 
@@ -518,174 +559,16 @@ function renderClicks(){
   $("clicks").innerHTML = Array.from({ length: N }, (_, j) => {
     const done = state.stageDone[j] || state.clicked[j];
     const cls = done ? "ok" : (j > state.index ? "lock" : "");
-    const label = done ? "done" : (j === state.index ? "current" : "locked");
-    return `<i id="c${j}" class="${cls}" title="Stage ${j+1} ${label}" aria-label="Stage ${j+1} ${label}">${done ? "" : (j + 1)}</i>`;
+    return `<i id="c${j}" class="${cls}">${j + 1}</i>`;
   }).join("");
 }
 
 function packLocked(){
-  // Server status wins over local
-  if(state.serverStatus === "pending" || state.serverStatus === "approved") return true;
   return state.packStatus === "pending" || state.packStatus === "approved" || state.submitted;
 }
 
-function preloadNextImage(){
-  try{
-    const next = slots[state.index + 1];
-    if(next && next.imageUrl){
-      const img = new Image();
-      img.src = next.imageUrl;
-    }
-  }catch(e){}
-}
-
-function clearTimer(){
-  if(state.timer){ clearInterval(state.timer); state.timer = null; }
-  state.timerArmed = false;
-  state.left = 0;
-  state.timerAccum = 0;
-  state.timerLastTick = 0;
-}
-
-function startTimer(){
-  clearTimer();
-  const need = Math.max(5, Number(campaign && campaign.durationSec) || 12);
-  state.timerNeed = need;
-  state.timerArmed = true;
-  state.timerAccum = 0;
-  state.timerLastTick = Date.now();
-  state.left = need;
-  if(!state.stageStartedAt[state.index]) state.stageStartedAt[state.index] = new Date().toISOString();
-  if(!state.runStartedAt) state.runStartedAt = new Date().toISOString();
-  $("timer").textContent = formatLeft(need);
-  $("bar").style.width = "0%";
-  $("cta").disabled = true;
-  $("cta").textContent = "Stay on offer… " + formatLeft(need);
-  announce("Timer started. Stay on the offer until it ends.");
-  state.timer = setInterval(tickTimer, 200);
-  document.addEventListener("visibilitychange", onVis);
-  window.addEventListener("focus", onFocusEarly);
-}
-
-function formatLeft(s){
-  s = Math.max(0, Math.ceil(s));
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return (m < 10 ? "0" : "") + m + ":" + (r < 10 ? "0" : "") + r;
-}
-
-function tickTimer(){
-  if(!state.timerArmed) return;
-  const now = Date.now();
-  // Only count time while page is visible (user stayed / returned after enough time)
-  if(document.visibilityState === "visible"){
-    const dt = (now - state.timerLastTick) / 1000;
-    state.timerAccum += dt;
-  }
-  state.timerLastTick = now;
-  const left = Math.max(0, state.timerNeed - state.timerAccum);
-  state.left = left;
-  $("timer").textContent = formatLeft(left);
-  const pct = Math.min(100, (state.timerAccum / state.timerNeed) * 100);
-  $("bar").style.width = pct + "%";
-  $("cta").textContent = left > 0 ? ("Stay on offer… " + formatLeft(left)) : "Finishing…";
-  if(left <= 0){
-    finishStage();
-  }
-}
-
-function onVis(){
-  if(!state.timerArmed) return;
-  state.timerLastTick = Date.now();
-  if(document.visibilityState === "visible"){
-    // Early return: if timer not finished, warn and restart stage
-    if(state.timerAccum < state.timerNeed - 0.5){
-      state.earlyReturns = (state.earlyReturns || 0) + 1;
-      showMsg("You returned early. Stay until the timer ends — stage restarted.", "err");
-      announce("Returned early. Stage timer restarted.");
-      clearTimer();
-      // Restart same stage
-      state.clicked[state.index] = false;
-      state.stageDone[state.index] = false;
-      if(campaign) saveStageProgress(campaign.id, state.clicked, state.index);
-      renderClicks();
-      renderStep();
-    }
-  }
-}
-
-function onFocusEarly(){
-  // handled via visibilitychange primarily
-}
-
-function finishStage(){
-  clearTimer();
-  document.removeEventListener("visibilitychange", onVis);
-  window.removeEventListener("focus", onFocusEarly);
-  const i = state.index;
-  state.stageDone[i] = true;
-  state.clicked[i] = true;
-  state.stageFinishedAt[i] = new Date().toISOString();
-  if(campaign) saveStageProgress(campaign.id, state.clicked, state.index);
-  renderClicks();
-  announce("Stage " + (i + 1) + " complete.");
-  preloadNextImage();
-
-  // Auto-advance to next stage
-  if(i < N - 1){
-    state.index = i + 1;
-    showMsg("Stage " + (i + 1) + " done. Continue to stage " + (i + 2) + ".", "ok");
-    renderStep();
-    return;
-  }
-
-  // All stages done for this run
-  state.localCompleted = (Number(state.localCompleted) || 0) + 1;
-  state.attemptLogs = (state.attemptLogs || []).concat([{
-    at: new Date().toISOString(),
-    stages: N,
-    earlyReturns: state.earlyReturns || 0
-  }]);
-  if(campaign) persistCurrentRuns(campaign.id);
-  clearStageProgress(campaign && campaign.id);
-  updateStickyProg();
-
-  const maxPer = Number(campaign && campaign.maxPerUser) || 0;
-  if(maxPer > 0 && state.localCompleted < maxPer){
-    // Reset stages for next run of same pack
-    showMsg("Run " + state.localCompleted + " / " + maxPer + " done. Starting next run…", "ok");
-    announce("Run " + state.localCompleted + " of " + maxPer + " complete.");
-    resetStagesForNextAttempt(true);
-    return;
-  }
-
-  // All required runs finished → auto submit (no manual button required)
-  showMsg("All stages complete. Submitting for review…", "info");
-  $("completeBtn").style.display = "none";
-  submitForReview(true);
-}
-
-function resetStagesForNextAttempt(keepRuns){
-  N = Math.max(1, (slots && slots.length) || 1);
-  state.index = 0;
-  state.clicked = Array(N).fill(false);
-  state.stageDone = Array(N).fill(false);
-  state.stageStartedAt = Array(N).fill(null);
-  state.stageFinishedAt = Array(N).fill(null);
-  state.submitted = false;
-  if(!keepRuns){
-    state.packStatus = null;
-    state.serverStatus = null;
-  }
-  clearTimer();
-  if(campaign) clearStageProgress(campaign.id);
-  if(!keepRuns) setStatusBanner(null);
-  updateStickyProg();
-  renderStep();
-}
-
 function renderStep(){
-  updateStickyProg();
+  try{ updateProgressStrip(); }catch(e){}
   if(!campaign){
     $("title").textContent = "Unavailable";
     $("desc").textContent = "No active activity found. Ask admin to publish a WatchFlix pack.";
@@ -703,84 +586,275 @@ function renderStep(){
     return;
   }
 
-  if(state.packStatus === "approved" || state.serverStatus === "approved"){
+  // Pack-level lock after submit / approval
+  if(state.packStatus === "approved"){
     $("title").textContent = "Completed";
-    $("desc").textContent = "Admin approved this activity. Reward is for approved completion — not for clicks.";
+    $("desc").textContent = "Admin approved this activity. It stays completed until the admin reactivates the pack.";
     $("cta").disabled = true;
     $("cta").className = "cta done locked";
     $("cta").textContent = "Completed ✓";
     $("completeBtn").style.display = "none";
     $("timer").textContent = "Done";
     $("bar").style.width = "100%";
-    $("foot").textContent = "Reward if approved was applied by admin · +" + (campaign.rewardWcoin || 0) + " WCoin";
-    updateStickyProg();
+    $("foot").textContent = "Reward credited after approval · +" + (campaign.rewardWcoin || 0) + " WCoin";
+    state.stageDone = Array(N).fill(true);
+    state.clicked = Array(N).fill(true);
+    renderClicks();
+    $("dots").innerHTML = Array.from({ length: N }, () => `<span class="done"></span>`).join("");
+    $("visual").innerHTML = `<div class="ph">Completed</div>`;
     return;
   }
 
-  if(state.packStatus === "pending" || state.serverStatus === "pending" || state.submitted){
+  // All required runs finished → always Under review (never "Opened")
+  const _maxPer = Number(campaign.maxPerUser) || 0;
+  const _runs = Number(state.localCompleted) || 0;
+  if(_maxPer > 0 && _runs >= _maxPer && state.packStatus !== "approved"){
+    state.packStatus = "pending";
+    state.submitted = true;
+  }
+
+  if(state.packStatus === "pending" || state.submitted){
     $("title").textContent = "Under review";
-    $("desc").textContent = "Your activity was submitted. Waiting for admin. Reward is paid only if approved.";
+    $("desc").textContent = "All required runs are done. Waiting for admin review — this pack stays locked until a decision.";
     $("cta").disabled = true;
     $("cta").className = "cta locked";
     $("cta").textContent = "Under review";
     $("completeBtn").style.display = "none";
-    $("timer").textContent = "—";
-    $("bar").style.width = "100%";
-    $("foot").textContent = "+" + (campaign.rewardWcoin || 0) + " WCoin if approved";
-    updateStickyProg();
+    $("timer").textContent = "Pending";
+    $("foot").textContent = "Waiting for admin · +" + (campaign.rewardWcoin || 0) + " WCoin if approved";
+    state.stageDone = Array(N).fill(true);
+    state.clicked = Array(N).fill(true);
+    renderClicks();
+    $("dots").innerHTML = Array.from({ length: N }, () => `<span class="done"></span>`).join("");
+    $("visual").innerHTML = `<div class="ph">Pending review</div>`;
     return;
   }
 
   const i = state.index;
   const slot = slots[i] || {};
-  const img = (slot.imageUrl || "").trim();
   $("title").textContent = slot.title || ("Stage " + (i + 1));
-  $("desc").textContent = slot.description || campaign.description || "Open the partner page and wait for the timer.";
-  $("step").textContent = "Stage " + (i + 1) + " of " + N;
-  $("dots").innerHTML = Array.from({ length: N }, (_, j) => {
-    const done = state.stageDone[j];
-    const on = j === i && !done;
-    const cls = done ? "done" : (on ? "on" : "");
-    return `<span class="${cls}" role="listitem" aria-label="Stage ${j+1}${done?" done":(on?" current":"")}">${j+1}</span>`;
+  $("desc").textContent = slot.description || "Open this partner link, then wait for the timer.";
+  $("step").textContent = "Step " + (i + 1) + " / " + N;
+  $("dots").innerHTML = Array.from({ length: N }, (_, d) => {
+    let cls = "";
+    if(state.stageDone[d]) cls = "done";
+    else if(d === i) cls = "on";
+    return `<span class="${cls}"></span>`;
   }).join("");
 
-  if(img){
-    $("visual").innerHTML = `<img src="${img.replace(/"/g,"")}" alt="" loading="eager">`;
+  if(slot.imageUrl){
+    const imgUrl = normalizeUrl(slot.imageUrl);
+    $("visual").innerHTML = `<img src="${String(imgUrl).replace(/"/g, "")}" alt="" onerror="this.parentNode.innerHTML='<div class=ph>Offer ${i + 1}</div>'">`;
   } else {
-    $("visual").innerHTML = `<div class="ph">${(slot.title || "Stage").replace(/</g,"")}</div>`;
+    $("visual").innerHTML = `<div class="ph">Stage ${i + 1} / ${N}</div>`;
   }
-  preloadNextImage();
   renderClicks();
 
-  const url = normalizeUrl(slot.url || "");
-  const broken = !url || !isValidUrl(url);
-  if(broken){
-    $("cta").disabled = true;
-    $("cta").className = "cta locked";
-    $("cta").textContent = "Link unavailable";
-    showMsg("This stage link is broken. Try another pack or contact support.", "err");
-    $("foot").textContent = "Broken link · admin can fix in WatchFlix Ads";
-    return;
+  const cta = $("cta");
+  const stageUrlValid = isValidUrl(normalizeUrl(slot.url || ""));
+
+  // Finished stage → permanently disabled for this attempt
+  if(state.stageDone[i]){
+    cta.textContent = "Stage complete ✓";
+    cta.className = "cta done";
+    cta.disabled = true;
+  } else if(state.clicked[i] && state.timerArmed){
+    cta.textContent = "Timer running…";
+    cta.className = "cta done";
+    cta.disabled = true;
+  } else if(state.stageDone[i]){
+    cta.textContent = (i < N - 1) ? "Stage done — continue" : "Run complete";
+    cta.className = "cta done";
+    cta.disabled = true;
+  } else if(state.clicked[i]){
+    // Offer opened but timer not finished yet
+    cta.textContent = "Wait for timer…";
+    cta.className = "cta done";
+    cta.disabled = true;
+  } else if(!stageUrlValid){
+    cta.textContent = "Link unavailable";
+    cta.className = "cta locked";
+    cta.disabled = true;
+  } else {
+    cta.textContent = slot.cta || "Go!";
+    cta.className = "cta";
+    cta.disabled = false;
   }
 
-  $("cta").disabled = false;
-  $("cta").className = "cta";
-  $("cta").textContent = slot.cta || "Open stage";
-  $("timer").textContent = "Ready · " + (Number(campaign.durationSec) || 12) + "s";
-  $("bar").style.width = "0%";
-  $("completeBtn").style.display = "none";
+  if(!state.timerArmed && !state.stageDone[i]){
+    $("timer").textContent = state.clicked[i] ? "Done" : "Tap Go to start";
+    if(!state.clicked[i]) $("bar").style.width = "0%";
+  }
+  updateProgressBadge();
+
+  updateCompleteBtn();
+}
+
+function updateCompleteBtn(){
+  const btn = $("completeBtn");
+  if(!btn) return;
+  if(packLocked()){ btn.style.display = "none"; return; }
+  const all = state.stageDone.length === N && state.stageDone.every(Boolean) && !state.timerArmed;
+  btn.style.display = all && !state.submitted ? "flex" : "none";
+  btn.disabled = !all;
+}
+
+function clearTimer(){
+  if(state.timer) clearInterval(state.timer);
+  state.timer = null;
+  state.timerArmed = false;
+}
+
+function finishCurrentStage(){
+  const i = state.index;
+  state.stageDone[i] = true;
+  state.clicked[i] = true;
+  state.stageFinishedAt[i] = new Date().toISOString();
+  if(campaign) saveStageProgress(campaign.id, state.clicked, state.index);
+  clearTimer();
+  $("bar").style.width = "100%";
+  $("timer").textContent = "Done";
+  if(state.index < N - 1){
+    state.index += 1;
+    showMsg("Stage " + (i + 1) + " complete. Continue to the next stage.", "info");
+    announce("Stage " + (i + 1) + " complete");
+    preloadStageImage(state.index);
+    renderStep();
+    return;
+  }
+  // Full pack run (all stages) finished
+  state.localCompleted = (state.localCompleted || 0) + 1;
+  state.attemptLogs = state.attemptLogs || [];
+  state.attemptLogs.push({
+    completedAt: new Date().toISOString(),
+    stages: N,
+    earlyReturns: state.earlyReturns || 0
+  });
+  try{ persistCurrentRuns(campaign.id); }catch(e){}
+  if(typeof updateProgressBadge === "function") updateProgressBadge();
+  try{ updateProgressStrip(); }catch(e){}
 
   const maxPer = Number(campaign.maxPerUser) || 0;
-  let limTxt = "";
-  if(maxPer > 0) limTxt = " · " + (state.localCompleted || 0) + "/" + maxPer + " runs";
-  if(campaign.maxUsers) limTxt += " · max " + campaign.maxUsers + " users";
-  $("foot").textContent = "+" + (campaign.rewardWcoin || 0) + " WCoin if approved" + limTxt;
-  updateStickyProg();
+  let reopenTs = 0;
+  try{ reopenTs = typeof parseReopenAt === "function" ? parseReopenAt(campaign) : 0; }catch(e){}
+  let serverUsed = 0;
+  serverUsed = (userHistory || []).filter(s => {
+    if(String(taskIdOf(s)) !== String(campaign.id)) return false;
+    const st = String(s.status||"").toLowerCase();
+    if(!(st === "pending" || st === "approved" || st === "completed")) return false;
+    if(reopenTs > 0){
+      const t = new Date(s.createdAt || s.updatedAt || 0).getTime();
+      if(t && t < reopenTs) return false;
+    }
+    return true;
+  }).length;
+  const totalDone = serverUsed + state.localCompleted;
+
+  if(maxPer > 0 && totalDone < maxPer){
+    showMsg("Run " + totalDone + " of " + maxPer + " complete. Next run starting — open the offer again.", "info");
+    setTimeout(function(){ resetStagesForNextAttempt(); }, 700);
+    return;
+  }
+  showMsg("All required runs complete. Submitting for review…", "info");
+  renderStep();
+  setTimeout(function(){ submitForReview(); }, 500);
+}
+
+function startTimer(){
+  clearTimer();
+  const sec = Math.max(5, Number(campaign.durationSec) || 12);
+  state.timerArmed = true;
+  state.timerNeed = sec;
+  // Wall-clock end time — keeps counting while user is on the partner site
+  state.timerEndAt = Date.now() + sec * 1000;
+  state.left = sec;
+  const i = state.index;
+  if(!state.stageStartedAt[i]) state.stageStartedAt[i] = new Date().toISOString();
+  $("timer").textContent = "00:" + String(Math.ceil(state.left)).padStart(2, "0");
+  $("bar").style.width = "0%";
+  const cta = $("cta");
+  cta.disabled = true;
+  cta.textContent = "Timer running…";
+  cta.className = "cta done";
+  showMsg("Timer running. Stay on the partner page until 00:00. Returning early restarts this stage.", "info");
+  announce("Timer running");
+  state.timer = setInterval(() => {
+    const leftMs = state.timerEndAt - Date.now();
+    state.left = Math.max(0, leftMs / 1000);
+    const elapsed = state.timerNeed - state.left;
+    $("timer").textContent = "00:" + String(Math.ceil(state.left)).padStart(2, "0");
+    const pct = Math.min(100, (elapsed / state.timerNeed) * 100);
+    $("bar").style.width = pct + "%";
+    const wrap = $("progressWrap");
+    if(wrap) wrap.setAttribute("aria-valuenow", String(Math.round(pct)));
+    if(state.left <= 0){
+      finishCurrentStage();
+    }
+  }, 200);
+}
+
+function updateProgressBadge(){
+  const maxPer = Number(campaign && campaign.maxPerUser) || 0;
+  let serverUsed = 0;
+  if(maxPer > 0 && campaign){
+    serverUsed = (userHistory || []).filter(s => {
+      if(String(taskIdOf(s)) !== String(campaign.id)) return false;
+      const st = String(s.status||"").toLowerCase();
+      return st === "pending" || st === "approved" || st === "completed";
+    }).length;
+  }
+  const local = Number(state.localCompleted) || 0;
+  const shown = serverUsed + local;
+  let badge = document.getElementById("attemptBadge");
+  if(!badge){
+    badge = document.createElement("div");
+    badge.id = "attemptBadge";
+    badge.style.cssText = "margin:10px 20px 0;padding:10px 12px;border-radius:12px;background:rgba(56,189,248,.12);color:#7dd3fc;font-size:13px;font-weight:800;text-align:center";
+    const body = document.querySelector(".body");
+    if(body) body.appendChild(badge);
+  }
+  if(maxPer > 0){
+    badge.style.display = "block";
+    badge.textContent = "Your progress on this pack: " + Math.min(shown, maxPer) + " / " + maxPer;
+  } else if(local > 0){
+    badge.style.display = "block";
+    badge.textContent = "Runs completed this session: " + local;
+  } else {
+    badge.style.display = "none";
+  }
+  const foot = $("foot");
+  if(foot && campaign){
+    let limTxt = "";
+    if(maxPer > 0) limTxt += " · Progress " + Math.min(shown, maxPer) + "/" + maxPer;
+    if(campaign.maxUsers) limTxt += " · max " + campaign.maxUsers + " users";
+    foot.textContent = "Reward if approved: +" + (campaign.rewardWcoin || 0) + " WCoin" + limTxt;
+    try{ updateProgressStrip(); }catch(e){}
+  }
+}
+
+function resetStagesForNextAttempt(){
+  N = Math.max(1, (slots && slots.length) || 1);
+  state.index = 0;
+  state.clicked = Array(N).fill(false);
+  state.stageDone = Array(N).fill(false);
+  state.stageStartedAt = Array(N).fill(null);
+  state.stageFinishedAt = Array(N).fill(null);
+  state.submitted = false;
+  state.packStatus = null;
+  clearTimer();
+  if(campaign) clearStageProgress(campaign.id);
+  setStatusBanner(null);
+  updateProgressBadge();
+  renderStep();
 }
 
 function onGo(){
   if(!campaign || packLocked()) return;
-  if(state.timerArmed) return;
+  if(state.timerArmed){
+    showMsg("Timer is running. Stay until it reaches 00:00 — leaving early restarts this stage.", "err");
+    announce("Timer still running");
+    return;
+  }
   const i = state.index;
   if(state.stageDone[i]){
     showMsg("This stage is already complete and locked.", "info");
@@ -789,18 +863,27 @@ function onGo(){
   const slot = slots[i] || {};
   let url = normalizeUrl(slot.url || "");
   if(!url || !isValidUrl(url)){
-    showMsg("This stage link is broken. Contact support or try another pack.", "err");
-    $("cta").disabled = true;
-    $("cta").textContent = "Link unavailable";
+    showMsg("This stage link is unavailable.", "err");
+    showErrorPanel(
+      "Stage link unavailable",
+      "This partner link is broken or missing. Try another pack or contact support.",
+      { hideLogin: true }
+    );
+    const cta = $("cta");
+    if(cta){ cta.disabled = true; cta.className = "cta locked"; cta.textContent = "Link unavailable"; }
     return;
   }
+  hideErrorPanel();
   state.clicked[i] = true;
   if(campaign) saveStageProgress(campaign.id, state.clicked, state.index);
   renderClicks();
   try{ window.open(url, "_blank", "noopener,noreferrer"); }catch(e){ location.href = url; }
   startTimer();
-  showMsg("Offer opened. Stay until the timer ends — returning early restarts this stage.", "info");
+  showMsg("Offer opened. Stay until the timer ends — coming back early restarts this stage.", "info");
+  announce("Timer started for stage " + (i + 1));
+  preloadStageImage(i + 1);
 }
+
 
 function adsPageUrl(packId){
   const base = "https://watchflix-app.pages.dev/watchflixads/";
@@ -812,14 +895,18 @@ function findNextAvailablePackId(currentId){
   if(!packs.length) return null;
   const cur = String(currentId || "");
   const ordered = packs.slice();
+  // Prefer packs listed after current, then wrap
   const idx = ordered.findIndex(p => String(p.id) === cur);
-  const rotated = idx >= 0 ? ordered.slice(idx + 1).concat(ordered.slice(0, idx)) : ordered;
+  const rotated = idx >= 0
+    ? ordered.slice(idx + 1).concat(ordered.slice(0, idx))
+    : ordered;
   for(const p of rotated){
     const id = String(p.id || "");
     if(!id || id === cur) continue;
     const sub = latestSubForTask(userHistory || [], id);
     if(sub){
       const st = String(sub.status || "").toLowerCase();
+      // Skip packs already waiting on admin for this user
       if(st === "pending") continue;
     }
     return id;
@@ -830,8 +917,10 @@ function advanceToNextPackIfAny(){
   if(!campaign) return false;
   const nextId = findNextAvailablePackId(campaign.id);
   if(!nextId) return false;
-  showMsg("This pack is under review. Opening next pack…", "info");
-  setTimeout(function(){ location.href = adsPageUrl(nextId); }, 1100);
+  showMsg("This pack is under review. Moving to the next available pack…", "info");
+  setTimeout(function(){
+    location.href = adsPageUrl(nextId);
+  }, 1100);
   return true;
 }
 
@@ -850,6 +939,7 @@ async function loadHistory(){
   }catch(e){ return []; }
 }
 
+
 function renderPackSwitcher(){
   const packs = window._wfLivePacks || [];
   let el = document.getElementById("packSwitch");
@@ -864,33 +954,27 @@ function renderPackSwitcher(){
   const cur = campaign ? campaign.id : "";
   el.innerHTML = packs.map(p => {
     const on = String(p.id) === String(cur);
-    return `<button type="button" onclick="location.href='https://watchflix-app.pages.dev/watchflixads/?id='+encodeURIComponent('${String(p.id).replace(/'/g,"")}')"
+    return `<button type="button" onclick="location.href='https://watchflix-app.pages.dev/watchflixads/?id='+encodeURIComponent(p.id)"
       style="border:1px solid ${on?'#38bdf8':'#334155'};background:${on?'rgba(56,189,248,.2)':'#1e293b'};color:#e2e8f0;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer">
-      ${String(p.title||'Pack').replace(/</g,'')} · +${p.reward||0} WC if approved
+      ${String(p.title||'Pack').replace(/</g,'')} · +${p.reward||0} WC
     </button>`;
   }).join("");
 }
-
 async function loadCampaign(){
-  setOfflineUi(false);
-  setSessionUi(false);
   const t = token();
+  hideErrorPanel();
   if(!t && !uid()){
-    showMsg("Open this from your dashboard while signed in.", "err");
-    setSessionUi(true);
-    $("visual").innerHTML = `<div class="ph">Sign in required</div>`;
+    showMsg("Sign in required.", "err");
+    $("cta").textContent = "Sign in required";
+    $("cta").disabled = true;
+    showErrorPanel("Sign in required", "Open WatchFlix Ads from your dashboard after signing in.", { hideRetry: true });
     return;
   }
   if(!t){
-    showMsg("Session missing. Sign in again from the dashboard.", "err");
-    setSessionUi(true);
-    return;
-  }
-  if(!navigator.onLine){
-    showMsg("You appear offline. Check your connection.", "err");
-    setOfflineUi(true);
+    showMsg("Session missing.", "err");
     $("cta").disabled = true;
-    $("cta").textContent = "Offline";
+    $("cta").textContent = "Session expired";
+    showErrorPanel("Session expired", "Your session expired. Sign in again, then reopen this activity.", { hideRetry: true });
     return;
   }
   try{
@@ -901,8 +985,10 @@ async function loadCampaign(){
     userHistory = history;
     const body = await res.json().catch(() => ({}));
     if(res.status === 401){
-      showMsg("Session expired. Sign in again.", "err");
-      setSessionUi(true);
+      showMsg("Session expired.", "err");
+      $("cta").disabled = true;
+      $("cta").textContent = "Session expired";
+      showErrorPanel("Session expired", "Sign in again from the dashboard, then return here.", { hideRetry: true });
       return;
     }
     if(!res.ok || body.success === false){
@@ -919,8 +1005,11 @@ async function loadCampaign(){
         || rows.find(t => t && String(t._id || t.id || "") === String(wantedId))
         || null;
     }
-    if(!task) task = wfRows[0] || null;
-
+    if(!task){
+      // Only WatchFlix packs — never a random Sponsored task
+      task = wfRows[0] || null;
+    }
+    // Expose all live packs for in-page switcher
     window._wfLivePacks = wfRows.map(t => ({
       id: String(t._id || t.id),
       title: t.title || "Pack",
@@ -932,7 +1021,7 @@ async function loadCampaign(){
         }catch(e){ return 0; }
       })()
     }));
-
+    // Fetch full task (metadata/slots/reopenAt often missing on list endpoint)
     if(task && (task._id || task.id)){
       try{
         const det = await fetch(API_URL + "/api/v1/sponsored-tasks/" + encodeURIComponent(task._id || task.id), {
@@ -943,10 +1032,25 @@ async function loadCampaign(){
         if(full && (full._id || full.id)) task = Object.assign({}, task, full);
       }catch(e){}
     }
-
+    // Prefer full task document (description / metadata with reopenAt)
+    try{
+      const detailRes = await fetch(API_URL + "/api/v1/sponsored-tasks/" + encodeURIComponent(task._id || task.id), { headers: authHeaders() });
+      if(detailRes.ok){
+        const detailBody = await detailRes.json().catch(()=>({}));
+        const full = detailBody.data || detailBody.task || detailBody;
+        if(full && (full._id || full.id)) task = full;
+      }
+    }catch(e){}
     campaign = mapTaskToCampaign(task);
     try{ renderPackSwitcher(); }catch(e){}
-
+    if(campaign){
+      let reopenTs = 0;
+      try{ reopenTs = typeof parseReopenAt === "function" ? parseReopenAt(task) : 0; }catch(e){}
+      const restored = restoreRunProgress(campaign.id, reopenTs);
+      state.localCompleted = Number(restored.localCompleted) || 0;
+      state.attemptLogs = restored.attemptLogs || [];
+      try{ updateProgressBadge(); }catch(e){}
+    }
     if(!campaign){
       $("title").textContent = "No campaigns";
       $("desc").textContent = "Admin has not published an active WatchFlix pack yet.";
@@ -954,7 +1058,6 @@ async function loadCampaign(){
       $("cta").textContent = "None available";
       $("visual").innerHTML = `<div class="ph">Empty</div>`;
       $("foot").textContent = "Check back after admin publishes a pack.";
-      updateStickyProg();
       return;
     }
 
@@ -965,22 +1068,17 @@ async function loadCampaign(){
     state.stageStartedAt = Array(N).fill(null);
     state.stageFinishedAt = Array(N).fill(null);
     state.earlyReturns = 0;
-    state.dailyLimit = Number(campaign.dailyLimit) || 10;
+    state.dailyLimit = 99;
     state.index = 0;
     state.submitted = false;
     state.packStatus = null;
-    state.serverStatus = null;
-    state._autoSubmitted = false;
 
+    // Admin review status for this user + pack
+    // Resolve reopen timestamp (WFJSON, plain markers, metadata, updatedAt)
     let reopenTs = typeof parseReopenAt === "function" ? parseReopenAt(task) : 0;
     if(!reopenTs && campaign) reopenTs = typeof parseReopenAt === "function" ? parseReopenAt(campaign) : 0;
-    const taskUpdated = new Date(task.updatedAt || campaign.updatedAt || 0).getTime() || 0;
+    const taskUpdated = new Date(task.updatedAt || 0).getTime() || 0;
     if(reopenTs) campaign.reopenAt = new Date(reopenTs).toISOString();
-
-    // Restore local runs first
-    const restored = restoreRunProgress(campaign.id, reopenTs);
-    state.localCompleted = Number(restored.localCompleted) || 0;
-    state.attemptLogs = restored.attemptLogs || [];
 
     const maxPer = Number(campaign.maxPerUser) || 0;
     const cutTs = reopenTs || 0;
@@ -989,13 +1087,12 @@ async function loadCampaign(){
       const ss = String(s.status||"").toLowerCase();
       if(!(ss === "pending" || ss === "approved" || ss === "completed")) return false;
       if(cutTs > 0){
-        const tt = new Date(s.createdAt || s.updatedAt || 0).getTime();
-        if(tt && tt < cutTs) return false;
+        const t = new Date(s.createdAt || s.updatedAt || 0).getTime();
+        if(t && t < cutTs) return false;
       }
       return true;
     }).length;
 
-    // —— Server status always wins over local locks (#16) ——
     const sub = latestSubForTask(userHistory, campaign.id);
     if(sub){
       const st = String(sub.status || "").toLowerCase();
@@ -1005,43 +1102,42 @@ async function loadCampaign(){
 
       if(isReopened){
         state.packStatus = null;
-        state.serverStatus = null;
         state.submitted = false;
-        if(reopenTs > 0 && reopenTs > subAt){
+        const explicitReopen = reopenTs > 0 && reopenTs > subAt;
+        if(explicitReopen){
           state.localCompleted = 0;
           state.attemptLogs = [];
           clearStageProgress(campaign.id);
           clearRunProgress(campaign.id);
           showMsg("Pack reopened — complete stages again.", "info");
+        } else {
+          showMsg("Pack available — your run progress is kept.", "info");
         }
         setStatusBanner(null);
       } else if(st === "pending"){
-        state.serverStatus = "pending";
         state.packStatus = "pending";
         state.submitted = true;
         setStatusBanner("pending");
+        // Don't stay stuck if another pack can still be done
         setTimeout(function(){ try{ advanceToNextPackIfAny(); }catch(e){} }, 800);
       } else if(st === "approved" || st === "completed"){
         if(maxPer > 0 && usedAfterReopen < maxPer){
           state.packStatus = null;
-          state.serverStatus = null;
           state.submitted = false;
           clearStageProgress(campaign.id);
           setStatusBanner(null);
           showMsg("Progress " + usedAfterReopen + "/" + maxPer + " — continue.", "info");
         } else if(maxPer <= 0){
-          // unlimited but last sub approved — still allow unless you want lock; lock after approved
-          state.serverStatus = "approved";
-          state.packStatus = "approved";
-          setStatusBanner("approved");
+          state.packStatus = null;
+          state.submitted = false;
+          clearStageProgress(campaign.id);
+          setStatusBanner(null);
         } else {
-          state.serverStatus = "approved";
           state.packStatus = "approved";
           setStatusBanner("approved");
         }
       } else if(st === "rejected"){
         state.packStatus = null;
-        state.serverStatus = null;
         state.submitted = false;
         clearStageProgress(campaign.id);
         setStatusBanner("rejected", (sub.rejectionReason || sub.reason) || "");
@@ -1049,40 +1145,55 @@ async function loadCampaign(){
       }
     } else {
       setStatusBanner(null);
-      if(!packLocked()){
-        const prog = loadStageProgress(campaign.id);
-        if(prog && Array.isArray(prog.clicked) && prog.clicked.length === N){
-          state.clicked = prog.clicked.map(Boolean);
-          state.stageDone = state.clicked.map((c, idx) => !!(c && prog.index > idx));
-          let idx = state.stageDone.findIndex(d => !d);
-          if(idx < 0) idx = 0;
-          state.index = idx;
-        }
+      // Restore in-progress stages (not submitted yet)
+      const prog = loadStageProgress(campaign.id);
+      if(prog && Array.isArray(prog.clicked) && prog.clicked.length === N){
+        state.clicked = prog.clicked.map(Boolean);
+        // Treat previously clicked stages that user left mid-pack as done only if they advanced past them
+        state.stageDone = state.clicked.map((c, idx) => {
+          // If a later stage was started, earlier ones are done
+          if(c && prog.index > idx) return true;
+          return false;
+        });
+        // Find first incomplete stage
+        let idx = state.stageDone.findIndex(d => !d);
+        if(idx < 0) idx = N - 1;
+        state.index = idx;
       }
     }
 
-    // Re-apply run progress after status (unless explicit reopen cleared it)
+    // Always re-apply saved run count (2/5 etc) after status handling
+    // (explicit reopen already cleared storage above)
     try{
-      const restored2 = restoreRunProgress(campaign.id, reopenTs || 0);
-      const n = Number(restored2.localCompleted) || 0;
-      if(n > (Number(state.localCompleted) || 0)) state.localCompleted = n;
+      const restored = restoreRunProgress(campaign.id, reopenTs || 0);
+      const n = Number(restored.localCompleted) || 0;
+      if(n > 0){
+        state.localCompleted = n;
+        state.attemptLogs = restored.attemptLogs || state.attemptLogs || [];
+      } else if(!state.localCompleted){
+        state.localCompleted = 0;
+      }
     }catch(e){}
+    try{ updateProgressBadge(); }catch(e){}
+    try{ updateProgressStrip(); }catch(e){}
 
     renderStep();
+    try{ updateProgressStrip(); }catch(e){}
+    try{ preloadStageImage(0); preloadStageImage(1); }catch(e){}
+    try{ if(!window.__wfAdsDeferred){ window.__wfAdsDeferred = true; setTimeout(loadDeferredAds, 1200); } }catch(e){}
   }catch(e){
-    const offline = !navigator.onLine || /network|failed to fetch|load/i.test(String(e.message||""));
     showMsg(e.message || "Could not load campaigns from server", "err");
     $("cta").disabled = true;
     $("cta").textContent = "Load failed";
     $("visual").innerHTML = `<div class="ph">Error</div>`;
-    setOfflineUi(true);
-    if(offline) showMsg("Connection problem. Tap Retry when online.", "err");
+    showErrorPanel("Could not load activity", e.message || "Check your connection and try again.", { hideLogin: false });
   }
 }
 
-async function submitForReview(auto){
+async function submitForReview(){
   if(state._submitInFlight) return;
-  if(state.packStatus === "approved" || state.serverStatus === "approved") return;
+  if(state.packStatus === "approved") return;
+  // Allow submit when we just locked UI as pending for auto-submit after all runs
   if(state.packStatus === "pending" && state._autoSubmitted) return;
   if(!campaign){
     showMsg("No campaign loaded.", "err");
@@ -1099,37 +1210,40 @@ async function submitForReview(auto){
   const u = uid();
   if(!u){
     showMsg("Sign in from the dashboard first.", "err");
-    setSessionUi(true);
     return;
   }
   if(!token()){
     showMsg("Session missing. Sign in again.", "err");
-    setSessionUi(true);
     return;
   }
-
+  // Times per user (from pack config — empty/null = unlimited)
   const maxPer = Number(campaign.maxPerUser) || 0;
-  // After auto multi-run, localCompleted should equal maxPer; server history still checked
   if(maxPer > 0){
     const mine = (userHistory || []).filter(s => {
-      if(String(taskIdOf(s)) !== String(campaign.id)) return false;
+      const tid = taskIdOf(s);
+      if(String(tid) !== String(campaign.id)) return false;
       const st = String(s.status || "").toLowerCase();
+      // count pending + approved (rejected does not consume a slot if you want retry — count all attempts)
       return st === "pending" || st === "approved" || st === "completed" || !st;
     }).length;
-    // allow one submit after finishing runs locally
+    if(mine >= maxPer){
+      showMsg("Limit reached: you can complete this pack " + maxPer + " time(s). You have used " + mine + ".", "err");
+      return;
+    }
   }
-
+  // Max users total (empty = unlimited)
   const maxUsers = Number(campaign.maxUsers) || 0;
   if(maxUsers > 0 && Number(campaign.completionCount || 0) >= maxUsers){
     showMsg("This pack is full (max " + maxUsers + " users).", "err");
     return;
   }
+  if(state.timerArmed || (state.left > 0 && state.timerArmed)){
+    showMsg("Wait for the timer to finish on this page before submitting.", "err");
+    return;
+  }
 
-  state._submitInFlight = true;
   const btn = $("completeBtn");
   if(btn){ btn.disabled = true; btn.textContent = "Submitting…"; }
-  $("cta").disabled = true;
-  $("cta").textContent = "Submitting…";
 
   const proofUrl = "https://watchflix-app.pages.dev/watchflixads/?id=" + encodeURIComponent(campaign.id) + "&session=" + encodeURIComponent(state.sessionId);
   const meta = {
@@ -1168,6 +1282,7 @@ async function submitForReview(auto){
       body: JSON.stringify(payload)
     });
     let body = await res.json().catch(() => ({}));
+    // Fallback: multipart text fields if JSON rejected
     if(!res.ok || body.success === false){
       const form = new FormData();
       form.append("proofType", "url");
@@ -1182,8 +1297,7 @@ async function submitForReview(auto){
     }
     if(res.status === 401){
       showMsg("Session expired. Sign in again.", "err");
-      setSessionUi(true);
-      state._submitInFlight = false;
+      if(btn){ btn.disabled = false; btn.textContent = "Submit for review"; }
       return;
     }
     if(!res.ok || body.success === false){
@@ -1200,12 +1314,12 @@ async function submitForReview(auto){
 
     state.submitted = true;
     state.packStatus = "pending";
-    state.serverStatus = "pending";
     state._autoSubmitted = true;
     setStatusBanner("pending");
     $("completeBtn").style.display = "none";
-    showMsg("Submitted for review · +" + (campaign.rewardWcoin || 0) + " WCoin if approved", "ok");
+    showMsg("Submitted for review. Pack locked until admin decides · +" + (campaign.rewardWcoin || 0) + " WCoin", "ok");
     renderStep();
+    // If another pack is available, open it automatically
     try{
       if(!advanceToNextPackIfAny()){
         showMsg("Submitted for review. No other packs available right now.", "ok");
@@ -1213,43 +1327,11 @@ async function submitForReview(auto){
     }catch(e){}
   }catch(e){
     showMsg(e.message || "Submit failed", "err");
-    if(btn){ btn.disabled = false; btn.textContent = "Submit for review"; btn.style.display = "flex"; }
-    $("cta").disabled = false;
-    $("cta").textContent = "Retry submit";
-  } finally {
-    state._submitInFlight = false;
+    if(btn){ btn.disabled = false; btn.textContent = "Submit for review"; }
   }
 }
 
-// Online / offline
-window.addEventListener("offline", function(){
-  showMsg("You are offline. Progress is kept on this device.", "err");
-  setOfflineUi(true);
-});
-window.addEventListener("online", function(){
-  showMsg("Back online.", "ok");
-  setOfflineUi(false);
-});
-
 loadCampaign();
-
-// #21 Load third-party ad scripts after UI is interactive
-window.addEventListener("load", function(){
-  setTimeout(function(){
-    try{
-      const s1 = document.createElement("script");
-      s1.src = "//guyprior.com/j66fp1kk2?key=cd5aa3d6e8ee19ad69a9fc4547ee0442";
-      s1.async = true;
-      document.head.appendChild(s1);
-    }catch(e){}
-    try{
-      const s2 = document.createElement("script");
-      s2.src = "https://guyprior.com/d5/31/00/d53100897c448dc3ffb3cfde0e31918f.js";
-      s2.async = true;
-      document.body.appendChild(s2);
-    }catch(e){}
-  }, 1200);
-});
 </script>
 </body>
 </html>
