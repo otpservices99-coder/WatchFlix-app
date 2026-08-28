@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#020617">
+<title>Offers · WatchFlix</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Adcash library (as high as possible) -->
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%;font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:#020617;color:#f1f5f9}
+body{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+.shell{max-width:480px;margin:0 auto;min-height:100vh}
+.top{
+  position:sticky;top:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top,0px));
+  background:rgba(2,6,23,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid #1e293b
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:15px;letter-spacing:-.02em}
+.brand i{
+  width:32px;height:32px;border-radius:10px;display:grid;place-items:center;
+  background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-style:normal;font-size:14px;font-weight:900;
+  box-shadow:0 6px 18px rgba(245,158,11,.35)
+}
+.top a{
+  color:#94a3b8;text-decoration:none;font-size:12px;font-weight:700;
+  border:1px solid #334155;border-radius:999px;padding:8px 12px
+}
+.hero{
+  margin:14px 16px;padding:16px;border-radius:18px;
+  background:linear-gradient(135deg,rgba(245,158,11,.18),rgba(239,68,68,.1));
+  border:1px solid rgba(245,158,11,.35)
+}
+.hero h1{margin:0 0 6px;font-size:18px;font-weight:900}
+.hero p{margin:0;font-size:13px;color:#cbd5e1;line-height:1.5;font-weight:600}
+.ad-slot{
+  margin:12px 16px;min-height:90px;border-radius:14px;overflow:hidden;
+  border:1px dashed #334155;background:#0f172a;
+  display:flex;align-items:center;justify-content:center;color:#64748b;font-size:11px;font-weight:700
+}
+.list{padding:4px 16px 28px;display:flex;flex-direction:column;gap:18px}
+.card{
+  border-radius:22px;overflow:hidden;background:#0b1220;
+  border:1px solid #1e293b;box-shadow:0 16px 40px rgba(0,0,0,.35)
+}
+.card .cover{
+  width:100%;aspect-ratio:9/16;max-height:72vh;min-height:320px;
+  background:#020617;position:relative;overflow:hidden
+}
+.card .cover img{
+  width:100%;height:100%;object-fit:cover;display:block
+}
+.card .cover .ph{
+  position:absolute;inset:0;display:grid;place-items:center;
+  color:#64748b;font-weight:800;font-size:14px;padding:24px;text-align:center
+}
+.card .body{padding:16px 16px 18px}
+.card .body h2{margin:0 0 8px;font-size:17px;font-weight:900;line-height:1.25}
+.card .body p{margin:0 0 14px;font-size:13px;color:#94a3b8;line-height:1.55;font-weight:500}
+.card .cta{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;border:0;border-radius:14px;padding:15px 16px;
+  font-weight:900;font-size:15px;cursor:pointer;
+  background:linear-gradient(135deg,#f59e0b,#ef4444);color:#0f172a;
+  text-decoration:none;box-shadow:0 12px 28px rgba(245,158,11,.3)
+}
+.card .cta:active{transform:scale(.98)}
+.empty{
+  margin:24px 16px;padding:28px 18px;border-radius:18px;text-align:center;
+  border:1px solid #1e293b;background:#0b1220;color:#94a3b8;font-weight:600;font-size:14px;line-height:1.5
+}
+.foot{
+  text-align:center;padding:8px 20px 20px;font-size:11px;color:#64748b;line-height:1.45;font-weight:600
+}
+.loading{text-align:center;padding:40px 16px;color:#64748b;font-weight:700}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top">
+    <div class="brand"><i>W</i> Offers</div>
+    <a href="https://watchflix-app.pages.dev/dashboard/">Dashboard</a>
+  </div>
+
+  <div class="hero">
+    <h1>Partner offers</h1>
+    <p>Browse featured partners below. This page is for offers only — rewards stay on your main WatchFlix dashboard.</p>
+  </div>
+
+  <!-- Network ad placements (AutoTag fills these where supported) -->
+  <div class="ad-slot" id="slotTop">Sponsored space</div>
+
+  <div class="list" id="list">
+    <div class="loading">Loading offers…</div>
+  </div>
+
+  <div class="ad-slot" id="slotMid">Sponsored space</div>
+
+  <div class="foot">
+    Offers are provided by partners. WatchFlix does not guarantee third-party results.
+    Return to the dashboard for tasks and withdrawals.
+  </div>
+
+  <div class="ad-slot" id="slotBottom">Sponsored space</div>
+</div>
+
+<script>
+/* —— Adcash AutoTag —— */
+(function(){
+  function run(){
+    try{
+      if(typeof aclib !== "undefined" && aclib.runAutoTag){
+        aclib.runAutoTag({ zoneId: "urjfrbl8ia" });
+      }
+    }catch(e){}
+  }
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", function(){ setTimeout(run, 300); });
+  } else {
+    setTimeout(run, 300);
+  }
+})();
+
+const API_URL = "https://global-api-platform-production.up.railway.app";
+const API_KEY = "ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c";
+const DASH = "https://watchflix-app.pages.dev/dashboard/";
+
+function token(){
+  return localStorage.getItem("wf_token") || localStorage.getItem("token") || "";
+}
+function authHeaders(){
+  const h = { "X-API-Key": API_KEY };
+  const t = token();
+  if(t) h["Authorization"] = "Bearer " + t;
+  return h;
+}
+function escapeHtml(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function normalizeUrl(url){
+  if(!url) return "";
+  url = String(url).trim().replace(/\s+/g, "");
+  if(!/^https?:\/\//i.test(url) && !/^mailto:/i.test(url)) url = "https://" + url;
+  return url;
+}
+function isValidUrl(url){
+  try{ new URL(url); return true; }catch(e){ return false; }
+}
+function isDisplayAd(t){
+  if(!t) return false;
+  const m = t.metadata || t.meta || {};
+  const platform = String(t.platform || "").toLowerCase();
+  const kind = String(m.kind || t.kind || "").toLowerCase();
+  if(platform === "display_ads" || platform === "display" || platform === "offers") return true;
+  if(kind === "display_ads" || kind === "display" || kind === "offer_wall") return true;
+  if(m.displayAd === true || t.displayAd === true) return true;
+  return false;
+}
+function isWatchFlixTask(t){
+  if(!t) return false;
+  const m = t.metadata || t.meta || {};
+  const emb = String(t.description || "");
+  if(String(m.kind || "").toLowerCase().includes("watchflix")) return true;
+  if(String(t.platform || "").toLowerCase() === "watchflix") return true;
+  if(emb.includes("<!--WFJSON:") || emb.toLowerCase().includes("watchflix multi-stage")) return true;
+  return false;
+}
+
+async function loadOffers(){
+  const box = document.getElementById("list");
+  if(!box) return;
+  try{
+    const res = await fetch(API_URL + "/api/v1/sponsored-tasks", {
+      method: "GET",
+      headers: authHeaders()
+    });
+    const body = await res.json().catch(function(){ return {}; });
+    if(res.status === 401){
+      box.innerHTML = '<div class="empty">Sign in on the dashboard first, then open this offers page.<br><br><a href="'+DASH+'" style="color:#fbbf24;font-weight:800">Go to dashboard</a></div>';
+      return;
+    }
+    if(!res.ok || body.success === false){
+      throw new Error(body.message || body.error || ("HTTP " + res.status));
+    }
+    const rows = Array.isArray(body.data) ? body.data : (Array.isArray(body) ? body : []);
+    const active = rows.filter(function(t){ return t && t.active !== false; });
+
+    // Prefer explicit display_ads; fallback: non-WatchFlix, non-social-proof heavy tasks with image+url
+    let offers = active.filter(isDisplayAd);
+    if(!offers.length){
+      offers = active.filter(function(t){
+        if(isWatchFlixTask(t)) return false;
+        if(String(t.platform || "").toLowerCase() === "social") return false;
+        const img = t.imageUrl || t.image || "";
+        const url = t.targetUrl || t.url || "";
+        return !!(img && url);
+      });
+    }
+
+    if(!offers.length){
+      box.innerHTML = '<div class="empty">No partner offers right now.<br>Network ads above may still load.<br><br>Admin can publish offers with platform <b>display_ads</b>.</div>';
+      return;
+    }
+
+    box.innerHTML = offers.map(function(t){
+      const title = t.title || "Partner offer";
+      const desc = t.description || t.instructions || "Open this partner offer to learn more.";
+      // strip WFJSON if any leaked
+      const cleanDesc = String(desc).replace(/<!--WFJSON:[\s\S]*?-->/g, "").replace(/\[WF_REOPEN:[^\]]*\]/g, "").trim();
+      const img = normalizeUrl(t.imageUrl || t.image || t.bannerUrl || "");
+      const url = normalizeUrl(t.targetUrl || t.url || t.link || "");
+      const href = isValidUrl(url) ? url : "#";
+      const disabled = !isValidUrl(url);
+      return (
+        '<article class="card">' +
+          '<div class="cover">' +
+            (img
+              ? '<img src="'+escapeHtml(img)+'" alt="" loading="lazy" onerror="this.style.display=\'none\';this.parentNode.querySelector(\'.ph\').style.display=\'grid\'">' +
+                '<div class="ph" style="display:none">Offer</div>'
+              : '<div class="ph">Offer</div>') +
+          '</div>' +
+          '<div class="body">' +
+            '<h2>'+escapeHtml(title)+'</h2>' +
+            '<p>'+escapeHtml(cleanDesc.slice(0, 280))+(cleanDesc.length > 280 ? "…" : "")+'</p>' +
+            (disabled
+              ? '<span class="cta" style="opacity:.5;pointer-events:none">Link unavailable</span>'
+              : '<a class="cta" href="'+escapeHtml(href)+'" target="_blank" rel="noopener noreferrer">Open offer</a>') +
+          '</div>' +
+        '</article>'
+      );
+    }).join("");
+  }catch(e){
+    box.innerHTML = '<div class="empty">Could not load offers.<br>'+escapeHtml(e.message || "Network error")+'</div>';
+  }
+}
+
+loadOffers();
+</script>
+</body>
+</html>
