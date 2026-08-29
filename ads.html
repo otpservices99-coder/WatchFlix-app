@@ -1,0 +1,1177 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#020617">
+<title>Offers</title><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"><!-- =========================
+     ADCASH AUTOTAG
+     ========================= --><script id="aclib"
+        type="text/javascript"
+        src="//acscdn.com/script/aclib.js"></script><script type="text/javascript">
+  /*
+   * Start Adcash as early as possible.
+   * This is only initialization.
+   * It does NOT mean an impression has already been served.
+   */
+  window.addEventListener("load", function () {
+    try {
+      if (window.aclib && typeof window.aclib.runAutoTag === "function") {
+        window.aclib.runAutoTag({
+          zoneId: "bkgdpudgtk"
+        });
+      }
+    } catch (e) {
+      console.warn("Adcash initialization failed:", e);
+    }
+  });
+</script><style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+  margin:0;
+  min-height:100%;
+  font-family:"Plus Jakarta Sans",system-ui,sans-serif;
+  background:#020617;
+  color:#f1f5f9;
+}
+
+.shell{
+  max-width:480px;
+  margin:0 auto;
+  min-height:100vh;
+  padding-bottom:calc(20px + env(safe-area-inset-bottom,0));
+}
+
+.top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 14px;
+  padding-top:max(10px,env(safe-area-inset-top,0));
+  background:transparent;
+  border:0;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:800;
+  font-size:13px;
+  color:#94a3b8;
+}
+
+.top a{
+  color:#64748b;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:700;
+}
+
+.timer-bar{
+  margin:0 14px 10px;
+  padding:10px 12px;
+  border-radius:12px;
+  background:rgba(15,23,42,.85);
+  border:1px solid #1e293b;
+}
+
+.timer-bar.paused{
+  border-color:#f87171;
+  background:rgba(127,29,29,.25);
+}
+
+.timer-bar .label{
+  font-size:11px;
+  font-weight:700;
+  color:#94a3b8;
+  margin-bottom:4px;
+}
+
+.timer-bar .row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.timer-bar .clock{
+  font-size:20px;
+  font-weight:900;
+  font-variant-numeric:tabular-nums;
+  color:#fbbf24;
+}
+
+.timer-bar .hint{
+  font-size:11px;
+  color:#64748b;
+  font-weight:600;
+  text-align:right;
+}
+
+.timer-track{
+  height:5px;
+  border-radius:99px;
+  background:#1e293b;
+  overflow:hidden;
+  margin-top:8px;
+}
+
+.timer-track i{
+  display:block;
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#f59e0b,#10b981);
+  transition:width .15s linear;
+}
+
+.note{
+  margin:0 14px 12px;
+  font-size:12px;
+  color:#64748b;
+  line-height:1.45;
+  font-weight:600;
+}
+
+.list{
+  padding:4px 14px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.card{
+  border-radius:18px;
+  overflow:hidden;
+  background:#0b1220;
+  border:1px solid #1e293b;
+}
+
+.card .cover{
+  width:100%;
+  aspect-ratio:9/16;
+  max-height:65vh;
+  min-height:260px;
+  background:#020617;
+  position:relative;
+}
+
+.card .cover img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.card .body{
+  padding:12px 14px 14px;
+}
+
+.card .body h2{
+  margin:0 0 6px;
+  font-size:15px;
+  font-weight:800;
+}
+
+.card .body p{
+  margin:0 0 10px;
+  font-size:12px;
+  color:#94a3b8;
+  line-height:1.45;
+}
+
+.card .cta{
+  display:inline-flex;
+  justify-content:center;
+  width:100%;
+  text-decoration:none;
+  border-radius:11px;
+  padding:11px;
+  font-weight:800;
+  font-size:13px;
+  background:#1e293b;
+  color:#e2e8f0;
+  border:1px solid #334155;
+}
+
+/* =========================
+   AD BLOCKER OVERLAY
+   ========================= */
+
+.ab-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(2,6,23,.94);
+  padding:24px 18px;
+  align-items:center;
+  justify-content:center;
+}
+
+.ab-overlay.show{
+  display:flex;
+}
+
+.ab-card{
+  width:100%;
+  max-width:400px;
+  background:#0f172a;
+  border:1px solid #f87171;
+  border-radius:16px;
+  padding:22px 18px;
+  text-align:center;
+  box-shadow:0 20px 50px rgba(0,0,0,.45);
+}
+
+.ab-card h2{
+  margin:0 0 10px;
+  font-size:18px;
+  font-weight:900;
+  color:#fecaca;
+}
+
+.ab-card p{
+  margin:0 0 12px;
+  font-size:13px;
+  color:#cbd5e1;
+  line-height:1.55;
+  font-weight:600;
+}
+
+.ab-card ol{
+  text-align:left;
+  margin:0 0 16px;
+  padding-left:20px;
+  color:#94a3b8;
+  font-size:13px;
+  line-height:1.6;
+  font-weight:600;
+}
+
+.ab-card button{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  padding:13px;
+  font-weight:900;
+  font-size:14px;
+  background:linear-gradient(135deg,#f59e0b,#ef4444);
+  color:#0f172a;
+  cursor:pointer;
+}
+
+.ab-card .sub{
+  margin-top:12px;
+  font-size:11px;
+  color:#64748b;
+  font-weight:600;
+}
+
+/*
+ * Detection probe.
+ *
+ * This is intentionally NOT given classes such as:
+ * adsbox, ad-banner, adsbygoogle, ad-placement.
+ *
+ * Those generic class names are commonly targeted by blockers
+ * and can create misleading results.
+ */
+#adDetectionProbe{
+  position:absolute;
+  width:1px;
+  height:1px;
+  left:-10000px;
+  top:-10000px;
+  overflow:hidden;
+  opacity:.01;
+  pointer-events:none;
+}
+</style></head><body><!--
+  Non-generic detection probe.
+  It is deliberately kept separate from the Adcash ad itself.
+--><div id="adDetectionProbe" aria-hidden="true"></div><!-- =========================
+     BLOCKER WARNING
+     ========================= --><div
+  class="ab-overlay"
+  id="abOverlay"
+  role="alertdialog"
+  aria-modal="true"
+  aria-labelledby="abTitle"
+>
+  <div class="ab-card"><h2 id="abTitle">Ad blocker detected</h2>
+
+<p>
+  WatchFlix is supported by advertising.
+  Please disable your ad blocker or tracking protection for this site
+  so advertisements can load and you can continue.
+</p>
+
+<ol>
+  <li>
+    Disable your ad blocker or tracking protection for
+    <b>watchflix-app.pages.dev</b>
+  </li>
+
+  <li>
+    Tap <b>I disabled it — Refresh</b>
+  </li>
+
+  <li>
+    Stay on this page while the timer runs.
+  </li>
+</ol>
+
+<button
+  type="button"
+  onclick="location.reload()"
+>
+  I disabled it — Refresh
+</button>
+
+<div class="sub">
+  The timer is paused while advertising appears to be blocked.
+</div>
+
+  </div>
+</div><div class="shell">  <div class="top">
+    <div class="brand">Offers</div><a href="https://watchflix-app.pages.dev/watchflixads/">
+  Back
+</a>
+
+  </div>  <div class="timer-bar paused" id="timerBar"><div class="label">
+  Please stay on this page
+</div>
+
+<div class="row">
+
+  <div class="clock" id="clock">
+    —
+  </div>
+
+  <div class="hint" id="timerHint">
+    Checking ads…
+  </div>
+
+</div>
+
+<div class="timer-track">
+  <i id="timerFill"></i>
+</div>
+
+  </div>  <p class="note">
+    Ads may appear on this page. Opening any offer is optional.
+    When the timer ends you return to WatchFlix Ads automatically.
+  </p>  <div class="list" id="list"></div></div><script>
+"use strict";
+
+/* =========================
+   CONFIG
+   ========================= */
+
+const API_URL =
+  "https://global-api-platform-production.up.railway.app";
+
+const API_KEY =
+  "ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c";
+
+const DA = "display_ads";
+
+const RETURN_URL =
+  "https://watchflix-app.pages.dev/watchflixads/";
+
+const ADCASH_SCRIPT_HOST =
+  "acscdn.com";
+
+
+/* =========================
+   HELPERS
+   ========================= */
+
+function token(){
+  return (
+    localStorage.getItem("wf_token") ||
+    localStorage.getItem("token") ||
+    ""
+  );
+}
+
+function authHeaders(){
+
+  const h = {
+    "X-API-Key": API_KEY
+  };
+
+  const t = token();
+
+  if(t){
+    h.Authorization = "Bearer " + t;
+  }
+
+  return h;
+}
+
+function $(id){
+  return document.getElementById(id);
+}
+
+function escapeHtml(s){
+
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
+}
+
+function normalizeUrl(url){
+
+  if(!url) return "";
+
+  url = String(url)
+    .trim()
+    .replace(/\s+/g,"");
+
+  if(!/^https?:\/\//i.test(url)){
+    url = "https://" + url;
+  }
+
+  return url;
+}
+
+function isValidUrl(url){
+
+  try{
+    new URL(url);
+    return true;
+  }catch(e){
+    return false;
+  }
+
+}
+
+function isDisplayAd(t){
+
+  if(!t) return false;
+
+  const p =
+    String(t.platform || "").toLowerCase();
+
+  const m =
+    t.metadata || t.meta || {};
+
+  const k =
+    String(m.kind || "").toLowerCase();
+
+  return (
+    p === DA ||
+    p === "display" ||
+    k === DA ||
+    m.displayAd === true
+  );
+}
+
+
+/* =========================
+   TIMER STATE
+   ========================= */
+
+let timerNeed = 30;
+let timerEnd = 0;
+let timerId = null;
+let timerStarted = false;
+let adsAllowed = false;
+
+
+/* =========================
+   BLOCKER UI
+   ========================= */
+
+function showBlockerWarning(show){
+
+  const ov = $("abOverlay");
+  const bar = $("timerBar");
+
+  if(ov){
+    ov.classList.toggle("show", !!show);
+  }
+
+  if(bar){
+    bar.classList.toggle("paused", !!show);
+  }
+
+  if(show){
+
+    stopTimer();
+
+    if($("clock")){
+      $("clock").textContent = "—";
+    }
+
+    if($("timerHint")){
+      $("timerHint").textContent =
+        "Paused — enable ads";
+    }
+
+    if($("timerFill")){
+      $("timerFill").style.width = "0%";
+    }
+
+  }
+
+}
+
+
+/* =========================
+   TIMER
+   ========================= */
+
+function stopTimer(){
+
+  if(timerId){
+    clearInterval(timerId);
+    timerId = null;
+  }
+
+  timerStarted = false;
+}
+
+function startTimer(sec){
+
+  if(!adsAllowed){
+    return;
+  }
+
+  timerNeed =
+    Math.max(5, Number(sec) || 30);
+
+  timerEnd =
+    Date.now() + timerNeed * 1000;
+
+  if(timerId){
+    clearInterval(timerId);
+  }
+
+  timerStarted = true;
+
+  const bar = $("timerBar");
+
+  if(bar){
+    bar.classList.remove("paused");
+  }
+
+  tickTimer();
+
+  timerId =
+    setInterval(tickTimer,200);
+}
+
+function tickTimer(){
+
+  if(!adsAllowed){
+
+    stopTimer();
+
+    return;
+  }
+
+  const left =
+    Math.max(
+      0,
+      (timerEnd - Date.now()) / 1000
+    );
+
+  const clock = $("clock");
+  const fill = $("timerFill");
+  const hint = $("timerHint");
+
+  const m =
+    Math.floor(left / 60);
+
+  const s =
+    Math.ceil(left % 60);
+
+  if(clock){
+
+    clock.textContent =
+      String(m).padStart(2,"0") +
+      ":" +
+      String(s).padStart(2,"0");
+
+  }
+
+  if(fill){
+
+    fill.style.width =
+      Math.min(
+        100,
+        ((timerNeed - left) / timerNeed) * 100
+      ) + "%";
+
+  }
+
+  if(hint){
+
+    hint.textContent =
+      left > 0
+        ? "Returning when timer ends"
+        : "Returning…";
+
+  }
+
+  if(left <= 0){
+
+    clearInterval(timerId);
+
+    timerId = null;
+
+    setTimeout(goBack,400);
+  }
+
+}
+
+
+/* =========================
+   RETURN
+   ========================= */
+
+function goBack(){
+
+  try{
+
+    const q =
+      new URLSearchParams(location.search);
+
+    const id =
+      q.get("id");
+
+    if(id){
+
+      location.href =
+        RETURN_URL +
+        "?id=" +
+        encodeURIComponent(id);
+
+    }else{
+
+      location.href =
+        RETURN_URL;
+
+    }
+
+  }catch(e){
+
+    location.href =
+      RETURN_URL;
+
+  }
+
+}
+
+
+/* =========================
+   TIMER CONFIG
+   ========================= */
+
+function resolveTimerSec(list){
+
+  let maxT = 0;
+
+  (list || []).forEach(function(t){
+
+    const m =
+      t.metadata ||
+      t.meta ||
+      {};
+
+    const n =
+      Number(
+        m.timerSec ||
+        m.durationSec ||
+        0
+      );
+
+    if(n > maxT){
+      maxT = n;
+    }
+
+  });
+
+  if(maxT >= 5){
+    return maxT;
+  }
+
+  try{
+
+    const g =
+      Number(
+        localStorage.getItem(
+          "wf_da_global_timer"
+        ) || 0
+      );
+
+    if(g >= 5){
+      return g;
+    }
+
+  }catch(e){}
+
+  try{
+
+    const q =
+      Number(
+        new URLSearchParams(
+          location.search
+        ).get("t") || 0
+      );
+
+    if(q >= 5){
+      return q;
+    }
+
+  }catch(e){}
+
+  return 30;
+}
+
+
+/* =========================
+   AD-BLOCK DETECTION
+   ========================= */
+
+/*
+ * IMPORTANT:
+ *
+ * This does NOT attempt to verify that an Adcash impression occurred.
+ *
+ * It checks whether the browser appears to be blocking advertising
+ * resources or whether the Adcash library failed to become available.
+ *
+ * We intentionally avoid:
+ *
+ *   typeof aclib === "undefined"
+ *
+ * as a standalone blocker test.
+ *
+ * We also avoid generic bait classes such as:
+ *
+ *   adsbox
+ *   ad-banner
+ *   adsbygoogle
+ *   ad-placement
+ *
+ * because those can produce false positives.
+ */
+
+async function detectAdBlocker(){
+
+  const checks = [];
+
+  /*
+   * CHECK 1
+   *
+   * Verify that the Adcash script element exists.
+   *
+   * This is only a structural check.
+   */
+  checks.push(
+    new Promise(function(resolve){
+
+      const script =
+        document.getElementById("aclib");
+
+      resolve(
+        script
+          ? false
+          : true
+      );
+
+    })
+  );
+
+
+  /*
+   * CHECK 2
+   *
+   * Give Adcash time to initialize.
+   *
+   * A short delay is important because scripts may load
+   * asynchronously on slower mobile connections.
+   */
+  checks.push(
+    new Promise(function(resolve){
+
+      setTimeout(function(){
+
+        try{
+
+          const exists =
+            !!(
+              window.aclib &&
+              typeof window.aclib === "object"
+            );
+
+          resolve(!exists);
+
+        }catch(e){
+
+          resolve(true);
+
+        }
+
+      },2500);
+
+    })
+  );
+
+
+  /*
+   * CHECK 3
+   *
+   * Attempt to load a harmless resource from the same
+   * Adcash CDN.
+   *
+   * This checks resource-level interference instead of
+   * checking whether an ad was actually clicked/displayed.
+   */
+  checks.push(
+    new Promise(function(resolve){
+
+      let finished = false;
+
+      const img =
+        new Image();
+
+      const finish =
+        function(blocked){
+
+          if(finished){
+            return;
+          }
+
+          finished = true;
+
+          img.onload = null;
+          img.onerror = null;
+
+          resolve(blocked);
+
+        };
+
+      img.onload =
+        function(){
+          finish(false);
+        };
+
+      img.onerror =
+        function(){
+          finish(true);
+        };
+
+      /*
+       * Use the CDN host without pretending this is an ad
+       * impression or ad-render verification.
+       */
+      img.src =
+        "https://" +
+        ADCASH_SCRIPT_HOST +
+        "/favicon.ico?check=" +
+        Date.now();
+
+      setTimeout(
+        function(){
+          finish(false);
+        },
+        3500
+      );
+
+    })
+  );
+
+
+  const results =
+    await Promise.all(checks);
+
+  /*
+   * Count the signals.
+   */
+  const blockedSignals =
+    results.filter(Boolean).length;
+
+  /*
+   * Require multiple independent signals.
+   *
+   * This is deliberately conservative so a slow connection
+   * doesn't immediately lock a legitimate user out.
+   */
+  return blockedSignals >= 2;
+}
+
+
+/* =========================
+   OFFERS
+   ========================= */
+
+async function loadOffers(){
+
+  const box =
+    $("list");
+
+  if(!box){
+    return 30;
+  }
+
+  let offers = [];
+
+  try{
+
+    if(token()){
+
+      const res =
+        await fetch(
+          API_URL +
+          "/api/v1/sponsored-tasks",
+          {
+            headers:authHeaders()
+          }
+        );
+
+      const body =
+        await res.json()
+          .catch(function(){
+            return {};
+          });
+
+      if(
+        res.ok &&
+        body.success !== false
+      ){
+
+        const rows =
+          Array.isArray(body.data)
+            ? body.data
+            : [];
+
+        offers =
+          rows.filter(function(t){
+
+            return (
+              t &&
+              t.active !== false &&
+              isDisplayAd(t)
+            );
+
+          });
+
+      }
+
+    }
+
+  }catch(e){
+
+    console.warn(
+      "Offers request failed:",
+      e
+    );
+
+  }
+
+
+  if(!offers.length){
+
+    box.innerHTML = "";
+
+  }else{
+
+    box.innerHTML =
+      offers.map(function(t){
+
+        const title =
+          t.title ||
+          "Offer";
+
+        let desc =
+          String(
+            t.description || ""
+          )
+          .replace(
+            /<!--WFJSON:[\s\S]*?-->/g,
+            ""
+          )
+          .trim();
+
+        const img =
+          normalizeUrl(
+            t.imageUrl ||
+            t.image ||
+            ""
+          );
+
+        const url =
+          normalizeUrl(
+            t.targetUrl ||
+            t.url ||
+            ""
+          );
+
+        const ok =
+          isValidUrl(url);
+
+        return (
+          '<article class="card">' +
+
+            '<div class="cover">' +
+
+              (
+                img
+                  ? '<img src="' +
+                    escapeHtml(img) +
+                    '" alt="" loading="lazy">'
+                  : ""
+              ) +
+
+            '</div>' +
+
+            '<div class="body">' +
+
+              '<h2>' +
+                escapeHtml(title) +
+              '</h2>' +
+
+              (
+                desc
+                  ? '<p>' +
+                    escapeHtml(
+                      desc.slice(0,220)
+                    ) +
+                    '</p>'
+                  : ""
+              ) +
+
+              (
+                ok
+                  ? '<a class="cta" href="' +
+                    escapeHtml(url) +
+                    '" target="_blank" rel="noopener noreferrer">' +
+                    'Open if interested' +
+                    '</a>'
+                  : ""
+              ) +
+
+            '</div>' +
+
+          '</article>';
+
+      }).join("");
+
+  }
+
+  return resolveTimerSec(offers);
+}
+
+
+/* =========================
+   BOOT
+   ========================= */
+
+async function boot(){
+
+  if($("timerHint")){
+    $("timerHint").textContent =
+      "Checking ad support…";
+  }
+
+  /*
+   * Wait for the page and advertising resources to have
+   * a reasonable chance to initialize.
+   */
+  const blocked =
+    await detectAdBlocker();
+
+  if(blocked){
+
+    adsAllowed = false;
+
+    showBlockerWarning(true);
+
+    return;
+  }
+
+
+  /*
+   * No strong blocking evidence.
+   * Allow the normal WatchFlix flow.
+   */
+  adsAllowed = true;
+
+  showBlockerWarning(false);
+
+
+  /*
+   * Make sure AutoTag has been initialized.
+   */
+  try{
+
+    if(
+      window.aclib &&
+      typeof window.aclib.runAutoTag === "function"
+    ){
+
+      window.aclib.runAutoTag({
+        zoneId:"bkgdpudgtk"
+      });
+
+    }
+
+  }catch(e){
+
+    console.warn(
+      "Adcash AutoTag error:",
+      e
+    );
+
+  }
+
+
+  const sec =
+    await loadOffers();
+
+  startTimer(sec);
+}
+
+
+/*
+ * Start only after DOM is ready.
+ */
+if(
+  document.readyState === "loading"
+){
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    boot
+  );
+
+}else{
+
+  boot();
+
+}
+
+</script><!-- =========================
+     ADSTERRA
+     =========================
+
+     This is separate from Adcash.
+
+     If you intend to use this Adsterra script,
+     keep it separate from the Adcash detection logic.
+--><script
+  src="https://guyprior.com/59/db/a3/59dba3655058fb84ac3201caeab5092f.js">
+</script></body>
+</html>
