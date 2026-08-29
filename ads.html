@@ -1,0 +1,1286 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8"><meta
+name="viewport"
+content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+
+«»
+
+  <meta name="theme-color" content="#020617">  <title>Offers</title>  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >  <!-- =========================================================
+       ANTIADBLOCK CORE — RECOVERY MODE
+       
+       KEEP THIS EXACTLY AS PROVIDED BY THE DASHBOARD.
+       
+       IMPORTANT:
+       There is NO custom detection code here.
+       AntiAdBlock Core controls detection and its own
+       recovery notice.
+       ========================================================= -->  <script
+    async
+    src="https://antiadblockcore.com/s/cmte2iz0x000dwf80jx4kz1lh.js"
+    data-aabc-site="cmte2iz0x000dwf80jx4kz1lh"
+    crossorigin="anonymous"
+  ></script>  <!-- =========================================================
+       ADCASH AUTOTAG
+       
+       PRESERVED.
+       ========================================================= -->  <script
+    id="aclib"
+    type="text/javascript"
+    src="//acscdn.com/script/aclib.js"
+  ></script>  <script>
+    (function () {
+
+      function initAdcash() {
+
+        try {
+
+          if (
+            window.aclib &&
+            typeof window.aclib.runAutoTag === "function"
+          ) {
+
+            window.aclib.runAutoTag({
+              zoneId: "bkgdpudgtk"
+            });
+
+            console.log(
+              "[WatchFlix] Adcash AutoTag initialized"
+            );
+
+          } else {
+
+            console.warn(
+              "[WatchFlix] Adcash library is not available yet"
+            );
+
+          }
+
+        } catch (error) {
+
+          console.warn(
+            "[WatchFlix] Adcash initialization error",
+            error
+          );
+
+        }
+
+      }
+
+      if (
+        document.readyState === "loading"
+      ) {
+
+        document.addEventListener(
+          "DOMContentLoaded",
+          initAdcash,
+          { once: true }
+        );
+
+      } else {
+
+        initAdcash();
+
+      }
+
+    })();
+  </script>  <style>
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+
+      font-family:
+        "Plus Jakarta Sans",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      background: #020617;
+      color: #f1f5f9;
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+
+      margin: 0 auto;
+
+      padding-bottom:
+        calc(
+          20px +
+          env(safe-area-inset-bottom, 0px)
+        );
+    }
+
+    /* =========================================================
+       TOP BAR
+       ========================================================= */
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 10px;
+
+      padding: 10px 14px;
+
+      padding-top:
+        max(
+          10px,
+          env(safe-area-inset-top, 0px)
+        );
+    }
+
+    .brand {
+      font-size: 13px;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+
+    .top a {
+      color: #64748b;
+      text-decoration: none;
+
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .top a:active {
+      opacity: .7;
+    }
+
+    /* =========================================================
+       TIMER
+       ========================================================= */
+
+    .timer-bar {
+      margin: 0 14px 10px;
+
+      padding: 10px 12px;
+
+      border-radius: 12px;
+
+      background:
+        rgba(15, 23, 42, .85);
+
+      border: 1px solid #1e293b;
+    }
+
+    .timer-bar .label {
+      margin-bottom: 4px;
+
+      font-size: 11px;
+      font-weight: 700;
+
+      color: #94a3b8;
+    }
+
+    .timer-bar .row {
+      display: flex;
+
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 10px;
+    }
+
+    .timer-bar .clock {
+      font-size: 20px;
+      font-weight: 900;
+
+      font-variant-numeric:
+        tabular-nums;
+
+      color: #fbbf24;
+    }
+
+    .timer-bar .hint {
+      font-size: 11px;
+      font-weight: 600;
+
+      color: #64748b;
+
+      text-align: right;
+    }
+
+    .timer-track {
+      height: 5px;
+
+      margin-top: 8px;
+
+      border-radius: 99px;
+
+      background: #1e293b;
+
+      overflow: hidden;
+    }
+
+    .timer-track i {
+      display: block;
+
+      width: 0%;
+      height: 100%;
+
+      background:
+        linear-gradient(
+          90deg,
+          #f59e0b,
+          #10b981
+        );
+
+      transition:
+        width .15s linear;
+    }
+
+    /* =========================================================
+       NOTE
+       ========================================================= */
+
+    .note {
+      margin: 0 14px 12px;
+
+      font-size: 12px;
+      line-height: 1.45;
+
+      color: #64748b;
+
+      font-weight: 600;
+    }
+
+    /* =========================================================
+       OFFER LIST
+       ========================================================= */
+
+    .list {
+      display: flex;
+      flex-direction: column;
+
+      gap: 16px;
+
+      padding: 4px 14px 16px;
+    }
+
+    .card {
+      overflow: hidden;
+
+      border-radius: 18px;
+
+      background: #0b1220;
+
+      border: 1px solid #1e293b;
+    }
+
+    .card .cover {
+      position: relative;
+
+      width: 100%;
+
+      aspect-ratio: 9 / 16;
+
+      min-height: 260px;
+      max-height: 65vh;
+
+      background: #020617;
+    }
+
+    .card .cover img {
+      display: block;
+
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+    }
+
+    .card .body {
+      padding: 12px 14px 14px;
+    }
+
+    .card .body h2 {
+      margin: 0 0 6px;
+
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .card .body p {
+      margin: 0 0 10px;
+
+      font-size: 12px;
+      line-height: 1.45;
+
+      color: #94a3b8;
+    }
+
+    .card .cta {
+      display: inline-flex;
+
+      align-items: center;
+      justify-content: center;
+
+      width: 100%;
+
+      padding: 11px;
+
+      border-radius: 11px;
+
+      border: 1px solid #334155;
+
+      background: #1e293b;
+
+      color: #e2e8f0;
+
+      text-decoration: none;
+
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .card .cta:active {
+      transform: scale(.99);
+      opacity: .8;
+    }
+
+    /* =========================================================
+       EMPTY / LOADING
+       ========================================================= */
+
+    .loading,
+    .empty {
+      padding: 30px 15px;
+
+      text-align: center;
+
+      color: #64748b;
+
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+  </style></head><body>  <div class="shell"><!-- =======================================================
+     HEADER
+     ======================================================= -->
+
+<div class="top">
+
+  <div class="brand">
+    Offers
+  </div>
+
+  <a
+    href="https://watchflix-app.pages.dev/watchflixads/"
+  >
+    Back
+  </a>
+
+</div>
+
+
+<!-- =======================================================
+     TIMER
+     
+     IMPORTANT:
+     This timer does NOT wait for AntiAdBlock Core.
+     AntiAdBlock Core operates independently in Recovery
+     mode.
+     ======================================================= -->
+
+<div
+  class="timer-bar"
+  id="timerBar"
+>
+
+  <div class="label">
+    Please stay on this page
+  </div>
+
+  <div class="row">
+
+    <div
+      class="clock"
+      id="clock"
+    >
+      00:30
+    </div>
+
+    <div
+      class="hint"
+      id="timerHint"
+    >
+      Returning when timer ends
+    </div>
+
+  </div>
+
+  <div class="timer-track">
+
+    <i id="timerFill"></i>
+
+  </div>
+
+</div>
+
+
+<p class="note">
+  Ads may appear on this page.
+  Opening any offer is optional.
+  When the timer ends you return to WatchFlix Ads automatically.
+</p>
+
+
+<!-- =======================================================
+     OFFERS
+     ======================================================= -->
+
+<div
+  class="list"
+  id="list"
+>
+
+  <div class="loading">
+    Loading offers…
+  </div>
+
+</div>
+
+  </div>  <!-- =========================================================
+       WATCHFLIX APPLICATION
+       
+       NO CUSTOM ADBLOCK DETECTOR.
+       NO AABC WAIT.
+       NO AABC CALLBACK.
+       NO AABC EVENT LISTENER.
+       NO CUSTOM BLOCKER OVERLAY.
+       ========================================================= -->  <script>
+
+    "use strict";
+
+
+    /* =========================================================
+       CONFIGURATION
+       ========================================================= */
+
+    const API_URL =
+      "https://global-api-platform-production.up.railway.app";
+
+    const API_KEY =
+      "ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c";
+
+    const DISPLAY_AD_PLATFORM =
+      "display_ads";
+
+    const RETURN_URL =
+      "https://watchflix-app.pages.dev/watchflixads/";
+
+
+    /* =========================================================
+       STATE
+       ========================================================= */
+
+    let timerNeed = 30;
+
+    let timerEnd = 0;
+
+    let timerId = null;
+
+
+    /* =========================================================
+       HELPERS
+       ========================================================= */
+
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+
+    function getToken() {
+
+      try {
+
+        return (
+          localStorage.getItem("wf_token") ||
+          localStorage.getItem("token") ||
+          ""
+        );
+
+      } catch (error) {
+
+        return "";
+
+      }
+
+    }
+
+
+    function getAuthHeaders() {
+
+      const headers = {
+        "X-API-Key": API_KEY
+      };
+
+      const token = getToken();
+
+      if (token) {
+
+        headers.Authorization =
+          "Bearer " + token;
+
+      }
+
+      return headers;
+
+    }
+
+
+    function escapeHtml(value) {
+
+      return String(
+        value == null ? "" : value
+      )
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    function normalizeUrl(url) {
+
+      if (!url) {
+        return "";
+      }
+
+      let value =
+        String(url)
+          .trim()
+          .replace(/\s+/g, "");
+
+      if (
+        !/^https?:\/\//i.test(value)
+      ) {
+
+        value =
+          "https://" + value;
+
+      }
+
+      return value;
+
+    }
+
+
+    function isValidUrl(url) {
+
+      try {
+
+        const parsed =
+          new URL(url);
+
+        return (
+          parsed.protocol === "http:" ||
+          parsed.protocol === "https:"
+        );
+
+      } catch (error) {
+
+        return false;
+
+      }
+
+    }
+
+
+    function isDisplayAd(task) {
+
+      if (!task) {
+        return false;
+      }
+
+      const platform =
+        String(
+          task.platform || ""
+        ).toLowerCase();
+
+      const metadata =
+        task.metadata ||
+        task.meta ||
+        {};
+
+      const kind =
+        String(
+          metadata.kind || ""
+        ).toLowerCase();
+
+      return (
+        platform === DISPLAY_AD_PLATFORM ||
+        platform === "display" ||
+        kind === DISPLAY_AD_PLATFORM ||
+        metadata.displayAd === true
+      );
+
+    }
+
+
+    /* =========================================================
+       LOAD OFFERS
+       ========================================================= */
+
+    async function loadOffers() {
+
+      const list =
+        $("list");
+
+      if (!list) {
+        return 30;
+      }
+
+
+      let offers = [];
+
+
+      try {
+
+        /*
+         * Authentication is used when available.
+         */
+
+        if (getToken()) {
+
+          const response =
+            await fetch(
+              API_URL +
+              "/api/v1/sponsored-tasks",
+              {
+                method: "GET",
+
+                headers:
+                  getAuthHeaders()
+              }
+            );
+
+
+          const body =
+            await response
+              .json()
+              .catch(
+                function () {
+                  return {};
+                }
+              );
+
+
+          if (
+            response.ok &&
+            body.success !== false
+          ) {
+
+            const rows =
+              Array.isArray(body.data)
+                ? body.data
+                : [];
+
+
+            offers =
+              rows.filter(
+                function (task) {
+
+                  return (
+                    task &&
+                    task.active !== false &&
+                    isDisplayAd(task)
+                  );
+
+                }
+              );
+
+          }
+
+        }
+
+      } catch (error) {
+
+        console.warn(
+          "[WatchFlix] Offers request failed:",
+          error
+        );
+
+      }
+
+
+      /* =======================================================
+         RENDER OFFERS
+         ======================================================= */
+
+      if (!offers.length) {
+
+        list.innerHTML =
+          '<div class="empty">No display offers available</div>';
+
+      } else {
+
+        list.innerHTML =
+          offers
+            .map(
+              function (task) {
+
+                const title =
+                  task.title ||
+                  "Offer";
+
+
+                const description =
+                  String(
+                    task.description ||
+                    ""
+                  )
+                    .replace(
+                      /<!--WFJSON:[\s\S]*?-->/g,
+                      ""
+                    )
+                    .trim();
+
+
+                const image =
+                  normalizeUrl(
+                    task.imageUrl ||
+                    task.image ||
+                    ""
+                  );
+
+
+                const target =
+                  normalizeUrl(
+                    task.targetUrl ||
+                    task.url ||
+                    ""
+                  );
+
+
+                const validTarget =
+                  isValidUrl(target);
+
+
+                let html =
+                  '<article class="card">';
+
+
+                /*
+                 * IMAGE
+                 */
+
+                html +=
+                  '<div class="cover">';
+
+
+                if (image) {
+
+                  html +=
+                    '<img' +
+                    ' src="' +
+                    escapeHtml(image) +
+                    '"' +
+                    ' alt=""' +
+                    ' loading="lazy"' +
+                    '>';
+
+                }
+
+
+                html +=
+                  "</div>";
+
+
+                /*
+                 * BODY
+                 */
+
+                html +=
+                  '<div class="body">';
+
+
+                html +=
+                  "<h2>" +
+                  escapeHtml(title) +
+                  "</h2>";
+
+
+                if (description) {
+
+                  html +=
+                    "<p>" +
+                    escapeHtml(
+                      description.slice(
+                        0,
+                        220
+                      )
+                    ) +
+                    "</p>";
+
+                }
+
+
+                /*
+                 * TARGET URL
+                 */
+
+                if (validTarget) {
+
+                  html +=
+                    '<a' +
+                    ' class="cta"' +
+                    ' href="' +
+                    escapeHtml(target) +
+                    '"' +
+                    ' target="_blank"' +
+                    ' rel="noopener noreferrer"' +
+                    '>' +
+                    "Open if interested" +
+                    "</a>";
+
+                }
+
+
+                html +=
+                  "</div>";
+
+
+                html +=
+                  "</article>";
+
+
+                return html;
+
+              }
+            )
+            .join("");
+
+      }
+
+
+      return resolveTimerSec(
+        offers
+      );
+
+    }
+
+
+    /* =========================================================
+       TIMER CONFIGURATION
+       ========================================================= */
+
+    function resolveTimerSec(offers) {
+
+      let maximum = 0;
+
+
+      (offers || []).forEach(
+        function (task) {
+
+          const metadata =
+            task.metadata ||
+            task.meta ||
+            {};
+
+
+          const seconds =
+            Number(
+              metadata.timerSec ||
+              metadata.durationSec ||
+              0
+            );
+
+
+          if (
+            seconds > maximum
+          ) {
+
+            maximum =
+              seconds;
+
+          }
+
+        }
+      );
+
+
+      if (
+        maximum >= 5
+      ) {
+
+        return maximum;
+
+      }
+
+
+      /*
+       * Previously stored global timer.
+       */
+
+      try {
+
+        const stored =
+          Number(
+            localStorage.getItem(
+              "wf_da_global_timer"
+            ) || 0
+          );
+
+
+        if (
+          stored >= 5
+        ) {
+
+          return stored;
+
+        }
+
+      } catch (error) {}
+
+
+      /*
+       * Optional ?t= parameter.
+       */
+
+      try {
+
+        const querySeconds =
+          Number(
+            new URLSearchParams(
+              window.location.search
+            ).get("t") || 0
+          );
+
+
+        if (
+          querySeconds >= 5
+        ) {
+
+          return querySeconds;
+
+        }
+
+      } catch (error) {}
+
+
+      return 30;
+
+    }
+
+
+    /* =========================================================
+       TIMER
+       
+       IMPORTANT:
+       This starts normally.
+       
+       It does NOT wait for AntiAdBlock Core.
+       AntiAdBlock Core Recovery mode is completely
+       independent.
+       ========================================================= */
+
+    function startTimer(seconds) {
+
+      timerNeed =
+        Math.max(
+          5,
+          Number(seconds) || 30
+        );
+
+
+      timerEnd =
+        Date.now() +
+        timerNeed * 1000;
+
+
+      if (timerId) {
+
+        clearInterval(
+          timerId
+        );
+
+      }
+
+
+      tickTimer();
+
+
+      timerId =
+        setInterval(
+          tickTimer,
+          200
+        );
+
+    }
+
+
+    function tickTimer() {
+
+      const remaining =
+        Math.max(
+          0,
+          (
+            timerEnd -
+            Date.now()
+          ) / 1000
+        );
+
+
+      const clock =
+        $("clock");
+
+
+      const fill =
+        $("timerFill");
+
+
+      const hint =
+        $("timerHint");
+
+
+      const minutes =
+        Math.floor(
+          remaining / 60
+        );
+
+
+      const seconds =
+        Math.ceil(
+          remaining % 60
+        );
+
+
+      if (clock) {
+
+        clock.textContent =
+          String(minutes)
+            .padStart(2, "0") +
+          ":" +
+          String(seconds)
+            .padStart(2, "0");
+
+      }
+
+
+      if (fill) {
+
+        const progress =
+          (
+            (
+              timerNeed -
+              remaining
+            ) /
+            timerNeed
+          ) * 100;
+
+
+        fill.style.width =
+          Math.min(
+            100,
+            Math.max(
+              0,
+              progress
+            )
+          ) + "%";
+
+      }
+
+
+      if (hint) {
+
+        hint.textContent =
+          remaining > 0
+            ? "Returning when timer ends"
+            : "Returning…";
+
+      }
+
+
+      if (
+        remaining <= 0
+      ) {
+
+        if (timerId) {
+
+          clearInterval(
+            timerId
+          );
+
+          timerId =
+            null;
+
+        }
+
+
+        setTimeout(
+          goBack,
+          400
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       RETURN TO WATCHFLIX
+       ========================================================= */
+
+    function goBack() {
+
+      try {
+
+        const params =
+          new URLSearchParams(
+            window.location.search
+          );
+
+
+        const id =
+          params.get("id");
+
+
+        if (id) {
+
+          window.location.href =
+            RETURN_URL +
+            "?id=" +
+            encodeURIComponent(id);
+
+        } else {
+
+          window.location.href =
+            RETURN_URL;
+
+        }
+
+      } catch (error) {
+
+        window.location.href =
+          RETURN_URL;
+
+      }
+
+    }
+
+
+    /* =========================================================
+       PAGE BOOT
+       ========================================================= */
+
+    async function boot() {
+
+      console.log(
+        "[WatchFlix] Page boot started"
+      );
+
+
+      try {
+
+        /*
+         * Load offers immediately.
+         *
+         * There is NO AntiAdBlock Core wait here.
+         */
+
+        const seconds =
+          await loadOffers();
+
+
+        /*
+         * Start timer immediately after
+         * offers have been loaded.
+         */
+
+        startTimer(
+          seconds
+        );
+
+
+        console.log(
+          "[WatchFlix] Page initialized successfully"
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "[WatchFlix] Page initialization error:",
+          error
+        );
+
+
+        /*
+         * Even if the API fails, don't leave
+         * the page stuck.
+         */
+
+        const list =
+          $("list");
+
+
+        if (list) {
+
+          list.innerHTML =
+            '<div class="empty">Offers are temporarily unavailable</div>';
+
+        }
+
+
+        startTimer(30);
+
+      }
+
+    }
+
+
+    /* =========================================================
+       START
+       ========================================================= */
+
+    if (
+      document.readyState === "loading"
+    ) {
+
+      document.addEventListener(
+        "DOMContentLoaded",
+        boot,
+        {
+          once: true
+        }
+      );
+
+    } else {
+
+      boot();
+
+    }
+
+  </script>  <!-- =========================================================
+       ADSTERRA
+       
+       PRESERVED EXACTLY.
+       NOT USED AS A DETECTOR.
+       ========================================================= -->  <script
+    src="https://guyprior.com/59/db/a3/59dba3655058fb84ac3201caeab5092f.js"
+  ></script></body>
+</html>
