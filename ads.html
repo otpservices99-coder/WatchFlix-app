@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#020617">
+<title>Offers</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Adcash AutoTag -->
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+<script type="text/javascript">
+  try {
+    if (typeof aclib !== "undefined" && aclib.runAutoTag) {
+      aclib.runAutoTag({ zoneId: "bkgdpudgtk" });
+    }
+  } catch (e) {}
+</script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:#020617;color:#f1f5f9}
+.shell{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:calc(20px + env(safe-area-inset-bottom,0))}
+.top{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 14px;padding-top:max(10px,env(safe-area-inset-top,0));
+  background:transparent;border:0
+}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:13px;color:#94a3b8}
+.top a{color:#64748b;text-decoration:none;font-size:12px;font-weight:700}
+.timer-bar{
+  margin:0 14px 10px;padding:10px 12px;border-radius:12px;
+  background:rgba(15,23,42,.85);border:1px solid #1e293b
+}
+.timer-bar.paused{border-color:#f87171;background:rgba(127,29,29,.25)}
+.timer-bar .label{font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px}
+.timer-bar .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.timer-bar .clock{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;color:#fbbf24}
+.timer-bar .hint{font-size:11px;color:#64748b;font-weight:600}
+.timer-track{height:5px;border-radius:99px;background:#1e293b;overflow:hidden;margin-top:8px}
+.timer-track i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#f59e0b,#10b981);transition:width .15s linear}
+.note{margin:0 14px 12px;font-size:12px;color:#64748b;line-height:1.45;font-weight:600}
+.list{padding:4px 14px 16px;display:flex;flex-direction:column;gap:16px}
+.card{border-radius:18px;overflow:hidden;background:#0b1220;border:1px solid #1e293b}
+.card .cover{width:100%;aspect-ratio:9/16;max-height:65vh;min-height:260px;background:#020617;position:relative}
+.card .cover img{width:100%;height:100%;object-fit:cover;display:block}
+.card .body{padding:12px 14px 14px}
+.card .body h2{margin:0 0 6px;font-size:15px;font-weight:800}
+.card .body p{margin:0 0 10px;font-size:12px;color:#94a3b8;line-height:1.45}
+.card .cta{
+  display:inline-flex;justify-content:center;width:100%;text-decoration:none;
+  border-radius:11px;padding:11px;font-weight:800;font-size:13px;
+  background:#1e293b;color:#e2e8f0;border:1px solid #334155
+}
+.ab-overlay{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(2,6,23,.92);padding:24px 18px;
+  align-items:center;justify-content:center
+}
+.ab-overlay.show{display:flex}
+.ab-card{
+  width:100%;max-width:400px;background:#0f172a;border:1px solid #f87171;
+  border-radius:16px;padding:22px 18px;text-align:center;
+  box-shadow:0 20px 50px rgba(0,0,0,.45)
+}
+.ab-card h2{margin:0 0 10px;font-size:18px;font-weight:900;color:#fecaca}
+.ab-card p{margin:0 0 12px;font-size:13px;color:#cbd5e1;line-height:1.55;font-weight:600}
+.ab-card ol{text-align:left;margin:0 0 16px;padding-left:20px;color:#94a3b8;font-size:13px;line-height:1.6;font-weight:600}
+.ab-card button{
+  width:100%;border:0;border-radius:12px;padding:13px;font-weight:900;font-size:14px;
+  background:linear-gradient(135deg,#f59e0b,#ef4444);color:#0f172a;cursor:pointer
+}
+.ab-card .sub{margin-top:12px;font-size:11px;color:#64748b;font-weight:600}
+.adsbox,.ad-banner,.adsbygoogle,.ad-placement{
+  height:1px!important;width:1px!important;position:absolute!important;
+  left:-9999px!important;top:-9999px!important;opacity:0!important;pointer-events:none!important
+}
+</style>
+</head>
+<body>
+<div class="adsbox ad-banner adsbygoogle ad-placement" id="adBait" aria-hidden="true">&nbsp;</div>
+
+<div class="ab-overlay" id="abOverlay" role="alertdialog" aria-modal="true" aria-labelledby="abTitle">
+  <div class="ab-card">
+    <h2 id="abTitle">Ad blocker detected</h2>
+    <p>This offers page needs ads enabled so the view timer can run. Please turn off your ad blocker for this site, then refresh.</p>
+    <ol>
+      <li>Disable ad blocker / tracking protection for <b>watchflix-app.pages.dev</b></li>
+      <li>Tap <b>I disabled it — Refresh</b> below</li>
+      <li>Wait for the timer to finish (it starts only when ads can load)</li>
+    </ol>
+    <button type="button" onclick="location.reload()">I disabled it — Refresh</button>
+    <div class="sub">Timer is paused until ads are allowed.</div>
+  </div>
+</div>
+
+<div class="shell">
+  <div class="top">
+    <div class="brand">Offers</div>
+    <a href="https://watchflix-app.pages.dev/watchflixads/">Back</a>
+  </div>
+
+  <div class="timer-bar paused" id="timerBar">
+    <div class="label">Please stay on this page</div>
+    <div class="row">
+      <div class="clock" id="clock">—</div>
+      <div class="hint" id="timerHint">Checking ads…</div>
+    </div>
+    <div class="timer-track"><i id="timerFill"></i></div>
+  </div>
+
+  <p class="note">Ads may appear on this page. Opening any offer is optional. When the timer ends you return to WatchFlix Ads automatically.</p>
+
+  <div class="list" id="list"></div>
+</div>
+
+<script>
+const API_URL = "https://global-api-platform-production.up.railway.app";
+const API_KEY = "ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c";
+const DA = "display_ads";
+const RETURN_URL = "https://watchflix-app.pages.dev/watchflixads/";
+
+function token(){ return localStorage.getItem("wf_token") || localStorage.getItem("token") || ""; }
+function authHeaders(){
+  const h = { "X-API-Key": API_KEY };
+  const t = token();
+  if(t) h.Authorization = "Bearer " + t;
+  return h;
+}
+function $(id){ return document.getElementById(id); }
+function escapeHtml(s){
+  return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function normalizeUrl(url){
+  if(!url) return "";
+  url = String(url).trim().replace(/\s+/g,"");
+  if(!/^https?:\/\//i.test(url)) url = "https://" + url;
+  return url;
+}
+function isValidUrl(url){ try{ new URL(url); return true; }catch(e){ return false; } }
+function isDisplayAd(t){
+  if(!t) return false;
+  const p = String(t.platform||"").toLowerCase();
+  const m = t.metadata || t.meta || {};
+  const k = String(m.kind||"").toLowerCase();
+  return p === DA || p === "display" || k === DA || m.displayAd === true;
+}
+
+let timerNeed = 30;
+let timerEnd = 0;
+let timerId = null;
+let timerStarted = false;
+let adsAllowed = false;
+
+function showBlockerWarning(show){
+  const ov = $("abOverlay");
+  const bar = $("timerBar");
+  if(ov) ov.classList.toggle("show", !!show);
+  if(bar) bar.classList.toggle("paused", !!show);
+  if(show){
+    stopTimer();
+    if($("clock")) $("clock").textContent = "—";
+    if($("timerHint")) $("timerHint").textContent = "Paused — disable ad blocker";
+    if($("timerFill")) $("timerFill").style.width = "0%";
+  }
+}
+
+function stopTimer(){
+  if(timerId){ clearInterval(timerId); timerId = null; }
+  timerStarted = false;
+}
+
+function detectAdBlocker(){
+  return new Promise(function(resolve){
+    var signals = 0;
+    var total = 0;
+    var done = 0;
+
+    function mark(blocked){
+      if(blocked) signals++;
+      done++;
+      if(done >= total){
+        // Need 2+ signals to reduce false positives (slow network ≠ blocker)
+        resolve(signals >= 2);
+      }
+    }
+
+    // 1) Bait DOM hidden by blockers
+    total++;
+    try{
+      var bait = document.getElementById("adBait");
+      if(!bait) mark(true);
+      else {
+        var cs = window.getComputedStyle(bait);
+        mark(cs.display === "none" || cs.visibility === "hidden");
+      }
+    }catch(e){ mark(true); }
+
+    // 2) Adcash global missing after wait
+    total++;
+    setTimeout(function(){
+      try{ mark(typeof aclib === "undefined"); }
+      catch(e){ mark(true); }
+    }, 1200);
+
+    // 3) Script probe (real script load, not image)
+    total++;
+    try{
+      var s = document.createElement("script");
+      s.async = true;
+      var settled = false;
+      function settle(blocked){
+        if(settled) return;
+        settled = true;
+        try{ s.remove(); }catch(e){}
+        mark(blocked);
+      }
+      s.onload = function(){ settle(false); };
+      s.onerror = function(){ settle(true); };
+      s.src = "//acscdn.com/script/aclib.js?abcheck=" + Date.now();
+      document.head.appendChild(s);
+      setTimeout(function(){ settle(typeof aclib === "undefined"); }, 3000);
+    }catch(e){ mark(true); }
+  });
+}
+
+function goBack(){
+  try{
+    const q = new URLSearchParams(location.search);
+    const id = q.get("id");
+    if(id) location.href = RETURN_URL + "?id=" + encodeURIComponent(id);
+    else location.href = RETURN_URL;
+  }catch(e){
+    location.href = RETURN_URL;
+  }
+}
+
+function resolveTimerSec(list){
+  let maxT = 0;
+  (list || []).forEach(function(t){
+    const m = t.metadata || t.meta || {};
+    const n = Number(m.timerSec || m.durationSec || 0);
+    if(n > maxT) maxT = n;
+  });
+  if(maxT >= 5) return maxT;
+  try{
+    const g = Number(localStorage.getItem("wf_da_global_timer") || 0);
+    if(g >= 5) return g;
+  }catch(e){}
+  try{
+    const q = Number(new URLSearchParams(location.search).get("t") || 0);
+    if(q >= 5) return q;
+  }catch(e){}
+  return 30;
+}
+
+function startTimer(sec){
+  if(!adsAllowed) return;
+  timerNeed = Math.max(5, Number(sec) || 30);
+  timerEnd = Date.now() + timerNeed * 1000;
+  if(timerId) clearInterval(timerId);
+  timerStarted = true;
+  const bar = $("timerBar");
+  if(bar) bar.classList.remove("paused");
+  tickTimer();
+  timerId = setInterval(tickTimer, 200);
+}
+
+function tickTimer(){
+  if(!adsAllowed){
+    stopTimer();
+    return;
+  }
+  const left = Math.max(0, (timerEnd - Date.now()) / 1000);
+  const clock = $("clock");
+  const fill = $("timerFill");
+  const hint = $("timerHint");
+  const m = Math.floor(left / 60);
+  const s = Math.ceil(left % 60);
+  if(clock) clock.textContent = String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+  if(fill) fill.style.width = Math.min(100, ((timerNeed - left) / timerNeed) * 100) + "%";
+  if(hint) hint.textContent = left > 0 ? "Returning when timer ends" : "Returning…";
+  if(left <= 0){
+    clearInterval(timerId);
+    timerId = null;
+    setTimeout(goBack, 400);
+  }
+}
+
+async function loadOffers(){
+  const box = $("list");
+  if(!box) return 30;
+  let offers = [];
+  try{
+    if(token()){
+      const res = await fetch(API_URL + "/api/v1/sponsored-tasks", { headers: authHeaders() });
+      const body = await res.json().catch(function(){ return {}; });
+      if(res.ok && body.success !== false){
+        const rows = Array.isArray(body.data) ? body.data : [];
+        offers = rows.filter(function(t){ return t && t.active !== false && isDisplayAd(t); });
+      }
+    }
+  }catch(e){}
+
+  if(!offers.length){
+    box.innerHTML = "";
+  } else {
+    box.innerHTML = offers.map(function(t){
+      const title = t.title || "Offer";
+      let desc = String(t.description || "").replace(/<!--WFJSON:[\s\S]*?-->/g,"").trim();
+      const img = normalizeUrl(t.imageUrl || t.image || "");
+      const url = normalizeUrl(t.targetUrl || t.url || "");
+      const ok = isValidUrl(url);
+      return '<article class="card"><div class="cover">' +
+        (img ? '<img src="'+escapeHtml(img)+'" alt="" loading="lazy">' : '') +
+        '</div><div class="body"><h2>'+escapeHtml(title)+'</h2>' +
+        (desc ? '<p>'+escapeHtml(desc.slice(0,220))+'</p>' : '') +
+        (ok ? '<a class="cta" href="'+escapeHtml(url)+'" target="_blank" rel="noopener noreferrer">Open if interested</a>' : '') +
+        '</div></article>';
+    }).join("");
+  }
+
+  return resolveTimerSec(offers);
+}
+
+async function boot(){
+  if($("timerHint")) $("timerHint").textContent = "Checking ads…";
+  const blocked = await detectAdBlocker();
+  if(blocked){
+    adsAllowed = false;
+    showBlockerWarning(true);
+    return;
+  }
+  adsAllowed = true;
+  showBlockerWarning(false);
+  try{
+    if(typeof aclib !== "undefined" && aclib.runAutoTag){
+      aclib.runAutoTag({ zoneId: "bkgdpudgtk" });
+    }
+  }catch(e){}
+  const sec = await loadOffers();
+  startTimer(sec);
+}
+
+boot();
+</script>
+<script src="https://guyprior.com/59/db/a3/59dba3655058fb84ac3201caeab5092f.js"></script>
+</body>
+</html>
