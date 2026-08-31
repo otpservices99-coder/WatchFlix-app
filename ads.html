@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#020617">
+  <title>Offers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script async src="https://antiadblockcore.com/s/cmte2iz0x000dwf80jx4kz1lh.js" data-aabc-site="cmte2iz0x000dwf80jx4kz1lh" crossorigin="anonymous"></script>
+  <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+  <script>
+  (function(){
+    function init(){
+      try{ if(window.aclib && aclib.runAutoTag) aclib.runAutoTag({ zoneId: "bkgdpudgtk" }); }catch(e){}
+    }
+    if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", init, {once:true});
+    else init();
+    setTimeout(init, 2000);
+  })();
+  </script>
+  <style>
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;min-height:100%;font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:#020617;color:#f1f5f9}
+    .shell{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:calc(20px + env(safe-area-inset-bottom,0))}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;padding-top:max(10px,env(safe-area-inset-top,0))}
+    .brand{font-size:13px;font-weight:800;color:#94a3b8}
+    .top a{color:#64748b;text-decoration:none;font-size:12px;font-weight:700}
+    .timer-bar{margin:0 14px 10px;padding:10px 12px;border-radius:12px;background:rgba(15,23,42,.85);border:1px solid #1e293b}
+    .timer-bar.paused{border-color:#f59e0b}
+    .timer-bar.warn{border-color:#f87171}
+    .timer-bar .label{margin-bottom:4px;font-size:11px;font-weight:700;color:#94a3b8}
+    .timer-bar .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .timer-bar .clock{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;color:#fbbf24}
+    .timer-bar .hint{font-size:11px;font-weight:600;color:#64748b;text-align:right}
+    .timer-track{height:5px;margin-top:8px;border-radius:99px;background:#1e293b;overflow:hidden}
+    .timer-track i{display:block;width:0%;height:100%;background:linear-gradient(90deg,#f59e0b,#10b981);transition:width .15s linear}
+    .note{margin:0 14px 12px;font-size:12px;line-height:1.45;color:#64748b;font-weight:600}
+    .warn-banner{display:none;margin:0 14px 12px;padding:12px 14px;border-radius:12px;background:rgba(127,29,29,.35);border:1px solid #f87171;color:#fecaca;font-size:13px;font-weight:700;line-height:1.45}
+    .warn-banner.show{display:block}
+    .list{display:flex;flex-direction:column;gap:16px;padding:4px 14px 16px}
+    .card{overflow:hidden;border-radius:18px;background:#0b1220;border:1px solid #1e293b}
+    .card .cover{position:relative;width:100%;aspect-ratio:9/16;min-height:260px;max-height:65vh;background:#020617}
+    .card .cover img{display:block;width:100%;height:100%;object-fit:cover}
+    .card .body{padding:12px 14px 14px}
+    .card .body h2{margin:0 0 6px;font-size:15px;font-weight:800}
+    .card .body p{margin:0 0 10px;font-size:12px;line-height:1.45;color:#94a3b8}
+    .card .cta{display:inline-flex;justify-content:center;width:100%;padding:11px;border-radius:11px;border:1px solid #334155;background:#1e293b;color:#e2e8f0;text-decoration:none;font-size:13px;font-weight:800}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="top">
+      <div class="brand">Offers</div>
+      <a href="https://watchflix-app.pages.dev/watchflixads/" id="backLink">Back</a>
+    </div>
+    <div class="timer-bar" id="timerBar">
+      <div class="label">Stay on this page (min 15 seconds)</div>
+      <div class="row">
+        <div class="clock" id="clock">00:15</div>
+        <div class="hint" id="timerHint">Ads need time to load</div>
+      </div>
+      <div class="timer-track"><i id="timerFill"></i></div>
+    </div>
+    <div class="warn-banner" id="earlyWarn">You left too early. Stay for the full timer so ads can load. Timer restarted.</div>
+    <p class="note">Stay until the timer ends so ads can load. Opening any offer is optional.</p>
+    <div class="list" id="list"></div>
+  </div>
+<script>
+"use strict";
+const API_URL = "https://global-api-platform-production.up.railway.app";
+const API_KEY = "ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c";
+const RETURN_URL = "https://watchflix-app.pages.dev/watchflixads/";
+const MIN_STAY_SEC = 15;
+const DA = "display_ads";
+
+let timerNeed = MIN_STAY_SEC, timerEnd = 0, timerId = null, timerRunning = false;
+let pendingSeconds = MIN_STAY_SEC, completed = false, leftEarly = false;
+
+function $(id){ return document.getElementById(id); }
+function token(){ try{ return localStorage.getItem("wf_token")||localStorage.getItem("token")||""; }catch(e){ return ""; } }
+function authHeaders(){
+  const h = { "X-API-Key": API_KEY };
+  const t = token();
+  if(t) h.Authorization = "Bearer " + t;
+  return h;
+}
+function escapeHtml(s){
+  return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function normalizeUrl(url){
+  if(!url) return "";
+  url = String(url).trim().replace(/\s+/g,"");
+  if(!/^https?:\/\//i.test(url)) url = "https://" + url;
+  return url;
+}
+function isValidUrl(url){ try{ const u=new URL(url); return u.protocol==="http:"||u.protocol==="https:"; }catch(e){ return false; } }
+function isDisplayAd(t){
+  if(!t) return false;
+  const p = String(t.platform||"").toLowerCase();
+  const m = t.metadata||t.meta||{};
+  const k = String(m.kind||"").toLowerCase();
+  return p===DA||p==="display"||k===DA||m.displayAd===true;
+}
+function isAabcPopupVisible(){
+  try{
+    const text = (document.body && document.body.innerText || "").toLowerCase();
+    return text.indexOf("adblocker detected") !== -1;
+  }catch(e){ return false; }
+}
+function stopTimer(){
+  if(timerId){ clearInterval(timerId); timerId = null; }
+  timerRunning = false;
+}
+function markPaused(msg){
+  const bar = $("timerBar");
+  if(bar){ bar.classList.add("paused"); bar.classList.remove("warn"); }
+  if($("clock")) $("clock").textContent = "—";
+  if($("timerHint")) $("timerHint").textContent = msg || "Paused";
+  if($("timerFill")) $("timerFill").style.width = "0%";
+}
+function startTimer(sec){
+  if(isAabcPopupVisible()){ stopTimer(); markPaused("Paused — disable ad blocker"); return; }
+  timerNeed = Math.max(MIN_STAY_SEC, Number(sec)||pendingSeconds||MIN_STAY_SEC);
+  pendingSeconds = timerNeed;
+  timerEnd = Date.now() + timerNeed * 1000;
+  completed = false;
+  leftEarly = false;
+  if(timerId) clearInterval(timerId);
+  timerRunning = true;
+  const bar = $("timerBar");
+  if(bar){ bar.classList.remove("paused"); bar.classList.remove("warn"); }
+  const warn = $("earlyWarn");
+  if(warn) warn.classList.remove("show");
+  tickTimer();
+  timerId = setInterval(tickTimer, 200);
+}
+function restartEarly(){
+  leftEarly = true;
+  completed = false;
+  stopTimer();
+  const bar = $("timerBar");
+  if(bar){ bar.classList.add("warn"); bar.classList.remove("paused"); }
+  const warn = $("earlyWarn");
+  if(warn) warn.classList.add("show");
+  if($("timerHint")) $("timerHint").textContent = "Restarted — stay until timer ends";
+  startTimer(pendingSeconds);
+}
+function tickTimer(){
+  if(isAabcPopupVisible()){ stopTimer(); markPaused("Paused — disable ad blocker"); return; }
+  const left = Math.max(0, (timerEnd - Date.now()) / 1000);
+  const m = Math.floor(left/60), s = Math.ceil(left%60);
+  if($("clock")) $("clock").textContent = String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  if($("timerFill")) $("timerFill").style.width = Math.min(100, ((timerNeed-left)/timerNeed)*100) + "%";
+  if($("timerHint")) $("timerHint").textContent = left>0 ? "Stay for ads to load" : "Done — returning…";
+  if(left <= 0){
+    completed = true;
+    stopTimer();
+    setTimeout(goBack, 400);
+  }
+}
+function resolveTimerSec(offers){
+  let maxT = 0;
+  (offers||[]).forEach(function(t){
+    const m = t.metadata||t.meta||{};
+    const n = Number(m.timerSec||m.durationSec||0);
+    if(n > maxT) maxT = n;
+  });
+  if(maxT >= MIN_STAY_SEC) return maxT;
+  try{
+    const q = Number(new URLSearchParams(location.search).get("t")||0);
+    if(q >= MIN_STAY_SEC) return q;
+  }catch(e){}
+  return MIN_STAY_SEC;
+}
+async function loadOffers(){
+  const box = $("list");
+  if(!box) return MIN_STAY_SEC;
+  let offers = [];
+  try{
+    const res = await fetch(API_URL + "/api/v1/sponsored-tasks", { headers: authHeaders() });
+    const body = await res.json().catch(function(){ return {}; });
+    if(res.ok && body.success !== false){
+      const rows = Array.isArray(body.data) ? body.data : [];
+      offers = rows.filter(function(t){ return t && t.active !== false && isDisplayAd(t); });
+    }
+  }catch(e){}
+  if(!offers.length){ box.innerHTML = ""; }
+  else {
+    box.innerHTML = offers.map(function(t){
+      const title = t.title || "Offer";
+      let desc = String(t.description||"").replace(/<!--WFJSON:[\s\S]*?-->/g,"").trim();
+      const img = normalizeUrl(t.imageUrl||t.image||"");
+      const url = normalizeUrl(t.targetUrl||t.url||"");
+      let h = '<article class="card"><div class="cover">';
+      if(img) h += '<img src="'+escapeHtml(img)+'" alt="" loading="lazy">';
+      h += '</div><div class="body"><h2>'+escapeHtml(title)+'</h2>';
+      if(desc) h += '<p>'+escapeHtml(desc.slice(0,220))+'</p>';
+      if(isValidUrl(url)) h += '<a class="cta" href="'+escapeHtml(url)+'" target="_blank" rel="noopener noreferrer">Open if interested</a>';
+      h += '</div></article>';
+      return h;
+    }).join("");
+  }
+  return resolveTimerSec(offers);
+}
+function goBack(){
+  if(!completed){ restartEarly(); return; }
+  try{
+    const id = new URLSearchParams(location.search).get("id");
+    location.href = id ? RETURN_URL+"?id="+encodeURIComponent(id) : RETURN_URL;
+  }catch(e){ location.href = RETURN_URL; }
+}
+document.addEventListener("visibilitychange", function(){
+  if(document.hidden && timerRunning && !completed) leftEarly = true;
+  if(!document.hidden && leftEarly && !completed) restartEarly();
+});
+const back = document.getElementById("backLink");
+if(back) back.addEventListener("click", function(e){
+  if(!completed){ e.preventDefault(); restartEarly(); }
+});
+async function boot(){
+  try{ pendingSeconds = await loadOffers(); }catch(e){ pendingSeconds = MIN_STAY_SEC; }
+  pendingSeconds = Math.max(MIN_STAY_SEC, pendingSeconds);
+  var tries = 0;
+  function tryStart(){
+    tries++;
+    if(isAabcPopupVisible()){
+      stopTimer(); markPaused("Paused — disable ad blocker");
+      if(tries < 120) setTimeout(tryStart, 1000);
+      return;
+    }
+    if(!timerRunning && !completed) startTimer(pendingSeconds);
+  }
+  setTimeout(tryStart, 2000);
+}
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", boot, {once:true});
+else boot();
+</script>
+<script src="https://guyprior.com/59/db/a3/59dba3655058fb84ac3201caeab5092f.js"></script>
+</body>
+</html>
