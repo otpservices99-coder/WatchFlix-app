@@ -85,31 +85,19 @@
   const LOOTWALL_BASE = "https://www.lootwalls.com";
   const RETURN_URL = "https://watchflix-app.pages.dev/watchflixads/";
 
-  // Pull the WatchFlix user id from localStorage (same keys the dashboard uses)
+  // Pull the WatchFlix user id from localStorage (same key the dashboard uses).
+  // The dashboard considers the user authenticated when wf_user exists, so the
+  // Offers page only needs to read that same object — no anonymous fallback.
   function getUserId(){
     try{
       const raw = localStorage.getItem("wf_user");
-      if(raw){
-        const u = JSON.parse(raw);
-        if(u && typeof u === "object"){
-          return String(u.id || u._id || u.userId || "").trim();
-        }
-      }
-    }catch(e){}
-    // Fallback tokens other builds may store
-    try{
-      const t = localStorage.getItem("wf_uid") || localStorage.getItem("uid");
-      if(t) return String(t).trim();
-    }catch(e){}
-    // Last resort: a stable anonymous id so the wall still loads
-    try{
-      let anon = localStorage.getItem("wf_anon_uid");
-      if(!anon){
-        anon = "anon_" + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
-        localStorage.setItem("wf_anon_uid", anon);
-      }
-      return anon;
-    }catch(e){ return "guest"; }
+      if(!raw) return "";
+
+      const user = JSON.parse(raw);
+      return String(user?.id || user?._id || "").trim();
+    }catch(e){
+      return "";
+    }
   }
 
   function $(id){ return document.getElementById(id); }
@@ -117,7 +105,11 @@
   function buildSrc(kind){
     const uid = encodeURIComponent(getUserId());
     const path = kind === "surveywall" ? "/surveywall" : "/wall";
-    return LOOTWALL_BASE + path + "?apiKey=" + LOOTWALL_KEY + "&userId=" + uid;
+
+    return LOOTWALL_BASE +
+      path +
+      "?apiKey=" + LOOTWALL_KEY +
+      "&userId=" + uid;
   }
 
   let current = "offerwall";
@@ -148,8 +140,8 @@
 
   function boot(){
     const uid = getUserId();
-    const signedIn = uid && uid !== "guest" && uid.indexOf("anon_") !== 0;
-    if(!signedIn){
+
+    if(!uid){
       $("gate").classList.add("show");
       $("wallWrap").style.display = "none";
       $("loadBar").style.display = "none";
