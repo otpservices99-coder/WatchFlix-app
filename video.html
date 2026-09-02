@@ -1,17 +1,19 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#020617">
   <title>WatchFlix — Video</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">  <style>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html,body{
       margin:0;
       min-height:100%;
       font-family:"Plus Jakarta Sans",system-ui,sans-serif;
       background:#020617;
-      color:#f1f5f9
+      color:#f1f5f9;
     }
 
     .shell{
@@ -19,9 +21,10 @@
       margin:0 auto;
       min-height:100vh;
       display:flex;
-      flex-direction:column
+      flex-direction:column;
     }
 
+    /* ---------- Top bar ---------- */
     .top{
       display:flex;
       align-items:center;
@@ -33,15 +36,13 @@
       border-bottom:1px solid #1e293b;
       position:sticky;
       top:0;
-      z-index:20
+      z-index:20;
     }
-
     .top .left{
       display:flex;
       align-items:center;
-      gap:10px
+      gap:10px;
     }
-
     .top a{
       color:#64748b;
       text-decoration:none;
@@ -49,36 +50,33 @@
       font-weight:700;
       display:inline-flex;
       align-items:center;
-      gap:4px
+      gap:4px;
     }
-
     .top a svg{
       width:16px;
-      height:16px
+      height:16px;
     }
-
     .top .brand{
       font-size:14px;
       font-weight:800;
-      color:#94a3b8
+      color:#94a3b8;
     }
 
+    /* ---------- Video stage ---------- */
     .video-stage{
       position:relative;
       width:100%;
       background:#000;
       overflow:hidden;
-      aspect-ratio:16/9
+      aspect-ratio:16/9;
     }
-
     #videoPlayer{
       display:block;
       width:100%;
       height:100%;
       object-fit:contain;
-      background:#000
+      background:#000;
     }
-
     .play-overlay{
       position:absolute;
       inset:0;
@@ -87,14 +85,12 @@
       justify-content:center;
       background:rgba(2,6,23,.55);
       z-index:10;
-      transition:opacity .25s
+      transition:opacity .25s;
     }
-
     .play-overlay.hidden{
       opacity:0;
-      pointer-events:none
+      pointer-events:none;
     }
-
     #watchflixPlayButton{
       width:76px;
       height:76px;
@@ -106,19 +102,16 @@
       place-items:center;
       cursor:pointer;
       box-shadow:0 12px 36px rgba(16,185,129,.5);
-      transition:transform .15s
+      transition:transform .15s;
     }
-
     #watchflixPlayButton:active{
-      transform:scale(.92)
+      transform:scale(.92);
     }
-
     #watchflixPlayButton svg{
       width:32px;
       height:32px;
-      margin-left:3px
+      margin-left:3px;
     }
-
     .ad-hint{
       position:absolute;
       bottom:12px;
@@ -133,18 +126,18 @@
       padding:5px 12px;
       border-radius:99px;
       pointer-events:none;
-      white-space:nowrap
+      white-space:nowrap;
     }
 
+    /* ---------- Controls ---------- */
     .controls{
       display:flex;
       align-items:center;
       gap:8px;
       padding:10px 12px;
       background:#0b1220;
-      border-bottom:1px solid #1e293b
+      border-bottom:1px solid #1e293b;
     }
-
     .controls button{
       border:0;
       background:transparent;
@@ -153,25 +146,21 @@
       padding:6px;
       display:grid;
       place-items:center;
-      border-radius:8px
+      border-radius:8px;
     }
-
     .controls button:active{
-      background:rgba(255,255,255,.08)
+      background:rgba(255,255,255,.08);
     }
-
     .controls button svg{
       width:20px;
-      height:20px
+      height:20px;
     }
-
     .progress-wrap{
       flex:1;
       display:flex;
       align-items:center;
-      gap:8px
+      gap:8px;
     }
-
     .progress-track{
       flex:1;
       height:5px;
@@ -179,94 +168,83 @@
       background:#1e293b;
       overflow:hidden;
       cursor:pointer;
-      position:relative
+      position:relative;
     }
-
     .progress-track i{
       display:block;
       height:100%;
       width:0%;
       background:linear-gradient(90deg,#059669,#34d399);
       border-radius:99px;
-      transition:width .1s linear
+      transition:width .1s linear;
     }
-
     .time{
       font-size:11px;
       font-weight:700;
       color:#64748b;
       font-variant-numeric:tabular-nums;
-      white-space:nowrap
+      white-space:nowrap;
     }
-
     .vol-wrap{
       display:flex;
       align-items:center;
-      gap:4px
+      gap:4px;
     }
-
     .vol-track{
       width:56px;
       height:4px;
       border-radius:99px;
       background:#1e293b;
       overflow:hidden;
-      cursor:pointer
+      cursor:pointer;
     }
-
     .vol-track i{
       display:block;
       height:100%;
       width:100%;
       background:#94a3b8;
-      border-radius:99px
+      border-radius:99px;
     }
-
     .fs-btn{
-      margin-left:2px
+      margin-left:2px;
     }
 
+    /* ---------- Info ---------- */
     .info{
       padding:16px 14px;
-      flex:1
+      flex:1;
     }
-
     .info h1{
       margin:0 0 8px;
       font-size:18px;
       font-weight:800;
-      line-height:1.3
+      line-height:1.3;
     }
-
     .info p{
       margin:0;
       font-size:13px;
       line-height:1.55;
-      color:#94a3b8
+      color:#94a3b8;
     }
-
     .meta-row{
       display:flex;
       align-items:center;
       gap:8px;
       margin-bottom:12px;
-      flex-wrap:wrap
+      flex-wrap:wrap;
     }
-
     .meta-chip{
       font-size:10px;
       font-weight:800;
       padding:4px 10px;
       border-radius:99px;
       background:rgba(16,185,129,.12);
-      color:#34d399
+      color:#34d399;
     }
-
     .meta-chip.muted{
       background:rgba(148,163,184,.12);
-      color:#94a3b8
+      color:#94a3b8;
     }
-
     .reward-note{
       margin:0 0 16px;
       padding:12px 14px;
@@ -276,13 +254,13 @@
       font-size:12px;
       color:#94a3b8;
       line-height:1.5;
-      font-weight:600
+      font-weight:600;
     }
-
     .reward-note b{
-      color:#34d399
+      color:#34d399;
     }
 
+    /* ---------- Gate / unavailable ---------- */
     .gate,
     .unavailable{
       display:none;
@@ -292,14 +270,12 @@
       flex:1;
       padding:48px 24px;
       text-align:center;
-      gap:12px
+      gap:12px;
     }
-
     .gate.show,
     .unavailable.show{
-      display:flex
+      display:flex;
     }
-
     .gate .ico,
     .unavailable .ico{
       width:56px;
@@ -308,36 +284,31 @@
       background:rgba(239,68,68,.12);
       color:#ef4444;
       display:grid;
-      place-items:center
+      place-items:center;
     }
-
     .unavailable .ico{
       background:rgba(148,163,184,.12);
-      color:#94a3b8
+      color:#94a3b8;
     }
-
     .gate .ico svg,
     .unavailable .ico svg{
       width:26px;
-      height:26px
+      height:26px;
     }
-
     .gate h2,
     .unavailable h2{
       margin:0;
       font-size:18px;
-      font-weight:800
+      font-weight:800;
     }
-
     .gate p,
     .unavailable p{
       margin:0;
       color:#64748b;
       font-size:13px;
       line-height:1.5;
-      max-width:280px
+      max-width:280px;
     }
-
     .gate a,
     .unavailable a{
       margin-top:4px;
@@ -347,9 +318,10 @@
       color:#fff;
       font-weight:800;
       font-size:13px;
-      text-decoration:none
+      text-decoration:none;
     }
 
+    /* ---------- Ad status ---------- */
     .ad-status{
       display:none;
       margin:0 14px 12px;
@@ -360,221 +332,189 @@
       color:#7dd3fc;
       font-size:12px;
       font-weight:700;
-      text-align:center
+      text-align:center;
     }
-
     .ad-status.show{
-      display:block
+      display:block;
     }
-  </style></head><body>
-  <div class="shell"><div class="top">
-  <div class="left">
-    <a href="https://watchflix-app.pages.dev/watchflixads/" id="backLink">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M15 18l-6-6 6-6"/>
-      </svg>
-      Back
-    </a>
-  </div>
+  </style>
+</head>
+<body>
+  <div class="shell">
 
-  <div class="brand">WatchFlix Video</div>
-  <div style="width:40px"></div>
-</div>
+    <!-- Top bar -->
+    <div class="top">
+      <div class="left">
+        <a href="https://watchflix-app.pages.dev/watchflixads/" id="backLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+          Back
+        </a>
+      </div>
+      <div class="brand">WatchFlix Video</div>
+      <div style="width:40px"></div>
+    </div>
 
-<div class="gate" id="authGate">
-  <div class="ico">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <rect x="3" y="11" width="18" height="11" rx="2"/>
-      <path d="M7 11V7a5 5 0 0110 0v4"/>
-    </svg>
-  </div>
-
-  <h2>Sign in to watch</h2>
-  <p>Open your WatchFlix account to watch videos and earn rewards.</p>
-  <a href="https://watchflix-app.pages.dev/login">Sign in</a>
-</div>
-
-<div class="unavailable" id="videoUnavailable">
-  <div class="ico">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="10"/>
-      <path d="M12 8v4M12 16h.01"/>
-    </svg>
-  </div>
-
-  <h2>Video unavailable</h2>
-
-  <p id="unavailableMsg">
-    This video is currently unavailable.
-  </p>
-
-  <a href="https://watchflix-app.pages.dev/watchflixads/" id="unavailableBack">
-    Back to activities
-  </a>
-</div>
-
-<div id="appBody" style="display:none;flex-direction:column;flex:1">
-
-  <div class="video-stage">
-
-    <video
-      id="videoPlayer"
-      playsinline
-      webkit-playsinline
-      preload="metadata"
-      poster="">
-    </video>
-
-    <div class="play-overlay" id="playOverlay">
-
-      <!-- IMPORTANT:
-           This exact ID is configured in ClickAdilla.
-           Do not rename it.
-      -->
-      <button
-        type="button"
-        id="watchflixPlayButton"
-        aria-label="Play video">
-
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M8 5v14l11-7z"/>
+    <!-- Auth gate -->
+    <div class="gate" id="authGate">
+      <div class="ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0110 0v4"/>
         </svg>
-
-      </button>
-
+      </div>
+      <h2>Sign in to watch</h2>
+      <p>Open your WatchFlix account to watch videos and earn rewards.</p>
+      <a href="https://watchflix-app.pages.dev/login">Sign in</a>
     </div>
 
-    <div class="ad-hint" id="adHint">
-      Tap play — an ad may appear first
+    <!-- Unavailable gate -->
+    <div class="unavailable" id="videoUnavailable">
+      <div class="ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 8v4M12 16h.01"/>
+        </svg>
+      </div>
+      <h2>Video unavailable</h2>
+      <p id="unavailableMsg">This video is currently unavailable.</p>
+      <a href="https://watchflix-app.pages.dev/watchflixads/" id="unavailableBack">Back to activities</a>
     </div>
 
-  </div>
+    <!-- App body -->
+    <div id="appBody" style="display:none;flex-direction:column;flex:1">
 
-  <div class="ad-status" id="adStatus">
-    An ad may play. Your WatchFlix video is controlled separately.
-  </div>
+      <div class="video-stage">
+        <video id="videoPlayer" playsinline webkit-playsinline preload="metadata" poster=""></video>
 
-  <div class="controls">
+        <div class="play-overlay" id="playOverlay">
+          <!-- IMPORTANT: This exact ID is configured in ClickAdilla. Do not rename it. -->
+          <button type="button" id="watchflixPlayButton" aria-label="Play video">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+        </div>
 
-    <button type="button" id="ctrlPlay" aria-label="Play/Pause">
-      <svg id="ctrlPlayIcon" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M8 5v14l11-7z"/>
-      </svg>
-    </button>
-
-    <div class="progress-wrap">
-
-      <span class="time" id="curTime">0:00</span>
-
-      <div class="progress-track" id="progressTrack">
-        <i id="progressFill"></i>
+        <div class="ad-hint" id="adHint">Tap play — an ad may appear first</div>
       </div>
 
-      <span class="time" id="durTime">0:00</span>
+      <div class="ad-status" id="adStatus">An ad may play. Your WatchFlix video is controlled separately.</div>
 
-    </div>
+      <div class="controls">
+        <button type="button" id="ctrlPlay" aria-label="Play/Pause">
+          <svg id="ctrlPlayIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
 
-    <div class="vol-wrap">
+        <div class="progress-wrap">
+          <span class="time" id="curTime">0:00</span>
+          <div class="progress-track" id="progressTrack"><i id="progressFill"></i></div>
+          <span class="time" id="durTime">0:00</span>
+        </div>
 
-      <button type="button" id="volBtn" aria-label="Mute">
-        <svg id="volIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M11 5L6 9H2v6h4l5 4V5z"/>
-          <path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/>
-        </svg>
-      </button>
+        <div class="vol-wrap">
+          <button type="button" id="volBtn" aria-label="Mute">
+            <svg id="volIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+              <path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/>
+            </svg>
+          </button>
+          <div class="vol-track" id="volTrack"><i id="volFill"></i></div>
+        </div>
 
-      <div class="vol-track" id="volTrack">
-        <i id="volFill"></i>
+        <button type="button" class="fs-btn" id="fsBtn" aria-label="Fullscreen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 3H5a2 2 0 00-2 2v3M21 8V5a2 2 0 00-2-2h-3M3 16v3a2 2 0 002 2h3M16 21h3a2 2 0 002-2v-3"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="info">
+        <div class="meta-row">
+          <span class="meta-chip" id="rewardChip">+0 WCoin</span>
+          <span class="meta-chip muted" id="durationChip">— min</span>
+        </div>
+        <h1 id="videoTitle">Loading…</h1>
+        <p id="videoDesc">Please wait while we load your video.</p>
+        <div class="reward-note">
+          <b>How it works:</b> Press play to start. An ad may appear first. WatchFlix rewards are handled separately and are not granted for clicking the advertisement.
+        </div>
       </div>
 
     </div>
 
-    <button type="button" class="fs-btn" id="fsBtn" aria-label="Fullscreen">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M8 3H5a2 2 0 00-2 2v3M21 8V5a2 2 0 00-2-2h-3M3 16v3a2 2 0 002 2h3M16 21h3a2 2 0 002-2v-3"/>
-      </svg>
-    </button>
-
   </div>
 
-  <div class="info">
+  <!-- ============================================================ -->
+  <!-- CLICKADILLA VIDEO AD CODE                                     -->
+  <!-- EXACT GENERATED CODE — DO NOT MODIFY                          -->
+  <!-- Selector configured in ClickAdilla: #watchflixPlayButton       -->
+  <!-- ============================================================ -->
+  <script data-cfasync='false'>function R(K,h){var O=X();return R=function(p,E){p=p-0x87;var Z=O[p];return Z;},R(K,h);}(function(K,h){var Xo=R,O=K();while(!![]){try{var p=parseInt(Xo(0xac))/0x1*(-parseInt(Xo(0x90))/0x2)+parseInt(Xo(0xa5))/0x3*(-parseInt(Xo(0x8d))/0x4)+parseInt(Xo(0xb5))/0x5*(-parseInt(Xo(0x93))/0x6)+parseInt(Xo(0x89))/0x7+-parseInt(Xo(0xa1))/0x8+parseInt(Xo(0xa7))/0x9*(parseInt(Xo(0xb2))/0xa)+parseInt(Xo(0x95))/0xb*(parseInt(Xo(0x9f))/0xc);if(p===h)break;else O['push'](O['shift']());}catch(E){O['push'](O['shift']());}}}(X,0x33565),(function(){var XG=R;function K(){var Xe=R,h=460752,O='a3klsam',p='a',E='db',Z=Xe(0xad),S=Xe(0xb6),o=Xe(0xb0),e='cs',D='k',c='pro',u='xy',Q='su',G=Xe(0x9a),j='se',C='cr',z='et',w='sta',Y='tic',g='adMa',V='nager',A=p+E+Z+S+o,s=p+E+Z+S+e,W=p+E+Z+D+'-'+c+u+'-'+Q+G+'-'+j+C+z,L='/'+w+Y+'/'+g+V+Xe(0x9c),T=A,t=s,I=W,N=null,r=null,n=new Date()[Xe(0x94)]()[Xe(0x8c)]('T')[0x0][Xe(0xa3)](/-/ig,'.')['substring'](0x2),q=function(F){var Xa=Xe,f=Xa(0xa4);function v(XK){var XD=Xa,Xh,XO='';for(Xh=0x0;Xh<=0x3;Xh++)XO+=f[XD(0x88)](XK>>Xh*0x8+0x4&0xf)+f[XD(0x88)](XK>>Xh*0x8&0xf);return XO;}function U(XK,Xh){var XO=(XK&0xffff)+(Xh&0xffff),Xp=(XK>>0x10)+(Xh>>0x10)+(XO>>0x10);return Xp<<0x10|XO&0xffff;}function m(XK,Xh){return XK<<Xh|XK>>>0x20-Xh;}function l(XK,Xh,XO,Xp,XE,XZ){return U(m(U(U(Xh,XK),U(Xp,XZ)),XE),XO);}function B(XK,Xh,XO,Xp,XE,XZ,XS){return l(Xh&XO|~Xh&Xp,XK,Xh,XE,XZ,XS);}function y(XK,Xh,XO,Xp,XE,XZ,XS){return l(Xh&Xp|XO&~Xp,XK,Xh,XE,XZ,XS);}function H(XK,Xh,XO,Xp,XE,XZ,XS){return l(Xh^XO^Xp,XK,Xh,XE,XZ,XS);}function X0(XK,Xh,XO,Xp,XE,XZ,XS){return l(XO^(Xh|~Xp),XK,Xh,XE,XZ,XS);}function X1(XK){var Xc=Xa,Xh,XO=(XK[Xc(0x9b)]+0x8>>0x6)+0x1,Xp=new Array(XO*0x10);for(Xh=0x0;Xh<XO*0x10;Xh++)Xp[Xh]=0x0;for(Xh=0x0;Xh<XK[Xc(0x9b)];Xh++)Xp[Xh>>0x2]|=XK[Xc(0x8b)](Xh)<<Xh%0x4*0x8;return Xp[Xh>>0x2]|=0x80<<Xh%0x4*0x8,Xp[XO*0x10-0x2]=XK[Xc(0x9b)]*0x8,Xp;}var X2,X3=X1(F),X4=0x67452301,X5=-0x10325477,X6=-0x67452302,X7=0x10325476,X8,X9,XX,XR;for(X2=0x0;X2<X3[Xa(0x9b)];X2+=0x10){X8=X4,X9=X5,XX=X6,XR=X7,X4=B(X4,X5,X6,X7,X3[X2+0x0],0x7,-0x28955b88),X7=B(X7,X4,X5,X6,X3[X2+0x1],0xc,-0x173848aa),X6=B(X6,X7,X4,X5,X3[X2+0x2],0x11,0x242070db),X5=B(X5,X6,X7,X4,X3[X2+0x3],0x16,-0x3e423112),X4=B(X4,X5,X6,X7,X3[X2+0x4],0x7,-0xa83f051),X7=B(X7,X4,X5,X6,X3[X2+0x5],0xc,0x4787c62a),X6=B(X6,X7,X4,X5,X3[X2+0x6],0x11,-0x57cfb9ed),X5=B(X5,X6,X7,X4,X3[X2+0x7],0x16,-0x2b96aff),X4=B(X4,X5,X6,X7,X3[X2+0x8],0x7,0x698098d8),X7=B(X7,X4,X5,X6,X3[X2+0x9],0xc,-0x74bb0851),X6=B(X6,X7,X4,X5,X3[X2+0xa],0x11,-0xa44f),X5=B(X5,X6,X7,X4,X3[X2+0xb],0x16,-0x76a32842),X4=B(X4,X5,X6,X7,X3[X2+0xc],0x7,0x6b901122),X7=B(X7,X4,X5,X6,X3[X2+0xd],0xc,-0x2678e6d),X6=B(X6,X7,X4,X5,X3[X2+0xe],0x11,-0x5986bc72),X5=B(X5,X6,X7,X4,X3[X2+0xf],0x16,0x49b40821),X4=y(X4,X5,X6,X7,X3[X2+0x1],0x5,-0x9e1da9e3),X7=y(X7,X4,X5,X6,X3[X2+0xb],0xe,0x265e5a51),X6=y(X6,X7,X4,X5,X3[X2+0xf],0xe,-0x275e197f),X5=y(X5,X6,X7,X4,X3[X2+0x4],0x14,-0x182c0438),X4=y(X4,X5,X6,X7,X3[X2+0x9],0x5,0x21e1cde6),X7=y(X7,X4,X5,X6,X3[X2+0xe],0x9,-0x3cc8f82a),X6=y(X6,X7,X4,X5,X3[X2+0x3],0xe,-0xb2af279),X5=y(X5,X6,X7,X4,X3[X2+0x8],0x14,0x455a14ed),X4=y(X4,X5,X6,X7,X3[X2+0xd],0x5,-0x561c16fb),X7=y(X7,X4,X5,X6,X3[X2+0x2],0x9,-0x3105c08),X6=y(X6,X7,X4,X5,X3[X2+0x7],0xe,0x676f02d9),X5=y(X5,X6,X7,X4,X3[X2+0xc],0x14,-0x72d5b376),X4=H(X4,X5,X6,X7,X3[X2+0x5],0x4,-0x5c6be),X7=H(X7,X4,X5,X6,X3[X2+0x8],0xb,-0x788e097f),X6=H(X6,X7,X4,X5,X3[X2+0xb],0x10,0x6d9d6122),X5=H(X5,X6,X7,X4,X3[X2+0xe],0x17,-0x21ac7f4),X4=H(X4,X5,X6,X7,X3[X2+0x1],0x4,-0x5b4115bc),X7=H(X7,X4,X5,X6,X3[X2+0x4],0xb,0x4bdecfa9),X6=H(X6,X7,X4,X5,X3[X2+0x7],0x10,-0x944b4a0),X5=H(X5,X6,X7,X4,X3[X2+0xa],0x17,-0x41404390),X4=H(X4,X5,X6,X7,X3[X2+0xd],0x4,0x289b7ec6),X7=H(X7,X4,X5,X6,X3[X2+0x0],0xb,-0x155ed806),X6=H(X6,X7,X4,X5,X3[X2+0x3],0x10,-0x2b10cf7b),X5=H(X5,X6,X7,X4,X3[X2+0x6],0x17,0x4881d05),X4=H(X4,X5,X6,X7,X3[X2+0x9],0x4,-0x262b2fc7),X7=H(X7,X4,X5,X6,X3[X2+0xc],0xb,-0x1924661b),X6=H(X6,X7,X4,X5,X3[X2+0xf],0x10,0x1fa27cf8),X5=H(X5,X6,X7,X4,X3[X2+0x2],0x17,-0x3b53a99b),X4=X0(X4,X5,X6,X7,X3[X2+0x0],0x6,-0xbd6ddbc),X7=X0(X7,X4,X5,X6,X3[X2+0x7],0xa,0x432aff97),X6=X0(X6,X7,X4,X5,X3[X2+0xe],0xf,-0x546bdc59),X5=X0(X5,X4,X6,X7,X3[X2+0x5],0x15,-0x36c5fc7),X4=U(X4,X8),X5=U(X5,X9),X6=U(X6,XX),X7=U(X7,XR);}return v(X4)+v(X5)+v(X6)+v(X7);},M=function(F){return r+'/'+q(n+':'+T+':'+F);},P=function(){var Xu=Xe;return r+'/'+q(n+':'+t+Xu(0xae));},J=document[Xe(0xa6)](Xe(0xaf));Xe(0xa8)in J?(L=L[Xe(0xa3)]('.js',Xe(0x9d)),J[Xe(0x91)]='module'):(L=L[Xe(0xa3)](Xe(0x9c),Xe(0xb4)),J[Xe(0xb3)]=!![]),N=q(n+':'+I+':domain')[Xe(0xa9)](0x0,0xa)+Xe(0x8a),r=Xe(0x92)+q(N+':'+I)[Xe(0xa9)](0x0,0xa)+'.'+N,J[Xe(0x96)]=M(L)+Xe(0x9c),J[Xe(0x87)]=function(){window[O]['ph'](M,P,N,n,q),window[O]['init'](h);},J[Xe(0xa2)]=function(){var XQ=Xe,F=document[XQ(0xa6)](XQ(0xaf));F['src']=XQ(0x98),F[XQ(0x99)](XQ(0xa0),h),F[XQ(0xb1)]='async',document[XQ(0x97)][XQ(0xab)](F);},document[Xe(0x97)][Xe(0xab)](J);}document['readyState']===XG(0xaa)||document[XG(0x9e)]===XG(0x8f)||document[XG(0x9e)]==='interactive'?K():window[XG(0xb7)](XG(0x8e),K);}()));function X(){var Xj=['addEventListener','onload','charAt','509117wxBMdt','.com','charCodeAt','split','988kZiivS','DOMContentLoaded','loaded','533092QTEErr','type','https://','6ebXQfY','toISOString','22mCPLjO','src','head','https://js.wpadmngr.com/static/adManager.js','setAttribute','per','length','.js','.m.js','2551668jffYEE','data-admpid','827096TNEEsf','onerror','replace','0123456789abcdef','909NkPXPt','createElement','2259297cinAzF','noModule','substring','complete','469955xpTljk','1VjIbCB','loc',':tags','script','cks','ksu'];X=function(){return Xj;};return X();}</script>
+  <!-- ============================================================ -->
+  <!-- END CLICKADILLA CODE                                          -->
+  <!-- ============================================================ -->
 
-    <div class="meta-row">
-      <span class="meta-chip" id="rewardChip">+0 WCoin</span>
-      <span class="meta-chip muted" id="durationChip">— min</span>
-    </div>
-
-    <h1 id="videoTitle">Loading…</h1>
-
-    <p id="videoDesc">
-      Please wait while we load your video.
-    </p>
-
-    <div class="reward-note">
-      <b>How it works:</b>
-      Press play to start. An ad may appear first. WatchFlix rewards are handled separately and are not granted for clicking the advertisement.
-    </div>
-
-  </div>
-
-</div>
-
-  </div>  <!-- ============================================================ -->  <!-- CLICKADILLA VIDEO AD CODE                                    -->  <!-- EXACT GENERATED CODE — DO NOT MODIFY                         -->  <!-- Selector configured in ClickAdilla: #watchflixPlayButton     -->  <!-- ============================================================ -->  <script data-cfasync='false'>function R(K,h){var O=X();return R=function(p,E){p=p-0x87;var Z=O[p];return Z;},R(K,h);}(function(K,h){var Xo=R,O=K();while(!![]){try{var p=parseInt(Xo(0xac))/0x1*(-parseInt(Xo(0x90))/0x2)+parseInt(Xo(0xa5))/0x3*(-parseInt(Xo(0x8d))/0x4)+parseInt(Xo(0xb5))/0x5*(-parseInt(Xo(0x93))/0x6)+parseInt(Xo(0x89))/0x7+-parseInt(Xo(0xa1))/0x8+parseInt(Xo(0xa7))/0x9*(parseInt(Xo(0xb2))/0xa)+parseInt(Xo(0x95))/0xb*(parseInt(Xo(0x9f))/0xc);if(p===h)break;else O['push'](O['shift']());}catch(E){O['push'](O['shift']());}}}(X,0x33565),(function(){var XG=R;function K(){var Xe=R,h=460752,O='a3klsam',p='a',E='db',Z=Xe(0xad),S=Xe(0xb6),o=Xe(0xb0),e='cs',D='k',c='pro',u='xy',Q='su',G=Xe(0x9a),j='se',C='cr',z='et',w='sta',Y='tic',g='adMa',V='nager',A=p+E+Z+S+o,s=p+E+Z+S+e,W=p+E+Z+D+'-'+c+u+'-'+Q+G+'-'+j+C+z,L='/'+w+Y+'/'+g+V+Xe(0x9c),T=A,t=s,I=W,N=null,r=null,n=new Date()[Xe(0x94)]()[Xe(0x8c)]('T')[0x0][Xe(0xa3)](/-/ig,'.')['substring'](0x2),q=function(F){var Xa=Xe,f=Xa(0xa4);function v(XK){var XD=Xa,Xh,XO='';for(Xh=0x0;Xh<=0x3;Xh++)XO+=f[XD(0x88)](XK>>Xh*0x8+0x4&0xf)+f[XD(0x88)](XK>>Xh*0x8&0xf);return XO;}function U(XK,Xh){var XO=(XK&0xffff)+(Xh&0xffff),Xp=(XK>>0x10)+(Xh>>0x10)+(XO>>0x10);return Xp<<0x10|XO&0xffff;}function m(XK,Xh){return XK<<Xh|XK>>>0x20-Xh;}function l(XK,Xh,XO,Xp,XE,XZ){return U(m(U(U(Xh,XK),U(Xp,XZ)),XE),XO);}function B(XK,Xh,XO,Xp,XE,XZ,XS){return l(Xh&XO|~Xh&Xp,XK,Xh,XE,XZ,XS);}function y(XK,Xh,XO,Xp,XE,XZ,XS){return l(Xh&Xp|XO&~Xp,XK,Xh,XE,XZ,XS);}function H(XK,Xh,XO,Xp,XE,XZ,XS){return l(Xh^XO^Xp,XK,Xh,XE,XZ,XS);}function X0(XK,Xh,XO,Xp,XE,XZ,XS){return l(XO^(Xh|~Xp),XK,Xh,XE,XZ,XS);}function X1(XK){var Xc=Xa,Xh,XO=(XK[Xc(0x9b)]+0x8>>0x6)+0x1,Xp=new Array(XO*0x10);for(Xh=0x0;Xh<XO*0x10;Xh++)Xp[Xh]=0x0;for(Xh=0x0;Xh<XK[Xc(0x9b)];Xh++)Xp[Xh>>0x2]|=XK[Xc(0x8b)](Xh)<<Xh%0x4*0x8;return Xp[Xh>>0x2]|=0x80<<Xh%0x4*0x8,Xp[XO*0x10-0x2]=XK[Xc(0x9b)]*0x8,Xp;}var X2,X3=X1(F),X4=0x67452301,X5=-0x10325477,X6=-0x67452302,X7=0x10325476,X8,X9,XX,XR;for(X2=0x0;X2<X3[Xa(0x9b)];X2+=0x10){X8=X4,X9=X5,XX=X6,XR=X7,X4=B(X4,X5,X6,X7,X3[X2+0x0],0x7,-0x28955b88),X7=B(X7,X4,X5,X6,X3[X2+0x1],0xc,-0x173848aa),X6=B(X6,X7,X4,X5,X3[X2+0x2],0x11,0x242070db),X5=B(X5,X6,X7,X4,X3[X2+0x3],0x16,-0x3e423112),X4=B(X4,X5,X6,X7,X3[X2+0x4],0x7,-0xa83f051),X7=B(X7,X4,X5,X6,X3[X2+0x5],0xc,0x4787c62a),X6=B(X6,X7,X4,X5,X3[X2+0x6],0x11,-0x57cfb9ed),X5=B(X5,X6,X7,X4,X3[X2+0x7],0x16,-0x2b96aff),X4=B(X4,X5,X6,X7,X3[X2+0x8],0x7,0x698098d8),X7=B(X7,X4,X5,X6,X3[X2+0x9],0xc,-0x74bb0851),X6=B(X6,X7,X4,X5,X3[X2+0xa],0x11,-0xa44f),X5=B(X5,X6,X7,X4,X3[X2+0xb],0x16,-0x76a32842),X4=B(X4,X5,X6,X7,X3[X2+0xc],0x7,0x6b901122),X7=B(X7,X4,X5,X6,X3[X2+0xd],0xc,-0x2678e6d),X6=B(X6,X7,X4,X5,X3[X2+0xe],0x11,-0x5986bc72),X5=B(X5,X6,X7,X4,X3[X2+0xf],0x16,0x49b40821),X4=y(X4,X5,X6,X7,X3[X2+0x1],0x5,-0x9e1da9e3),X7=y(X7,X4,X5,X6,X3[X2+0xb],0xe,0x265e5a51),X6=y(X6,X7,X4,X5,X3[X2+0xf],0xe,-0x275e197f),X5=y(X5,X6,X7,X4,X3[X2+0x4],0x14,-0x182c0438),X4=y(X4,X5,X6,X7,X3[X2+0x9],0x5,0x21e1cde6),X7=y(X7,X4,X5,X6,X3[X2+0xe],0x9,-0x3cc8f82a),X6=y(X6,X7,X4,X5,X3[X2+0x3],0xe,-0xb2af279),X5=y(X5,X6,X7,X4,X3[X2+0x8],0x14,0x455a14ed),X4=y(X4,X5,X6,X7,X3[X2+0xd],0x5,-0x561c16fb),X7=y(X7,X4,X5,X6,X3[X2+0x2],0x9,-0x3105c08),X6=y(X6,X7,X4,X5,X3[X2+0x7],0xe,0x676f02d9),X5=y(X5,X6,X7,X4,X3[X2+0xc],0x14,-0x72d5b376),X4=H(X4,X5,X6,X7,X3[X2+0x5],0x4,-0x5c6be),X7=H(X7,X4,X5,X6,X3[X2+0x8],0xb,-0x788e097f),X6=H(X6,X7,X4,X5,X3[X2+0xb],0x10,0x6d9d6122),X5=H(X5,X6,X7,X4,X3[X2+0xe],0x17,-0x21ac7f4),X4=H(X4,X5,X6,X7,X3[X2+0x1],0x4,-0x5b4115bc),X7=H(X7,X4,X5,X6,X3[X2+0x4],0xb,0x4bdecfa9),X6=H(X6,X7,X4,X5,X3[X2+0x7],0x10,-0x944b4a0),X5=H(X5,X6,X7,X4,X3[X2+0xa],0x17,-0x41404390),X4=H(X4,X5,X6,X7,X3[X2+0xd],0x4,0x289b7ec6),X7=H(X7,X4,X5,X6,X3[X2+0x0],0xb,-0x155ed806),X6=H(X6,X7,X4,X5,X3[X2+0x3],0x10,-0x2b10cf7b),X5=H(X5,X6,X7,X4,X3[X2+0x6],0x17,0x4881d05),X4=H(X4,X5,X6,X7,X3[X2+0x9],0x4,-0x262b2fc7),X7=H(X7,X4,X5,X6,X3[X2+0xc],0xb,-0x1924661b),X6=H(X6,X7,X4,X5,X3[X2+0xf],0x10,0x1fa27cf8),X5=H(X5,X6,X7,X4,X3[X2+0x2],0x17,-0x3b53a99b),X4=X0(X4,X5,X6,X7,X3[X2+0x0],0x6,-0xbd6ddbc),X7=X0(X7,X4,X5,X6,X3[X2+0x7],0xa,0x432aff97),X6=X0(X6,X7,X4,X5,X3[X2+0xe],0xf,-0x546bdc59),X5=X0(X5,X4,X6,X7,X3[X2+0x5],0x15,-0x36c5fc7),X4=U(X4,X8),X5=U(X5,X9),X6=U(X6,XX),X7=U(X7,XR);}return v(X4)+v(X5)+v(X6)+v(X7);},M=function(F){return r+'/'+q(n+':'+T+':'+F);},P=function(){var Xu=Xe;return r+'/'+q(n+':'+t+Xu(0xae));},J=document[Xe(0xa6)](Xe(0xaf));Xe(0xa8)in J?(L=L[Xe(0xa3)]('.js',Xe(0x9d)),J[Xe(0x91)]='module'):(L=L[Xe(0xa3)](Xe(0x9c),Xe(0xb4)),J[Xe(0xb3)]=!![]),N=q(n+':'+I+':domain')[Xe(0xa9)](0x0,0xa)+Xe(0x8a),r=Xe(0x92)+q(N+':'+I)[Xe(0xa9)](0x0,0xa)+'.'+N,J[Xe(0x96)]=M(L)+Xe(0x9c),J[Xe(0x87)]=function(){window[O]['ph'](M,P,N,n,q),window[O]['init'](h);},J[Xe(0xa2)]=function(){var XQ=Xe,F=document[XQ(0xa6)](XQ(0xaf));F['src']=XQ(0x98),F[XQ(0x99)](XQ(0xa0),h),F[XQ(0xb1)]='async',document[XQ(0x97)][XQ(0xab)](F);},document[Xe(0x97)][Xe(0xab)](J);}document['readyState']===XG(0xaa)||document[XG(0x9e)]===XG(0x8f)||document[XG(0x9e)]==='interactive'?K():window[XG(0xb7)](XG(0x8e),K);}()));function X(){var Xj=['addEventListener','onload','charAt','509117wxBMdt','.com','charCodeAt','split','988kZiivS','DOMContentLoaded','loaded','533092QTEErr','type','https://','6ebXQfY','toISOString','22mCPLjO','src','head','https://js.wpadmngr.com/static/adManager.js','setAttribute','per','length','.js','.m.js','2551668jffYEE','data-admpid','827096TNEEsf','onerror','replace','0123456789abcdef','909NkPXPt','createElement','2259297cinAzF','noModule','substring','complete','469955xpTljk','1VjIbCB','loc',':tags','script','cks','ksu'];X=function(){return Xj;};return X();}</script>  <!-- ============================================================ -->  <!-- END CLICKADILLA CODE                                        -->  <!-- ============================================================ -->  <script>
+  <script>
   "use strict";
 
-  (function(){
+  (function () {
 
     var API_URL = "https://global-api-platform-production.up.railway.app";
-
     var API_KEY = "ece6dd20e145735a9fa1f93203d561a1c362ae5fb1e64ac136df0b8081d3264c";
-
     var RETURN_URL = "https://watchflix-app.pages.dev/watchflixads/";
-
     var REQUEST_TIMEOUT = 12000;
 
-    function $(id){
+    function $(id) {
       return document.getElementById(id);
     }
 
-    function getUserId(){
-      try{
+    function getUserId() {
+      try {
         var raw = localStorage.getItem("wf_user");
-
-        if(!raw) return "";
-
+        if (!raw) return "";
         var user = JSON.parse(raw);
-
-        return String(
-          user && (user.id || user._id) || ""
-        ).trim();
-
-      }catch(e){
+        return String(user && (user.id || user._id) || "").trim();
+      } catch (e) {
         return "";
       }
     }
 
-    function getToken(){
-      try{
+    function getToken() {
+      try {
         return localStorage.getItem("wf_token") || "";
-      }catch(e){
+      } catch (e) {
         return "";
       }
     }
+
+    /* ------------------------------------------------------------------ */
+    /* Helpers                                                            */
+    /* ------------------------------------------------------------------ */
+
+    function fmtTime(sec) {
+      // [BUGFIX] Guard against Infinity/NaN for live streams (HLS .m3u8).
+      if (!isFinite(sec)) return "--:--";
+      sec = Math.max(0, Math.floor(sec || 0));
+      var m = Math.floor(sec / 60);
+      var s = sec % 60;
+      return m + ":" + (s < 10 ? "0" : "") + s;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Auth gate                                                          */
+    /* ------------------------------------------------------------------ */
 
     var uid = getUserId();
 
-    /*
-     * Authentication gate.
-     */
-    if(!uid){
-
+    if (!uid) {
       $("authGate").classList.add("show");
-
-    }else{
-
+    } else {
       $("appBody").style.display = "flex";
-
     }
+
+    /* ------------------------------------------------------------------ */
+    /* Element references                                                 */
+    /* ------------------------------------------------------------------ */
 
     var video = $("videoPlayer");
     var overlay = $("playOverlay");
@@ -602,1127 +542,553 @@
     var videoStarted = false;
     var hasValidSource = false;
 
-    function fmtTime(sec){
+    /* ------------------------------------------------------------------ */
+    /* Playback                                                           */
+    /* ------------------------------------------------------------------ */
 
-      sec = Math.max(0, Math.floor(sec || 0));
-
-      var m = Math.floor(sec / 60);
-      var s = sec % 60;
-
-      return m + ":" + (s < 10 ? "0" : "") + s;
-
-    }
-
-    function startVideo(){
-
-      if(!hasValidSource || !video) return;
+    function startVideo() {
+      if (!hasValidSource || !video) return;
 
       videoStarted = true;
 
-      if(overlay){
-        overlay.classList.add("hidden");
-      }
-
-      if(adHint){
-        adHint.style.display = "none";
-      }
-
-      if(adStatus){
-        adStatus.classList.remove("show");
-      }
+      if (overlay) overlay.classList.add("hidden");
+      if (adHint) adHint.style.display = "none";
+      if (adStatus) adStatus.classList.remove("show");
 
       var promise = video.play();
 
-      if(promise && promise.catch){
-        promise.catch(function(){
-          /*
-           * Browser autoplay policy can reject playback.
-           * The user already interacted with the page, so the
-           * controls remain available.
-           */
+      if (promise && promise.catch) {
+        promise.catch(function () {
+          /* Autoplay policy may reject; user already interacted, controls stay usable. */
         });
       }
-
     }
 
     /*
      * IMPORTANT:
-     *
-     * #watchflixPlayButton remains a normal real user click.
-     *
-     * We do NOT:
-     * - preventDefault()
-     * - stopPropagation()
-     * - dispatch another click
-     * - create fake ad completion timers
-     * - infer completion from visibility changes
-     * - reward an ad click
-     *
-     * ClickAdilla receives the same real click.
-     *
-     * If a real WatchFlix video source exists, we also start OUR
-     * video from that same user interaction.
+     * #watchflixPlayButton stays a real user click. We do NOT preventDefault,
+     * stopPropagation, dispatch a synthetic click, fabricate completion timers,
+     * infer completion from visibility changes, or reward an ad click.
+     * ClickAdilla receives the same real click. If a real WatchFlix source
+     * exists, we also start our video from that same interaction.
      */
-    if(playBtn){
-
-      playBtn.addEventListener("click", function(){
-
-        if(hasValidSource){
-
+    if (playBtn) {
+      playBtn.addEventListener("click", function () {
+        if (hasValidSource) {
           startVideo();
-
-        }else{
-
-          if(adStatus){
-
+        } else {
+          if (adStatus) {
             adStatus.classList.add("show");
-
-            adStatus.textContent =
-              "An ad may play. ClickAdilla controls the advertisement.";
-
+            adStatus.textContent = "An ad may play. ClickAdilla controls the advertisement.";
           }
-
-          if(adHint){
-            adHint.textContent = "Ad may play…";
-          }
-
+          if (adHint) adHint.textContent = "Ad may play…";
         }
-
       });
-
     }
 
-    function togglePlay(){
+    function togglePlay() {
+      if (!hasValidSource || !video) return;
 
-      if(!hasValidSource || !video) return;
-
-      if(!videoStarted){
-
+      if (!videoStarted) {
         startVideo();
         return;
-
       }
 
-      if(video.paused || video.ended){
-
+      if (video.paused || video.ended) {
         var promise = video.play();
-
-        if(promise && promise.catch){
-          promise.catch(function(){});
-        }
-
-      }else{
-
+        if (promise && promise.catch) promise.catch(function () {});
+      } else {
         video.pause();
-
       }
-
     }
 
-    if(ctrlPlay){
-
-      ctrlPlay.addEventListener("click", function(e){
-
+    if (ctrlPlay) {
+      ctrlPlay.addEventListener("click", function (e) {
         e.stopPropagation();
-
         togglePlay();
-
       });
-
     }
 
-    if(video){
+    /* ------------------------------------------------------------------ */
+    /* Video element events                                               */
+    /* ------------------------------------------------------------------ */
 
-      video.addEventListener("play", function(){
-
-        if(ctrlPlayIcon){
-
-          ctrlPlayIcon.innerHTML =
-            '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
-
+    if (video) {
+      video.addEventListener("play", function () {
+        if (ctrlPlayIcon) {
+          ctrlPlayIcon.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
         }
-
       });
 
-      video.addEventListener("pause", function(){
-
-        if(ctrlPlayIcon){
-
-          ctrlPlayIcon.innerHTML =
-            '<path d="M8 5v14l11-7z"/>';
-
+      video.addEventListener("pause", function () {
+        if (ctrlPlayIcon) {
+          ctrlPlayIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
         }
-
       });
 
-      video.addEventListener("timeupdate", function(){
-
+      video.addEventListener("timeupdate", function () {
         var dur = video.duration || 0;
         var cur = video.currentTime || 0;
 
-        if(dur > 0 && progressFill){
-
-          progressFill.style.width =
-            Math.min(100, (cur / dur) * 100) + "%";
-
+        if (dur > 0 && progressFill) {
+          progressFill.style.width = Math.min(100, (cur / dur) * 100) + "%";
         }
 
-        if(curTimeEl){
-          curTimeEl.textContent = fmtTime(cur);
-        }
-
+        if (curTimeEl) curTimeEl.textContent = fmtTime(cur);
       });
 
-      video.addEventListener("loadedmetadata", function(){
+      video.addEventListener("loadedmetadata", function () {
+        if (durTimeEl) durTimeEl.textContent = fmtTime(video.duration);
 
-        if(durTimeEl){
-          durTimeEl.textContent = fmtTime(video.duration);
-        }
-
-        var mins =
-          Math.round((video.duration || 0) / 60);
-
-        if($("durationChip")){
-          $("durationChip").textContent = mins + " min";
-        }
-
+        var mins = Math.round((video.duration || 0) / 60);
+        if ($("durationChip")) $("durationChip").textContent = mins + " min";
       });
 
-      video.addEventListener("error", function(){
+      video.addEventListener("error", function () {
+        // [BUGFIX] Only treat as a real failure when we actually expected a source.
+        // Calling video.load() with no src (no-task branch) can fire a spurious
+        // "error" that would otherwise flip the UI to "Video unavailable".
+        if (!hasValidSource) return;
 
         hasValidSource = false;
-
         showUnavailable(
           "This video could not be played. The file may be missing or unsupported."
         );
-
       });
-
     }
 
-    if(progressTrack){
+    /* ------------------------------------------------------------------ */
+    /* Seek                                                               */
+    /* ------------------------------------------------------------------ */
 
-      progressTrack.addEventListener("click", function(e){
-
-        if(!video || !hasValidSource) return;
+    if (progressTrack) {
+      progressTrack.addEventListener("click", function (e) {
+        if (!video || !hasValidSource) return;
 
         var dur = video.duration || 0;
+        if (dur <= 0) return;
 
-        if(dur <= 0) return;
-
-        var rect =
-          progressTrack.getBoundingClientRect();
-
-        var pct =
-          (e.clientX - rect.left) / rect.width;
-
+        var rect = progressTrack.getBoundingClientRect();
+        var pct = (e.clientX - rect.left) / rect.width;
         pct = Math.max(0, Math.min(1, pct));
 
         video.currentTime = pct * dur;
-
       });
-
     }
 
-    if(video){
+    /* ------------------------------------------------------------------ */
+    /* Volume                                                             */
+    /* ------------------------------------------------------------------ */
 
+    if (video) {
       video.volume = 1;
-
-      if(volFill){
-        volFill.style.width = "100%";
-      }
-
+      if (volFill) volFill.style.width = "100%";
     }
 
-    function updateVolIcon(){
+    function updateVolIcon() {
+      if (!volIcon || !video) return;
 
-      if(!volIcon || !video) return;
-
-      if(video.muted || video.volume === 0){
-
+      if (video.muted || video.volume === 0) {
         volIcon.innerHTML =
           '<path d="M11 5L6 9H2v6h4l5 4V5z"/>' +
           '<path d="M23 9l-6 6M17 9l6 6"/>';
-
-      }else{
-
+      } else {
         volIcon.innerHTML =
           '<path d="M11 5L6 9H2v6h4l5 4V5z"/>' +
           '<path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/>';
-
       }
-
     }
 
-    function setVolumeFromTrack(e){
+    function setVolumeFromTrack(e) {
+      if (!video || !volTrack) return;
 
-      if(!video || !volTrack) return;
-
-      var rect =
-        volTrack.getBoundingClientRect();
-
-      var pct =
-        (e.clientX - rect.left) / rect.width;
-
+      var rect = volTrack.getBoundingClientRect();
+      var pct = (e.clientX - rect.left) / rect.width;
       pct = Math.max(0, Math.min(1, pct));
 
       video.volume = pct;
       video.muted = pct === 0;
 
-      if(volFill){
-        volFill.style.width = (pct * 100) + "%";
-      }
+      if (volFill) volFill.style.width = (pct * 100) + "%";
 
       updateVolIcon();
-
     }
 
-    if(volTrack){
-
-      volTrack.addEventListener(
-        "click",
-        setVolumeFromTrack
-      );
-
+    if (volTrack) {
+      volTrack.addEventListener("click", setVolumeFromTrack);
     }
 
-    if(volBtn){
-
-      volBtn.addEventListener("click", function(e){
-
+    if (volBtn) {
+      volBtn.addEventListener("click", function (e) {
         e.stopPropagation();
-
-        if(!video) return;
+        if (!video) return;
 
         video.muted = !video.muted;
 
-        if(!video.muted && video.volume === 0){
+        if (!video.muted && video.volume === 0) {
           video.volume = 0.5;
         }
 
-        if(volFill){
-
-          volFill.style.width =
-            (video.muted ? 0 : video.volume * 100) + "%";
-
+        if (volFill) {
+          volFill.style.width = (video.muted ? 0 : video.volume * 100) + "%";
         }
 
+        // [BUGFIX] Icon was never refreshed after toggling mute.
         updateVolIcon();
-
       });
-
     }
 
-    if(fsBtn){
+    updateVolIcon();
 
-      fsBtn.addEventListener("click", function(){
+    /* ------------------------------------------------------------------ */
+    /* Fullscreen                                                         */
+    /* ------------------------------------------------------------------ */
 
-        var el =
-          video && (video.parentElement || video);
+    if (fsBtn) {
+      fsBtn.addEventListener("click", function () {
+        var el = video && (video.parentElement || video);
+        if (!el) return;
 
-        if(!el) return;
-
-        if(
-          document.fullscreenElement ||
-          document.webkitFullscreenElement
-        ){
-
-          if(document.exitFullscreen){
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          if (document.exitFullscreen) {
             document.exitFullscreen();
-          }else if(document.webkitExitFullscreen){
+          } else if (document.webkitExitFullscreen) {
             document.webkitExitFullscreen();
           }
-
-        }else{
-
-          if(el.requestFullscreen){
+        } else {
+          if (el.requestFullscreen) {
             el.requestFullscreen();
-          }else if(el.webkitRequestFullscreen){
+          } else if (el.webkitRequestFullscreen) {
             el.webkitRequestFullscreen();
-          }else if(video.webkitEnterFullscreen){
+          } else if (video.webkitEnterFullscreen) {
             video.webkitEnterFullscreen();
           }
-
         }
-
       });
-
     }
 
-    function authHeaders(){
+    /* ------------------------------------------------------------------ */
+    /* Networking                                                         */
+    /* ------------------------------------------------------------------ */
 
-      var headers = {
-        "X-API-Key": API_KEY
-      };
-
+    function authHeaders() {
+      var headers = { "X-API-Key": API_KEY };
       var t = getToken();
-
-      if(t){
-        headers["Authorization"] = "Bearer " + t;
-      }
-
+      if (t) headers["Authorization"] = "Bearer " + t;
       return headers;
-
     }
 
-    /*
-     * Fetch with a hard timeout.
-     *
-     * This prevents the page from remaining on Loading…
-     * forever if Railway/API/network hangs.
-     */
-    async function fetchWithTimeout(url, options){
-
+    /* Fetch with a hard timeout so the page never sits on "Loading…" forever. */
+    async function fetchWithTimeout(url, options) {
       var controller =
-        typeof AbortController !== "undefined"
-          ? new AbortController()
-          : null;
-
+        typeof AbortController !== "undefined" ? new AbortController() : null;
       var timer = null;
 
-      if(controller){
-
-        options = Object.assign({}, options, {
-          signal: controller.signal
-        });
-
-        timer = setTimeout(function(){
-
-          try{
-            controller.abort();
-          }catch(e){}
-
+      if (controller) {
+        options = Object.assign({}, options, { signal: controller.signal });
+        timer = setTimeout(function () {
+          try { controller.abort(); } catch (e) {}
         }, REQUEST_TIMEOUT);
-
       }
 
-      try{
-
+      try {
         return await fetch(url, options);
-
-      }finally{
-
-        if(timer){
-          clearTimeout(timer);
-        }
-
+      } finally {
+        if (timer) clearTimeout(timer);
       }
-
     }
 
-    function decodeWfPackConfig(text){
-
-      if(!text) return null;
-
-      var m =
-        String(text).match(
-          /<!--WFJSON:([\s\S]*?)-->/
-        );
-
-      if(!m) return null;
-
-      try{
+    function decodeWfPackConfig(text) {
+      if (!text) return null;
+      var m = String(text).match(/<!--WFJSON:([\s\S]*?)-->/);
+      if (!m) return null;
+      try {
         return JSON.parse(m[1]);
-      }catch(e){
+      } catch (e) {
         return null;
       }
-
     }
 
-    function looksLikeVideoUrl(url){
-
-      if(!url || typeof url !== "string"){
-        return false;
-      }
-
+    function looksLikeVideoUrl(url) {
+      if (!url || typeof url !== "string") return false;
       url = url.trim();
+      if (!/^https?:\/\//i.test(url)) return false;
 
-      if(!/^https?:\/\//i.test(url)){
-        return false;
-      }
-
-      if(
-        /\.(mp4|webm|ogg|m3u8|mov)(\?|#|$)/i.test(url)
-      ){
+      if (/\.(mp4|webm|ogg|m3u8|mov)(\?|#|$)/i.test(url)) return true;
+      if (/\/video\//i.test(url) &&
+          !/instagram\.com|facebook\.com|tiktok\.com|youtube\.com\/channel/i.test(url)) {
         return true;
       }
-
-      if(
-        /\/video\//i.test(url) &&
-        !/instagram\.com|facebook\.com|tiktok\.com|youtube\.com\/channel/i.test(url)
-      ){
-        return true;
-      }
-
-      if(/cloudinary\.com\/.*\/video\//i.test(url)){
-        return true;
-      }
-
-      if(/vimeo\.com\/.*\.mp4/i.test(url)){
-        return true;
-      }
+      if (/cloudinary\.com\/.*\/video\//i.test(url)) return true;
+      if (/vimeo\.com\/.*\.mp4/i.test(url)) return true;
 
       return false;
-
     }
 
-    function extractVideoUrl(task){
+    function extractVideoUrl(task) {
+      if (!task) return "";
 
-      if(!task) return "";
-
-      var meta =
-        task.metadata ||
-        task.meta ||
-        {};
-
-      var emb =
-        decodeWfPackConfig(task.description) ||
-        {};
+      var meta = task.metadata || task.meta || {};
+      var emb = decodeWfPackConfig(task.description) || {};
 
       var candidates = [
-
-        meta.videoUrl,
-        meta.video,
-        meta.videoSrc,
-        meta.mediaUrl,
-        meta.media,
-
-        emb.videoUrl,
-        emb.video,
-        emb.videoSrc,
-        emb.mediaUrl,
-        emb.media,
-
-        task.videoUrl,
-        task.video,
-        task.mediaUrl,
-
-        looksLikeVideoUrl(task.targetUrl)
-          ? task.targetUrl
-          : "",
-
-        looksLikeVideoUrl(task.url)
-          ? task.url
-          : "",
-
-        looksLikeVideoUrl(meta.url)
-          ? meta.url
-          : "",
-
-        looksLikeVideoUrl(meta.targetUrl)
-          ? meta.targetUrl
-          : ""
-
+        meta.videoUrl, meta.video, meta.videoSrc, meta.mediaUrl, meta.media,
+        emb.videoUrl, emb.video, emb.videoSrc, emb.mediaUrl, emb.media,
+        task.videoUrl, task.video, task.mediaUrl,
+        looksLikeVideoUrl(task.targetUrl) ? task.targetUrl : "",
+        looksLikeVideoUrl(task.url) ? task.url : "",
+        looksLikeVideoUrl(meta.url) ? meta.url : "",
+        looksLikeVideoUrl(meta.targetUrl) ? meta.targetUrl : ""
       ];
 
-      for(var i = 0; i < candidates.length; i++){
-
+      for (var i = 0; i < candidates.length; i++) {
         var c = candidates[i];
-
-        if(c && typeof c === "string"){
-
+        if (c && typeof c === "string") {
           c = c.trim();
-
-          if(looksLikeVideoUrl(c)){
-            return c;
-          }
-
+          if (looksLikeVideoUrl(c)) return c;
         }
-
       }
 
-      var desc =
-        String(task.description || "");
+      var desc = String(task.description || "");
+      var m = desc.match(
+        /https?:\/\/[^\s"'<>]+\.(mp4|webm|m3u8|ogg|mov)(\?[^\s"'<>]*)?/i
+      );
+      if (m) return m[0];
 
-      var m =
-        desc.match(
-          /https?:\/\/[^\s"'<>]+\.(mp4|webm|m3u8|ogg|mov)(\?[^\s"'<>]*)?/i
-        );
-
-      if(m){
-        return m[0];
-      }
-
-      var slots =
-        task.slots ||
-        meta.slots ||
-        emb.slots ||
-        [];
-
-      if(Array.isArray(slots)){
-
-        for(var j = 0; j < slots.length; j++){
-
+      var slots = task.slots || meta.slots || emb.slots || [];
+      if (Array.isArray(slots)) {
+        for (var j = 0; j < slots.length; j++) {
           var s = slots[j] || {};
-
-          var opts = [
-            s.videoUrl,
-            s.video,
-            s.mediaUrl,
-            s.url,
-            s.link,
-            s.targetUrl,
-            s.href
-          ];
-
-          for(var k = 0; k < opts.length; k++){
-
-            if(looksLikeVideoUrl(opts[k])){
-
-              return String(opts[k]).trim();
-
-            }
-
+          var opts = [s.videoUrl, s.video, s.mediaUrl, s.url, s.link, s.targetUrl, s.href];
+          for (var k = 0; k < opts.length; k++) {
+            if (looksLikeVideoUrl(opts[k])) return String(opts[k]).trim();
           }
-
         }
-
       }
 
       return "";
-
     }
 
-    function rewardWcoin(task){
+    function rewardWcoin(task) {
+      var meta = task.metadata || task.meta || {};
+      var emb = decodeWfPackConfig(task.description);
 
-      var meta =
-        task.metadata ||
-        task.meta ||
-        {};
+      var rw = meta.rewardWcoin || (emb && emb.rewardWcoin);
+      if (rw != null) return Number(rw) || 0;
 
-      var emb =
-        decodeWfPackConfig(task.description);
-
-      var rw =
-        meta.rewardWcoin ||
-        (emb && emb.rewardWcoin);
-
-      if(rw != null){
-        return Number(rw) || 0;
-      }
-
-      return Math.round(
-        Number(
-          task.rewardAmount ||
-          task.reward ||
-          0
-        ) * 5
-      );
-
+      return Math.round(Number(task.rewardAmount || task.reward || 0) * 5);
     }
 
-    function showUnavailable(msg){
+    function showUnavailable(msg) {
+      if ($("appBody")) $("appBody").style.display = "none";
 
-      if($("appBody")){
-        $("appBody").style.display = "none";
-      }
-
-      var gate =
-        $("videoUnavailable");
-
-      if(gate){
-
+      var gate = $("videoUnavailable");
+      if (gate) {
         gate.classList.add("show");
-
-        if(
-          msg &&
-          $("unavailableMsg")
-        ){
-
-          $("unavailableMsg").textContent = msg;
-
-        }
-
+        if (msg && $("unavailableMsg")) $("unavailableMsg").textContent = msg;
       }
 
       hasValidSource = false;
-
     }
 
-    async function fetchTaskById(id){
+    async function fetchTaskById(id) {
+      if (!id) return null;
 
-      if(!id) return null;
-
-      try{
-
-        var res =
-          await fetchWithTimeout(
-            API_URL +
-            "/api/v1/sponsored-tasks/" +
-            encodeURIComponent(id),
-            {
-              headers: authHeaders()
-            }
-          );
-
-        var body =
-          await res.json().catch(function(){
-            return {};
-          });
-
-        if(
-          !res.ok ||
-          body.success === false
-        ){
-
-          return null;
-
-        }
-
-        var full =
-          body.data ||
-          body.task ||
-          body;
-
-        if(
-          full &&
-          (full._id || full.id)
-        ){
-
-          return full;
-
-        }
-
-      }catch(e){
-
-        console.warn(
-          "WatchFlix task detail request failed:",
-          e
+      try {
+        var res = await fetchWithTimeout(
+          API_URL + "/api/v1/sponsored-tasks/" + encodeURIComponent(id),
+          { headers: authHeaders() }
         );
 
+        var body = await res.json().catch(function () { return {}; });
+
+        if (!res.ok || body.success === false) return null;
+
+        var full = body.data || body.task || body;
+        if (full && (full._id || full.id)) return full;
+      } catch (e) {
+        console.warn("WatchFlix task detail request failed:", e);
       }
 
       return null;
-
     }
 
-    async function fetchTaskList(){
-
-      try{
-
-        var res =
-          await fetchWithTimeout(
-            API_URL +
-            "/api/v1/sponsored-tasks",
-            {
-              headers: authHeaders()
-            }
-          );
-
-        var body =
-          await res.json().catch(function(){
-            return {};
-          });
-
-        if(
-          !res.ok ||
-          body.success === false
-        ){
-
-          return [];
-
-        }
-
-        return Array.isArray(body.data)
-          ? body.data
-          : [];
-
-      }catch(e){
-
-        console.warn(
-          "WatchFlix task list request failed:",
-          e
+    async function fetchTaskList() {
+      try {
+        var res = await fetchWithTimeout(
+          API_URL + "/api/v1/sponsored-tasks",
+          { headers: authHeaders() }
         );
 
+        var body = await res.json().catch(function () { return {}; });
+
+        if (!res.ok || body.success === false) return [];
+
+        return Array.isArray(body.data) ? body.data : [];
+      } catch (e) {
+        console.warn("WatchFlix task list request failed:", e);
         return [];
-
       }
-
     }
 
-    async function loadVideoTask(){
-
-      if(!uid) return;
+    async function loadVideoTask() {
+      if (!uid) return;
 
       var taskId = "";
+      try {
+        taskId = new URLSearchParams(location.search).get("id") || "";
+      } catch (e) {}
 
-      try{
-
-        taskId =
-          new URLSearchParams(
-            location.search
-          ).get("id") || "";
-
-      }catch(e){}
-
-      try{
-
+      try {
         var task = null;
 
-        /*
-         * 1. Direct task lookup.
-         */
-        if(taskId){
-
-          task =
-            await fetchTaskById(taskId);
-
+        /* 1. Direct task lookup. */
+        if (taskId) {
+          task = await fetchTaskById(taskId);
         }
 
-        /*
-         * 2. Fallback to task list.
-         */
-        if(!task){
+        /* 2. Fallback to task list. */
+        if (!task) {
+          var rows = await fetchTaskList();
 
-          var rows =
-            await fetchTaskList();
-
-          if(taskId){
-
-            task =
-              rows.find(function(t){
-
-                return t &&
-                  String(t._id || t.id) ===
-                  String(taskId);
-
-              }) || null;
-
+          if (taskId) {
+            task = rows.find(function (t) {
+              return t && String(t._id || t.id) === String(taskId);
+            }) || null;
           }
 
-          /*
-           * Enrich a thin list result.
-           */
-          if(task){
-
-            var rich =
-              await fetchTaskById(
-                task._id || task.id
-              );
-
-            if(rich){
-
-              task =
-                Object.assign(
-                  {},
-                  task,
-                  rich
-                );
-
-            }
-
+          /* Enrich a thin list result. */
+          if (task) {
+            var rich = await fetchTaskById(task._id || task.id);
+            if (rich) task = Object.assign({}, task, rich);
           }
 
-          /*
-           * If there is no ID, select the first
-           * active task that contains a real video.
-           */
-          if(!task){
-
-            var withVideo =
-              rows.filter(function(t){
-
-                return t &&
-                  t.active !== false &&
-                  extractVideoUrl(t);
-
-              });
-
-            task =
-              withVideo[0] || null;
-
+          /* No ID: pick the first active task that contains a real video. */
+          if (!task) {
+            var withVideo = rows.filter(function (t) {
+              return t && t.active !== false && extractVideoUrl(t);
+            });
+            task = withVideo[0] || null;
           }
-
         }
 
-        /*
-         * No task does NOT mean ClickAdilla
-         * has failed.
-         *
-         * We can still show the player shell.
-         */
-        if(!task){
-
-          if($("videoUnavailable")){
-            $("videoUnavailable")
-              .classList.remove("show");
-          }
-
-          if($("appBody")){
-            $("appBody").style.display = "flex";
-          }
+        /* No task does NOT mean ClickAdilla failed — we can still show the player shell. */
+        if (!task) {
+          if ($("videoUnavailable")) $("videoUnavailable").classList.remove("show");
+          if ($("appBody")) $("appBody").style.display = "flex";
 
           hasValidSource = false;
 
-          if($("videoTitle")){
-            $("videoTitle").textContent =
-              "WatchFlix";
-          }
-
-          if($("videoDesc")){
+          if ($("videoTitle")) $("videoTitle").textContent = "WatchFlix";
+          if ($("videoDesc")) {
             $("videoDesc").textContent =
               "Tap Play. ClickAdilla may show an overlay video advertisement.";
           }
+          if ($("rewardChip")) $("rewardChip").textContent = "Ad";
 
-          if($("rewardChip")){
-            $("rewardChip").textContent =
-              "Ad";
-          }
-
-          if(adStatus){
-
+          if (adStatus) {
             adStatus.classList.add("show");
-
-            adStatus.textContent =
-              "Tap Play for the ClickAdilla overlay advertisement.";
-
+            adStatus.textContent = "Tap Play for the ClickAdilla overlay advertisement.";
           }
-
-          if(adHint){
-            adHint.textContent =
-              "Tap Play for the ad";
-          }
-
-          if(overlay){
-            overlay.classList.remove("hidden");
-          }
+          if (adHint) adHint.textContent = "Tap Play for the ad";
+          if (overlay) overlay.classList.remove("hidden");
 
           return;
-
         }
 
-        /*
-         * Populate task information.
-         */
-        var title =
-          String(
-            task.title ||
-            "WatchFlix Video"
-          );
+        /* Populate task information. */
+        var title = String(task.title || "WatchFlix Video");
 
         var desc =
-          String(
-            task.description || ""
-          )
-          .replace(
-            /<!--WFJSON:[\s\S]*?-->/g,
-            ""
-          )
-          .replace(
-            /WF_REOPEN:[^]*\]/g,
-            ""
-          )
-          .trim() ||
-          "Watch this video to earn WCoin rewards.";
+          String(task.description || "")
+            .replace(/<!--WFJSON:[\s\S]*?-->/g, "")
+            // [BUGFIX] Make the WF_REOPEN strip non-greedy so it can't eat the
+            // rest of the description (the old [^]*\] was greedily unbounded).
+            .replace(/\[WF_REOPEN:[^\]]*\]/g, "")
+            .trim() || "Watch this video to earn WCoin rewards.";
 
-        var vidUrl =
-          extractVideoUrl(task);
+        var vidUrl = extractVideoUrl(task);
+        var rw = rewardWcoin(task);
+        var poster = task.imageUrl || task.image || "";
 
-        var rw =
-          rewardWcoin(task);
+        if ($("videoTitle")) $("videoTitle").textContent = title;
+        if ($("videoDesc")) $("videoDesc").textContent = desc;
+        if ($("rewardChip")) $("rewardChip").textContent = "+" + rw + " WCoin";
 
-        var poster =
-          task.imageUrl ||
-          task.image ||
-          "";
+        if (poster && video) video.poster = poster;
 
-        if($("videoTitle")){
-          $("videoTitle").textContent =
-            title;
-        }
+        /* Always keep the player shell available so ClickAdilla's selector exists. */
+        if ($("videoUnavailable")) $("videoUnavailable").classList.remove("show");
+        if ($("appBody")) $("appBody").style.display = "flex";
 
-        if($("videoDesc")){
-          $("videoDesc").textContent =
-            desc;
-        }
-
-        if($("rewardChip")){
-          $("rewardChip").textContent =
-            "+" + rw + " WCoin";
-        }
-
-        if(poster && video){
-          video.poster = poster;
-        }
-
-        /*
-         * Always keep the player shell available so
-         * ClickAdilla's selector exists.
-         */
-        if($("videoUnavailable")){
-          $("videoUnavailable")
-            .classList.remove("show");
-        }
-
-        if($("appBody")){
-          $("appBody").style.display = "flex";
-        }
-
-        if(vidUrl){
-
+        if (vidUrl) {
           hasValidSource = true;
 
-          /*
-           * Assign the actual WatchFlix content source.
-           */
+          /* Assign the actual WatchFlix content source. */
           video.src = vidUrl;
 
-          /*
-           * Reset playback state.
-           */
+          /* Reset playback state. */
           videoStarted = false;
 
-          if(overlay){
-            overlay.classList.remove("hidden");
-          }
-
-          if(adStatus){
-            adStatus.classList.remove("show");
-          }
-
-          if(adHint){
-
-            adHint.textContent =
-              "Tap play — an ad may appear first";
-
-          }
-
-        }else{
-
+          if (overlay) overlay.classList.remove("hidden");
+          if (adStatus) adStatus.classList.remove("show");
+          if (adHint) adHint.textContent = "Tap play — an ad may appear first";
+        } else {
           hasValidSource = false;
           videoStarted = false;
 
-          try{
-
+          try {
             video.removeAttribute("src");
             video.load();
+          } catch (e) {}
 
-          }catch(e){}
+          if (overlay) overlay.classList.remove("hidden");
 
-          if(overlay){
-            overlay.classList.remove("hidden");
-          }
-
-          if(adStatus){
-
+          if (adStatus) {
             adStatus.classList.add("show");
-
-            adStatus.textContent =
-              "Tap Play for the ClickAdilla overlay advertisement.";
-
+            adStatus.textContent = "Tap Play for the ClickAdilla overlay advertisement.";
           }
-
-          if(adHint){
-
-            adHint.textContent =
-              "Tap Play for the ad";
-
-          }
-
+          if (adHint) adHint.textContent = "Tap Play for the ad";
         }
+      } catch (e) {
+        console.error("WatchFlix loading error:", e);
 
-      }catch(e){
-
-        console.error(
-          "WatchFlix loading error:",
-          e
-        );
-
-        /*
-         * Never leave the user permanently stuck
-         * on Loading…
-         */
+        /* Never leave the user permanently stuck on Loading…. */
         showUnavailable(
           "We could not load this video right now. Please go back and try again."
         );
-
       }
-
     }
 
-    /*
-     * Back navigation.
-     */
+    /* ------------------------------------------------------------------ */
+    /* Back navigation                                                    */
+    /* ------------------------------------------------------------------ */
+
+    function goBack(e) {
+      e.preventDefault();
+      try {
+        var id = new URLSearchParams(location.search).get("id");
+        location.href = id
+          ? RETURN_URL + "?id=" + encodeURIComponent(id)
+          : RETURN_URL;
+      } catch (err) {
+        location.href = RETURN_URL;
+      }
+    }
+
     var back = $("backLink");
+    if (back) back.addEventListener("click", goBack);
 
-    if(back){
+    var ub = $("unavailableBack");
+    if (ub) ub.addEventListener("click", goBack);
 
-      back.addEventListener(
-        "click",
-        function(e){
+    /* ------------------------------------------------------------------ */
+    /* Init                                                               */
+    /* ------------------------------------------------------------------ */
 
-          e.preventDefault();
-
-          try{
-
-            var id =
-              new URLSearchParams(
-                location.search
-              ).get("id");
-
-            location.href =
-              id
-                ? RETURN_URL +
-                  "?id=" +
-                  encodeURIComponent(id)
-                : RETURN_URL;
-
-          }catch(err){
-
-            location.href = RETURN_URL;
-
-          }
-
-        }
-      );
-
-    }
-
-    var ub =
-      $("unavailableBack");
-
-    if(ub){
-
-      ub.addEventListener(
-        "click",
-        function(e){
-
-          e.preventDefault();
-
-          try{
-
-            var id =
-              new URLSearchParams(
-                location.search
-              ).get("id");
-
-            location.href =
-              id
-                ? RETURN_URL +
-                  "?id=" +
-                  encodeURIComponent(id)
-                : RETURN_URL;
-
-          }catch(err){
-
-            location.href = RETURN_URL;
-
-          }
-
-        }
-      );
-
-    }
-
-    /*
-     * Initialize only when authenticated.
-     */
-    if(uid){
-
-      loadVideoTask();
-
-    }
+    if (uid) loadVideoTask();
 
   })();
-  </script></body>
+  </script>
+</body>
 </html>
