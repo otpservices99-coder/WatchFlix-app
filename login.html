@@ -106,7 +106,17 @@ async function doLogin(e){
     let data=null,lastErr="Login failed";
     for(const path of paths){
       try{
-        const res=await fetch(API_URL+path,{method:"POST",headers:{"Content-Type":"application/json","X-API-Key":API_KEY},body:JSON.stringify(bodyBase)});
+        console.log("LOGIN REQUEST:", API_URL+path, bodyBase);
+const res=await fetch(API_URL+path,{
+  method:"POST",
+  mode:"cors",
+  headers:{
+    "Content-Type":"application/json",
+    "X-API-Key":API_KEY
+  },
+  body:JSON.stringify(bodyBase)
+});
+console.log("LOGIN RESPONSE:", res.status, res.url);
         const body=await res.json().catch(()=>({}));
         if(res.ok&&body.success!==false){data=body;break}
         lastErr=body.message||body.error||("HTTP "+res.status);
