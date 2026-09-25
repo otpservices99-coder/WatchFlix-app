@@ -102,7 +102,7 @@ async function doLogin(e){
   const device=devicePayload();
   try{
     const bodyBase={email,username:email,password,...device,deviceFingerprint:device.deviceId};
-    const paths=["/api/auth/login","/api/v1/auth/login","/api/v1/login"];
+    const paths=["/api/auth/login"];
     let data=null,lastErr="Login failed";
     for(const path of paths){
       try{
