@@ -86,7 +86,12 @@ function toggleTheme(){const dark=!document.body.classList.contains("theme-dark"
 if(localStorage.getItem(LS.token)){const n=document.getElementById("sessionNote");if(n)n.classList.add("show")}
 function getDeviceId(){try{let id=localStorage.getItem(LS.device);if(!id){id="d_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,12);localStorage.setItem(LS.device,id)}return id}catch(e){return "d_unknown"}}
 function devicePayload(){return{deviceId:getDeviceId(),userAgent:navigator.userAgent||"",language:navigator.language||"",platform:navigator.platform||"",screen:(screen.width||0)+"x"+(screen.height||0),timezone:(Intl.DateTimeFormat().resolvedOptions().timeZone||""),touch:navigator.maxTouchPoints||0}}
-function showMsg(text,ok){const m=document.getElementById("msg");m.className="msg "+(ok?"ok":"err");m.textContent=text}
+function showMsg(text,ok){
+  const m=document.getElementById("msg");
+  m.className="msg "+(ok?"ok":"err");
+  m.textContent=text;
+  m.style.display="block";
+}
 async function doLogin(e){
   e.preventDefault();
   const email=document.getElementById("email").value.trim();
